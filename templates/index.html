@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch Đặt Phòng Họp</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Phần tiêu đề và các button phòng -->
+    <div class="top-bar">
+        <div class="title">Lịch Đặt Phòng Họp</div>
+        <div class="room-buttons">
+            <button class="room-select">Phòng 1</button>
+            <button class="room-select">Phòng 2</button>
+            <button class="room-select">Phòng 3</button>
+            <button class="room-select">Phòng 4</button>
+            <!-- Nút Đặt Phòng, bị vô hiệu hóa nếu user chưa đăng nhập -->
+            <button id="bookRoomButton" disabled>Đặt Phòng</button>
+        </div>
+
+        <!-- Kiểm tra nếu người dùng đã đăng nhập -->
+    {% if 'username' in session %}
+        <p>Chào, {{ session['username'] }} <a href="{{ url_for('logout') }}">Log out</a></p>
+    {% else %}
+        <!-- Form Đăng Nhập -->
+        <div class="login">
+            <p><strong>Login </strong></p>
+            <form action="{{ url_for('login') }}" method="post">
+                <input type="text" name="username" placeholder="Username" required><br>
+                <input type="password" name="password" placeholder="Password" required><br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <!-- Hiển thị thông báo lỗi trong popup nếu đăng nhập thất bại -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="popup">
+                {% for category, message in messages %}
+                    <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+                <button onclick="closePopup()">Đóng</button>
+            </div>
+        {% endif %}
+    {% endwith %}
+    </div>
+
+    <!-- Phần điều hướng thời gian -->
+    <div class="time-navigation">
+    <a href="{{ url_for('index', offset=offset-1) }}">
+        <button>Tuần trước</button>
+    </a>
+    <a href="{{ url_for('index', offset=0) }}">
+        <button class="current-week">Tuần này</button>
+    </a>
+    <a href="{{ url_for('index', offset=offset+1) }}">
+        <button>Tuần sau</button>
+    </a>
+    <span>{{ week_label }}: {{ week_range }}</span>
+    </div>
+
+    <!-- Bảng lịch đặt phòng -->
+   <div class="schedule-wrapper">
+    <table class="schedule-table">
+        <thead>
+            <tr>
+                <th>Giờ</th>
+                <th class="{% if week_days[0] < current_date %}inactive{% elif week_days[0] == current_date %}today-column{% endif %}">
+                    Thứ 2<br><span>{{ week_days[0].strftime('%d/%m/%Y') }}</span>
+                </th>
+                <th class="{% if week_days[1] < current_date %}inactive{% elif week_days[1] == current_date %}today-column{% endif %}">
+                    Thứ 3<br><span>{{ week_days[1].strftime('%d/%m/%Y') }}</span>
+                </th>
+                <th class="{% if week_days[2] < current_date %}inactive{% elif week_days[2] == current_date %}today-column{% endif %}">
+                    Thứ 4<br><span>{{ week_days[2].strftime('%d/%m/%Y') }}</span>
+                </th>
+                <th class="{% if week_days[3] < current_date %}inactive{% elif week_days[3] == current_date %}today-column{% endif %}">
+                    Thứ 5<br><span>{{ week_days[3].strftime('%d/%m/%Y') }}</span>
+                </th>
+                <th class="{% if week_days[4] < current_date %}inactive{% elif week_days[4] == current_date %}today-column{% endif %}">
+                    Thứ 6<br><span>{{ week_days[4].strftime('%d/%m/%Y') }}</span>
+                </th>
+                <th class="{% if week_days[5] < current_date %}inactive{% elif week_days[5] == current_date %}today-column{% endif %}">
+                    Thứ 7<br><span>{{ week_days[5].strftime('%d/%m/%Y') }}</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for time in time_slots %}
+            <tr class="{% if '12:00-13:30' in time %}time-break{% endif %}">
+                <td>{{ time }}</td>
+                <td id="monday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
+                    class="{% if week_days[0] < current_date %}inactive{% endif %}">
+                </td>
+                <td id="tuesday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
+                    class="{% if week_days[1] < current_date %}inactive{% endif %}">
+                </td>
+                <td id="wednesday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
+                    class="{% if week_days[2] < current_date %}inactive{% endif %}">
+                </td>
+                <td id="thursday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
+                    class="{% if week_days[3] < current_date %}inactive{% endif %}">
+                </td>
+                <td id="friday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
+                    class="{% if week_days[4] < current_date %}inactive{% endif %}">
+                </td>
+                <td id="saturday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
+                    class="{% if week_days[5] < current_date %}inactive{% endif %}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+</div>
+
+<!-- Form Đặt Phòng, ban đầu ẩn đi -->
+<div id="booking-form-1" class="booking-form hidden" style="visibility: hidden">
+    <h2>Đặt Phòng</h2>
+    <h3>Ngày: <span id="bookingDate"></span></h3>
+    <form id="booking-form-content-1">
+        <label for="roomName">Tên phòng:</label>
+        <input type="text" id="roomName" name="roomName" readonly><br>
+
+        <label for="time">Thời gian:</label>
+        <input type="text" id="time" name="time" readonly><br>
+
+        <button type="submit">Xác nhận</button>
+        <button type="button" onclick="closeBookingForm()">Hủy</button>
+    </form>
+</div>
+<script>
+    const loggedInUser = "{{ session['username'] }}";
+</script>
+<script src="{{ url_for('static', filename='js/highlight.js') }}"></script>
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+<script src="{{ url_for('static', filename='js/saving.js') }}"></script>
+<script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+
+<!--<script src="{{ url_for('static', filename='js/index.js') }}"></script> -->
+</body>
+</html>
