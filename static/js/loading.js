@@ -26,7 +26,7 @@ async function loadBookings() {
             console.log(selectedCells.length);
             const bookingId = `booking_${booking.room_name}_${booking.reservation_date}_${booking.start_time}-${booking.end_time}`.replace(/[\s:-]/g, '_');
             const nameContent = `<div><strong>Cuộc họp:</strong> ${booking.booking_name}</div>`;
-            const departmentContent = `<div style="background-color: #07f407; color: black; font-weight: bold; padding: 5px;"><strong>Khối:</strong> ${booking.department}</div>`;
+            const departmentContent = `<div style="background-color: #07f407; color: black; font-weight: bold; padding: 5px;width: 100%;"><strong>Khối:</strong> ${booking.department}</div>`;
             const chairmanContent = `<div><strong>Chủ trì:</strong> ${booking.chairman}</div>`;
             const timeContent = `<div><strong>Thời gian:</strong> ${booking.start_time} - ${booking.end_time}</div>`;
             const meetingContentText = `<div><strong>Nội dung:</strong> ${booking.meeting_content}</div>`;

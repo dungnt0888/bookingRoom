@@ -84,7 +84,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     // Chuẩn bị nội dung cho các phần booking
     const nameContent = `<div><strong>Cuộc họp:</strong> ${bookingName}</div>`;
     const departmentContent = `
-    <div style="background-color: #07f407; color: black; font-weight: bold; padding: 5px;">
+    <div style="background-color: #07f407; color: black; font-weight: bold; padding: 5px; width: 100%;">
         <strong>Khối:</strong> ${department}
     </div>
     `;

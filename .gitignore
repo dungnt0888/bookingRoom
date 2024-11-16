@@ -1,0 +1,14 @@
+# Bỏ qua thư mục môi trường ảo
+venv/
+__pycache__/
+
+# Bỏ qua file cấu hình nhạy cảm
+*.env
+instance/
+
+# Bỏ qua file database SQLite (nếu có)
+*.sqlite3
+
+# Bỏ qua các file hệ thống
+.DS_Store
+*.pyc
