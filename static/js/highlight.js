@@ -8,8 +8,18 @@ document.addEventListener('DOMContentLoaded', function () {
         return cell.parentElement.classList.contains("time-break");
     }
 
+    function isBooked(cell) {
+        return cell.parentElement.classList.contains("booked");
+    }
+
     function toggleCellHighlight(cell) {
         const column = cell.cellIndex;
+        if (cell.classList.contains('booked')){
+            if(cell.classList.contains('department')){
+                console.log("Clicked on department:", event.target);
+            }
+            return;
+        }
         if (cell.classList.contains('highlighted')) {
             cell.classList.remove('highlighted');
             const index = selectedCells.indexOf(cell);
@@ -49,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function startHighlight(cell, event) {
-        if (event.button !== 0 || isLunchBreakRow(cell) || cell.cellIndex === 0) return;
+        if (event.button !== 0 || isBooked(cell) || isLunchBreakRow(cell) || cell.cellIndex === 0) return;
 
         isDragging = true;
         activeColumn = cell.cellIndex;
@@ -63,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function dragHighlight(cell) {
         if (!isDragging || cell.cellIndex !== activeColumn || cell.cellIndex === 0) return;
 
-        if (isLunchBreakRow(cell)) {
+        if (isLunchBreakRow(cell) || isBooked(cell)) {
             isDragging = false;
             return;
         }

@@ -16,7 +16,7 @@ body {
     align-items: center;
     margin-top: 20px;
     padding: 15px;
-    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    background: linear-gradient(135deg, #8fbb91, #2E7D32);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
 }
@@ -131,6 +131,9 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    border: 2px solid #9fa190; /* Viền bao quanh bên ngoài bảng */
+    border-spacing: 0; /* Loại bỏ khoảng cách giữa các ô nếu cần */
+    overflow: hidden; /* Ngăn phần tử con đè lên viền */
 }
 
 .schedule-table th, .schedule-table td {
@@ -148,6 +151,11 @@ body {
 .schedule-table td:hover {
     background-color: #d0f0c0;
     transition: background-color 0.2s;
+}
+
+.schedule-table td {
+    z-index: 0;
+    position: relative;
 }
 
 
@@ -169,7 +177,7 @@ body {
 .time-navigation button {
     margin: 0 10px;
     padding: 6px 12px;
-    background-color: #42a5f5;
+    background-color: #8ea9bf;
     color: white;
     border: none;
     border-radius: 4px;
@@ -178,7 +186,7 @@ body {
 }
 
 .time-navigation button.current-week {
-    background-color: #1e88e5; /* Màu nổi bật hơn cho nút "Tuần này" */
+    background-color: #5be360; /* Màu nổi bật hơn cho nút "Tuần này" */
 }
 
 .time-navigation button:hover {
@@ -196,14 +204,13 @@ body {
 /* ========== Schedule Table Styles ========== */
 .schedule-table {
     width: 100%;
-    border-collapse: collapse;
     margin-top: 10px;
     table-layout: fixed; /* Đảm bảo các cột có kích thước cố định */
 }
 
 .schedule-table th, .schedule-table td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 6px;
     text-align: center;
 }
 
@@ -302,13 +309,13 @@ body {
 
 /* Thêm lớp cho highlight */
 .schedule-table .today-column {
-    background-color: #3ba7ff; /* Màu vàng nhạt hoặc bạn có thể chọn màu khác */
+    background-color: #43f947; /* Màu vàng nhạt hoặc bạn có thể chọn màu khác */
 }
 
 .schedule-table td.inactive, .schedule-table th.inactive {
     background-color: #f0f0f0;  /* Màu nền xám nhạt để biểu thị trạng thái inactive */
     color: #999;  /* Màu chữ xám */
-    pointer-events: none;  /* Vô hiệu hóa tương tác chuột */
+    pointer-events: none !important;  /* Vô hiệu hóa tương tác chuột */
     user-select: none;  /* Không cho phép chọn văn bản */
 }
 
@@ -445,27 +452,41 @@ body {
 
 .booking-content {
     position: relative;
-    padding: 8px;
+    padding: 5px;
     background-color: #d1e7dd;
     border-radius: 5px;
+}
+.booking-content div.department {
+    pointer-events: auto; /* Kích hoạt sự kiện chuột */
+    transition: all 0.3s ease; /* Thêm hiệu ứng mượt mà */
+    z-index: 9;
+    position: relative;
+}
+
+.booking-content div.department:hover {
+    background-color: #0056b3; /* Đổi màu nền khi hover */
+    color: white; /* Đổi màu chữ */
+    transform: scale(1.05); /* Phóng to nhẹ khi hover */
+    cursor: pointer; /* Đổi con trỏ thành bàn tay */
 }
 
 .close-btn {
     pointer-events: auto;
     position: absolute;
-    top: 0px;
-    right: 0px;
+    top: -19px;
+    right: -9px;
     background: #dc3545;
     color: #fff;
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     font-size: 12px;
     line-height: 18px;
     text-align: center;
     padding: 0;
+    z-index: 10;
 }
 
 .close-btn:hover {
@@ -475,4 +496,53 @@ body {
 .tmpDisable {
     pointer-events: none; /* Ngăn tương tác */
     opacity: 0.5; /* Làm mờ các ô bị vô hiệu */
+}
+
+/* Modal chung */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Màu nền mờ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Nội dung modal */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+}
+
+/* Nút trong modal */
+.modal-content .btn {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-content .btn:hover {
+    background-color: #f1f1f1;
+}
+
+
+.wrap-text {
+    white-space: normal;       /* Cho phép xuống dòng tại khoảng trắng */
+    word-wrap: break-word;     /* Bắt buộc xuống dòng nếu từ quá dài */
+    overflow-wrap: break-word; /* Tương tự như trên, ưu tiên hơn */
+    word-break: break-word;    /* Bắt buộc phá vỡ từ nếu quá dài */
+    max-width: 100%;          /* Chiều rộng tối đa để giới hạn */
+    overflow: hidden;          /* Ẩn nội dung thừa nếu cần */
+    /*border: 1px solid #000;     Hiển thị khung để thấy giới hạn */
+    padding: 5px;
 }

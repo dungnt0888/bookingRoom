@@ -4,6 +4,9 @@ from log_in import authenticate_user
 from save_booking import save_booking
 from models.booking_room import Booking
 from cnnDatabase import init_db, db
+from delete_booking import booking_delete_bp  # Import blueprint từ booking_delete.py
+from user_logon import login_bp
+from booking_api import booking_bp
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
 
@@ -12,52 +15,10 @@ init_db(app)
 #@app.route('/')
 #def hello_world():  # put application's code here
 #   return 'Hello World!'
-@app.route('/login', methods=['POST'])
-def login():
-    username = request.form['username']
-    password = request.form['password']
-    message = authenticate_user(username, password)
 
-    if "Đăng nhập thành công" in message:
-        session['username'] = username  # Lưu tên người dùng vào session
-        flash(message, 'success')
-        return redirect(url_for('index'))
-    else:
-        flash("Sai tên đăng nhập hoặc mật khẩu. Vui lòng thử lại.", 'error')
-        return redirect(url_for('index'))
+app.register_blueprint(login_bp)
 
-@app.route('/logout')
-def logout():
-    session.pop('username', None)  # Xóa username khỏi session
-    flash("Bạn đã đăng xuất thành công.", 'success')
-    return redirect(url_for('index'))
-
-
-@app.route('/api/username')
-def get_username():
-    username = session.get('username', 'Guest')
-    return jsonify({'username': username})
-
-@app.route('/submit_booking', methods=['POST'])
-def submit_booking():
-    data = request.json  # Nhận dữ liệu JSON từ yêu cầu
-
-    # Lấy dữ liệu từ JSON và gọi hàm save_booking
-    try:
-        save_booking(
-            booking_name=data.get('booking_name'),
-            department=data.get('department'),
-            meeting_content=data.get('meeting_content'),
-            chairman=data.get('chairman'),
-            start_time=data.get('start_time'),
-            end_time=data.get('end_time'),
-            reservation_date=data.get('reservation_date'),
-            room_name=data.get('room_name')
-        )
-        return jsonify({"message": "Booking saved successfully!"}), 201
-    except Exception as e:
-        return jsonify({"message": f"Failed to save booking: {e}"}), 500
-
+app.register_blueprint(booking_bp, url_prefix='/api/booking')
 
 @app.route('/get_bookings', methods=['GET'])
 def get_bookings():
@@ -85,6 +46,9 @@ def get_bookings():
         # Trả về chi tiết lỗi nếu có lỗi xảy ra
         print("Lỗi khi lấy dữ liệu bookings:", e)
         return jsonify({"message": f"Failed to load bookings: {str(e)}"}), 500
+
+
+app.register_blueprint(booking_delete_bp)
 @app.route('/')
 def index():
     # Dữ liệu giả lập cho các khung giờ
@@ -106,7 +70,7 @@ def index():
 
     # Tạo danh sách ngày từ Thứ Hai đến Chủ Nhật
     #week_days = [(start_of_week + timedelta(days=i)).strftime('%d-%m-%Y') for i in range(7)]
-    week_days = [start_of_week + timedelta(days=i) for i in range(7)]
+    week_days = [(start_of_week + timedelta(days=i)).date() for i in range(7)]
 
     # Format ngày thành chuỗi
     week_range = f"{start_of_week.strftime('%d-%m-%Y')} đến {end_of_week.strftime('%d-%m-%Y')}"
@@ -116,7 +80,7 @@ def index():
     week_label = "Lịch tuần này" if is_current_week else "Lịch"
 
     #current_date = datetime.now().strftime('%d-%m-%Y')  # Định dạng ngày để so sánh
-    current_date = datetime.now()
+    current_date = datetime.now().date()
     return render_template('index.html', time_slots=time_slots, week_range=week_range,
                            week_label=week_label, offset=offset, week_days=week_days, current_date=current_date)
 

@@ -10,7 +10,7 @@ async function loadBookings() {
         }
 
         const activeRoomName = activeRoomButton.textContent.trim(); // Lấy tên phòng đang active từ nút
-        console.log(activeRoomName);
+        //console.log(activeRoomName);
         bookings.forEach(booking => {
             if (booking.room_name !== activeRoomName) {
 
@@ -25,17 +25,20 @@ async function loadBookings() {
             console.log(selectedCells);
             console.log(selectedCells.length);
             const bookingId = `booking_${booking.room_name}_${booking.reservation_date}_${booking.start_time}-${booking.end_time}`.replace(/[\s:-]/g, '_');
-            const nameContent = `<div><strong>Cuộc họp:</strong> ${booking.booking_name}</div>`;
-            const departmentContent = `<div style="background-color: #07f407; color: black; font-weight: bold; padding: 5px;width: 100%;"><strong>Khối:</strong> ${booking.department}</div>`;
-            const chairmanContent = `<div><strong>Chủ trì:</strong> ${booking.chairman}</div>`;
+            const id = `<div style="display: none" class="booking-id" data-id="${booking.booking_id}"></div>`;
+            //console.log("ID: " + booking.booking_id);
+            const nameContent = `<div class="nameContent wrap-text"><strong>Cuộc họp:</strong> ${booking.booking_name}</div>`;
+            const departmentContent = `<div class="department wrap-text" style="background-color: #07f407; color: black; font-weight: bold; padding: 5px;width: 100%;"><strong>Khối:</strong> ${booking.department}</div>`;
+            const chairmanContent = `<div class="chairman wrap-text"><strong>Chủ trì:</strong> ${booking.chairman}</div>`;
             const timeContent = `<div><strong>Thời gian:</strong> ${booking.start_time} - ${booking.end_time}</div>`;
-            const meetingContentText = `<div><strong>Nội dung:</strong> ${booking.meeting_content}</div>`;
+            const meetingContentText = `<div class="meetingContent wrap-text"><strong>Nội dung:</strong> ${booking.meeting_content}</div>`;
 
             // Sử dụng logic phân bổ nội dung tương tự như khi người dùng tạo mới
             if (selectedCells.length === 1) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}">
                         <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button> 
+                        ${id}
                         ${departmentContent}
                         ${nameContent}
                         ${chairmanContent}
@@ -47,6 +50,7 @@ async function loadBookings() {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
                         <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                        ${id}
                         ${departmentContent}
                         ${nameContent}
                     </div>
@@ -62,6 +66,7 @@ async function loadBookings() {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
                          <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                         ${id}
                         ${departmentContent}
                     </div>
                 `;
@@ -81,6 +86,7 @@ async function loadBookings() {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
                          <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                         ${id}
                         ${departmentContent}
                     </div>
                 `;
@@ -111,6 +117,7 @@ async function loadBookings() {
                         cell.innerHTML = `
                             <div class="booking-content" data-id="${bookingId}">
                                 <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                                ${id}
                                 ${contentParts[index]}
                             </div>
                         `;

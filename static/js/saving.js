@@ -82,22 +82,53 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const bookingId = `booking_${roomName}_${bookingDate}_${timeRange}`.replace(/[\s:-]/g, '_');
 
     // Chuẩn bị nội dung cho các phần booking
-    const nameContent = `<div><strong>Cuộc họp:</strong> ${bookingName}</div>`;
+    const nameContent = `<div class="nameContent wrap-text"><strong>Cuộc họp:</strong> ${bookingName}</div>`;
     const departmentContent = `
-    <div style="background-color: #07f407; color: black; font-weight: bold; padding: 5px; width: 100%;">
+    <div class="department wrap-text" style="background-color: #07f407; color: black; font-weight: bold; padding: 0px; width: 100%;">
         <strong>Khối:</strong> ${department}
     </div>
     `;
-    const chairmanContent = `<div><strong>Chủ trì:</strong> ${chairman}</div>`;
+    const chairmanContent = `<div class="chairman wrap-text"><strong>Chủ trì:</strong> ${chairman}</div>`;
     const timeContent = `<div><strong>Thời gian:</strong> ${timeRange}</div>`;
-    const meetingContentText = `<div><strong>Nội dung:</strong> ${meetingContent}</div>`;
+    const meetingContentText = `<div class="meetingContent wrap-text"><strong>Nội dung:</strong> ${meetingContent}</div>`;
+    let id = null;
 
+    // Gửi yêu cầu đến Flask
+    try {
+        const response = await fetch('/api/booking/submit_booking', {  // Sửa đường dẫn API nếu cần
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.booking_id) {
+            console.log("Booking saved successfully with ID:", result.booking_id);
+
+            // Cập nhật DOM với booking_id từ server
+            //updateBookingUI(result.booking_id, data);
+            id = result.booking_id;
+        } else {
+            console.error("Failed to save booking:", result.message);
+            alert("Failed to save booking. Please try again.");
+        }
+    } catch (error) {
+        console.error("Error saving booking:", error);
+        alert("Failed to save booking. Please try again.");
+    }
+    const book_id = `<div style="display: none" class="booking-id" data-id="${id}"></div>`;
     // Xử lý các trường hợp theo số lượng ô đã chọn
     if (selectedCells.length === 1) {
         // Nếu chỉ có 1 ô, hiển thị tất cả nội dung trong ô đó
         selectedCells[0].innerHTML = `
             <div class="booking-content" data-id="${bookingId}">
                 <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button> 
+                ${book_id}
                 ${departmentContent}
                 ${nameContent}
                 ${chairmanContent}
@@ -112,6 +143,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
         selectedCells[0].innerHTML = `
             <div class="booking-content" data-id="${bookingId}_1">
                 <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                ${book_id}
                 ${departmentContent}
                 ${nameContent}
             </div>
@@ -132,6 +164,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
         selectedCells[0].innerHTML = `
             <div class="booking-content" data-id="${bookingId}_1">
                 <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                ${book_id}
                 ${departmentContent}
             </div>
         `;
@@ -156,6 +189,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
         selectedCells[0].innerHTML = `
             <div class="booking-content" data-id="${bookingId}_1">
                 <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                ${book_id}
                 ${departmentContent}
             </div>
         `;
@@ -192,6 +226,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
                 cell.innerHTML = `
                     <div class="booking-content" data-id="${bookingId}">
                         <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                        ${book_id}
                         ${contentParts[index]}
                     </div>
                 `;
@@ -205,21 +240,6 @@ function createBookingForm(roomName, timeRange, bookingDate) {
                 cell.innerHTML = `<div class="booking-content" data-id="${bookingId}_${index}"></div>`;
             }
         });
-    }
-
-    // Gửi yêu cầu đến Flask
-    try {
-        const response = await fetch('/submit_booking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-        //alert(result.message);  // Hiển thị thông báo từ Flask
-    } catch (error) {
-        console.error("Error saving booking:", error);
-        alert("Failed to save booking. Please try again.");
     }
 
     // Đóng popup sau khi lưu
@@ -273,11 +293,34 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     }
 }
 
-function removeBooking(bookingId) {
+async function removeBooking(bookingId) {
     // Lấy tất cả phần tử có cùng bookingId trong các ô
     const bookingElements = document.querySelectorAll(`[data-id^="${bookingId}"]`);
+    /*const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa booking này không?");
+    if (!confirmDelete) {
+        console.log("Hủy thao tác xóa booking.");
+        return; // Hủy bỏ xóa nếu người dùng nhấn "Cancel"
+    }*/
+    const confirmDelete = await showConfirmModal("Bạn có chắc chắn muốn xóa booking này không?");
+    if (!confirmDelete) {
+        console.log("Hủy thao tác xóa booking.");
+        return; // Hủy bỏ nếu người dùng chọn "Hủy"
+    }
 
     bookingElements.forEach(bookingElement => {
+
+        const bookingIdDiv = bookingElement.querySelector('.booking-id');
+        //console.log(bookingIdDiv);
+        if (bookingIdDiv) {
+            // Lấy giá trị `data-id` của `booking_id`
+            const innerBookingId = bookingIdDiv.dataset.id;
+            console.log(`Inner Booking ID: ${innerBookingId}`);
+            deleteBookingFromDatabase(innerBookingId)
+                .catch(() => {
+                    hasError = true; // Đánh dấu nếu có lỗi
+                });
+
+        }
         const bookingCell = bookingElement.closest('td'); // Xác định ô chứa booking
         bookingElement.remove(); // Xóa phần tử booking-content
 
@@ -285,6 +328,7 @@ function removeBooking(bookingId) {
         if (bookingCell && bookingCell.querySelectorAll('.booking-content').length === 0) {
             bookingCell.classList.remove('booked', 'highlighted');
         }
+
     });
 
     // Kích hoạt lại các cột nếu hàm enableAllColumns tồn tại
@@ -296,6 +340,55 @@ function removeBooking(bookingId) {
     if (typeof window.clearSelectedCells === 'function') {
         window.clearSelectedCells();
     }
+}
+
+async function deleteBookingFromDatabase(bookingId) {
+    try {
+        const response = await fetch('/delete_booking', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ booking_id: bookingId }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            console.log(`Booking ID ${bookingId} đã được soft delete.`);
+        } else {
+            console.error(`Lỗi khi soft delete Booking ID ${bookingId}:`, result.error);
+        }
+    } catch (error) {
+        console.error('Đã xảy ra lỗi:', error);
+    }
+}
+
+
+function showConfirmModal(message) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById("confirmModal");
+        const confirmYes = document.getElementById("confirmYes");
+        const confirmNo = document.getElementById("confirmNo");
+        const modalContent = modal.querySelector(".modal-content p");
+
+        // Gán thông điệp cho modal
+        modalContent.textContent = message;
+
+        // Hiển thị modal
+        modal.style.display = "flex";
+
+        // Xử lý khi người dùng nhấn "Đồng ý"
+        confirmYes.onclick = () => {
+            modal.style.display = "none"; // Ẩn modal
+            resolve(true); // Trả về true
+        };
+
+        // Xử lý khi người dùng nhấn "Hủy"
+        confirmNo.onclick = () => {
+            modal.style.display = "none"; // Ẩn modal
+            resolve(false); // Trả về false
+        };
+    });
 }
 
 

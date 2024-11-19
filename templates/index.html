@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lịch Đặt Phòng Họp</title>
+    <title>Lịch Đặt Phòng Họp Bcons</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
@@ -23,12 +23,12 @@
 
         <!-- Kiểm tra nếu người dùng đã đăng nhập -->
     {% if 'username' in session %}
-        <p>Chào, {{ session['username'] }} <a href="{{ url_for('logout') }}">Log out</a></p>
+        <p>Chào, {{ session['username'] }} <a href="{{ url_for('login.logout') }}">Log out</a></p>
     {% else %}
         <!-- Form Đăng Nhập -->
         <div class="login">
             <p><strong>Login </strong></p>
-            <form action="{{ url_for('login') }}" method="post">
+            <form action="{{ url_for('login.login') }}" method="post">
                 <input type="text" name="username" placeholder="Username/admin" required><br>
                 <input type="password" name="password" placeholder="Password/admin1234" required><br>
                 <button type="submit">Login</button>
@@ -120,7 +120,7 @@
 </div>
 
 <!-- Form Đặt Phòng, ban đầu ẩn đi -->
-<div id="booking-form-1" class="booking-form hidden" style="visibility: hidden">
+<div id="booking-form-1" class="booking-form hidden" style="display: none">
     <h2>Đặt Phòng</h2>
     <h3>Ngày: <span id="bookingDate"></span></h3>
     <form id="booking-form-content-1">
@@ -134,14 +134,46 @@
         <button type="button" onclick="closeBookingForm()">Hủy</button>
     </form>
 </div>
+
+<div id="confirmModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <p>Bạn có chắc chắn muốn xóa booking này không?</p>
+        <button id="confirmYes" class="btn">Đồng ý</button>
+        <button id="confirmNo" class="btn">Hủy</button>
+    </div>
+</div>
+
+<div id="edit-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeEditModal()">&times;</span>
+        <h3>Chỉnh sửa thông tin đặt phòng</h3>
+        <form id="edit-form">
+            <label for="edit-department">Khối:</label>
+            <input type="text" id="edit-department" name="department"><br>
+
+            <label for="edit-booking-name">Cuộc họp:</label>
+            <input type="text" id="edit-booking-name" name="booking_name"><br>
+
+            <label for="edit-chairman">Chủ trì:</label>
+            <input type="text" id="edit-chairman" name="chairman"><br>
+
+            <label for="edit-meeting-content">Nội dung:</label>
+            <textarea id="edit-meeting-content" name="meeting_content" rows="4"></textarea><br>
+
+            <button type="submit">Lưu</button>
+            <button type="button" onclick="closeEditModal()">Hủy</button>
+        </form>
+    </div>
+</div>
 <script>
     const loggedInUser = "{{ session['username'] }}";
+    const loggedInUserRole = "{{ session['role'] }}";
 </script>
 <script src="{{ url_for('static', filename='js/highlight.js') }}"></script>
 <script src="{{ url_for('static', filename='js/booking.js') }}"></script>
 <script src="{{ url_for('static', filename='js/saving.js') }}"></script>
 <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
-
+<script src="{{ url_for('static', filename='js/update.js') }}"></script>
 <!--<script src="{{ url_for('static', filename='js/index.js') }}"></script> -->
 </body>
 </html>
