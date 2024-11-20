@@ -2,7 +2,7 @@ async function loadBookings() {
     try {
         const response = await fetch('/get_bookings');
         const bookings = await response.json();
-        console.log(bookings);
+        //console.log(bookings);
         const activeRoomButton = document.querySelector('.room-select.active');
         if (!activeRoomButton) {
             //console.warn("Không có phòng nào đang được chọn.");
@@ -22,8 +22,8 @@ async function loadBookings() {
             }
             // Giả định bạn đã có hàm để tìm và chọn đúng các ô dựa trên thời gian
             const selectedCells = getCellsForBooking(booking.start_time, booking.end_time, booking.reservation_date);
-            console.log(selectedCells);
-            console.log(selectedCells.length);
+            //console.log(selectedCells);
+            //console.log(selectedCells.length);
             const bookingId = `booking_${booking.room_name}_${booking.reservation_date}_${booking.start_time}-${booking.end_time}`.replace(/[\s:-]/g, '_');
             const id = `<div style="display: none" class="booking-id" data-id="${booking.booking_id}"></div>`;
             //console.log("ID: " + booking.booking_id);
@@ -32,12 +32,17 @@ async function loadBookings() {
             const chairmanContent = `<div class="chairman wrap-text"><strong>Chủ trì:</strong> ${booking.chairman}</div>`;
             const timeContent = `<div><strong>Thời gian:</strong> ${booking.start_time} - ${booking.end_time}</div>`;
             const meetingContentText = `<div class="meetingContent wrap-text"><strong>Nội dung:</strong> ${booking.meeting_content}</div>`;
+            //console.log(booking.username);
+            //console.log(loggedInUser === booking.username);
 
+            const closeButtonHTML = loggedInUserRole === "Administrator" || loggedInUser === booking.username
+            ? `<button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>`
+            : ''; // Nếu không phải admin, không hiển thị nút
             // Sử dụng logic phân bổ nội dung tương tự như khi người dùng tạo mới
             if (selectedCells.length === 1) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}">
-                        <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button> 
+                        ${closeButtonHTML} 
                         ${id}
                         ${departmentContent}
                         ${nameContent}
@@ -49,7 +54,7 @@ async function loadBookings() {
             } else if (selectedCells.length === 2) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
-                        <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                        ${closeButtonHTML} 
                         ${id}
                         ${departmentContent}
                         ${nameContent}
@@ -65,7 +70,7 @@ async function loadBookings() {
             } else if (selectedCells.length === 3) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
-                         <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                        ${closeButtonHTML} 
                          ${id}
                         ${departmentContent}
                     </div>
@@ -85,7 +90,7 @@ async function loadBookings() {
             } else if (selectedCells.length === 4) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
-                         <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                         ${closeButtonHTML} 
                          ${id}
                         ${departmentContent}
                     </div>
@@ -116,7 +121,7 @@ async function loadBookings() {
                     if (index === 0) {
                         cell.innerHTML = `
                             <div class="booking-content" data-id="${bookingId}">
-                                <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                                ${closeButtonHTML} 
                                 ${id}
                                 ${contentParts[index]}
                             </div>

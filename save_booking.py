@@ -2,7 +2,7 @@ from models.booking_room import Booking
 from cnnDatabase import db
 from datetime import datetime
 
-def save_booking(booking_name, department, meeting_content, chairman, start_time, end_time, reservation_date, room_name):
+def save_booking(booking_name, department, meeting_content, chairman, start_time, end_time, reservation_date, room_name, username):
     """
     Hàm lưu thông tin đặt phòng vào cơ sở dữ liệu và trả về booking_id.
     """
@@ -16,7 +16,8 @@ def save_booking(booking_name, department, meeting_content, chairman, start_time
             start_time=start_time,
             end_time=end_time,
             reservation_date=reservation_date,
-            room_name=room_name
+            room_name=room_name,
+            username = username
         )
 
         # Thêm booking mới vào session và commit

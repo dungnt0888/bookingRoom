@@ -18,7 +18,8 @@ def get_all_bookings():
                 "start_time": booking.start_time,
                 "end_time": booking.end_time,
                 "reservation_date": booking.reservation_date,
-                "room_name": booking.room_name
+                "room_name": booking.room_name,
+                "username": booking.username
             })
 
         return bookings_data

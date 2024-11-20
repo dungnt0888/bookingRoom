@@ -66,6 +66,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const timeRange = timeRange1.split(" - ");
     const startTime = timeRange[0];
     const endTime = timeRange[1];
+    //const user_booking = loggedInUser;
 
     const data = {
         booking_name: bookingName,
@@ -75,7 +76,8 @@ function createBookingForm(roomName, timeRange, bookingDate) {
         room_name: roomName,
         reservation_date: bookingDate,
         start_time: startTime,
-        end_time: endTime
+        end_time: endTime,
+        username: loggedInUser
     };
     console.log(data);
 
@@ -95,11 +97,13 @@ function createBookingForm(roomName, timeRange, bookingDate) {
 
     // Gửi yêu cầu đến Flask
     try {
+        console.log(data.username);
         const response = await fetch('/api/booking/submit_booking', {  // Sửa đường dẫn API nếu cần
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         });
+
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -301,7 +305,7 @@ async function removeBooking(bookingId) {
         console.log("Hủy thao tác xóa booking.");
         return; // Hủy bỏ xóa nếu người dùng nhấn "Cancel"
     }*/
-    const confirmDelete = await showConfirmModal("Bạn có chắc chắn muốn xóa booking này không?");
+    const confirmDelete = await showConfirmModal("Bạn có chắc chắn muốn xóa lịch đặt này không?");
     if (!confirmDelete) {
         console.log("Hủy thao tác xóa booking.");
         return; // Hủy bỏ nếu người dùng chọn "Hủy"

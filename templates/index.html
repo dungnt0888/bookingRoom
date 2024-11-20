@@ -57,7 +57,7 @@
     <a href="{{ url_for('index', offset=0) }}">
         <button class="current-week">Tuần này</button>
     </a>
-    <a href="{{ url_for('index', offset=offset+1) }}">
+    <a href="{{ url_for('index', offset=offset + 1) }}">
         <button>Tuần sau</button>
     </a>
     <span>{{ week_label }}: {{ week_range }}</span>

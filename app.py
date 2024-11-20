@@ -38,7 +38,8 @@ def get_bookings():
                 "start_time": booking.start_time,
                 "end_time": booking.end_time,
                 "reservation_date": booking.reservation_date,
-                "room_name": booking.room_name
+                "room_name": booking.room_name,
+                "username": booking.username
             })
         #print("Dữ liệu bookings:", bookings_data)  # Ghi lại dữ liệu booking trước khi trả về
         return jsonify(bookings_data)

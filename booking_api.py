@@ -23,9 +23,12 @@ def submit_booking():
             start_time=data.get('start_time'),
             end_time=data.get('end_time'),
             reservation_date=data.get('reservation_date'),
-            room_name=data.get('room_name')
+            room_name=data.get('room_name'),
+            username = data.get('username')
         )
         # Trả về booking_id sau khi lưu
+        print("Received booking data:", data)
+        print("Username received:", data.get('username'))
         return jsonify({"message": "Booking saved successfully!", "booking_id": booking_id}), 201
     except Exception as e:
         return jsonify({"message": f"Failed to save booking: {e}"}), 500
@@ -48,6 +51,7 @@ def get_booking(booking_id):
             "reservation_date": booking.reservation_date,
             "room_name": booking.room_name,
             "date_booking": booking.date_booking.strftime("%Y-%m-%d"),
+            "username": booking.username,
         })
     else:
         return jsonify({"message": "Booking not found or deleted."}), 404
