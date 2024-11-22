@@ -95,9 +95,14 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const meetingContentText = `<div class="meetingContent wrap-text"><strong>Nội dung:</strong> ${meetingContent}</div>`;
     let id = null;
 
+    const closeButtonHTML = (loggedInUserRole === "Administrator" || loggedInUser === booking.username)
+                ? `<button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>`
+                : ''; // Nếu không phải admin hoặc <td> chứa class inactive, không hiển thị nút
+            // Sử dụng logic phân bổ nội dung tương tự như khi
+
     // Gửi yêu cầu đến Flask
     try {
-        console.log(data.username);
+        //console.log(data.username);
         const response = await fetch('/api/booking/submit_booking', {  // Sửa đường dẫn API nếu cần
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -127,11 +132,12 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     }
     const book_id = `<div style="display: none" class="booking-id" data-id="${id}"></div>`;
     // Xử lý các trường hợp theo số lượng ô đã chọn
+    //console.log(hasInactiveClass);
     if (selectedCells.length === 1) {
         // Nếu chỉ có 1 ô, hiển thị tất cả nội dung trong ô đó
         selectedCells[0].innerHTML = `
             <div class="booking-content" data-id="${bookingId}">
-                <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button> 
+                ${closeButtonHTML} 
                 ${book_id}
                 ${departmentContent}
                 ${nameContent}
@@ -146,7 +152,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
         // Nếu có 2 ô, phân bố nội dung vào cả hai ô
         selectedCells[0].innerHTML = `
             <div class="booking-content" data-id="${bookingId}_1">
-                <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                ${closeButtonHTML} 
                 ${book_id}
                 ${departmentContent}
                 ${nameContent}
@@ -167,7 +173,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
         // Nếu có 3 ô, phân bố nội dung vào từng ô
         selectedCells[0].innerHTML = `
             <div class="booking-content" data-id="${bookingId}_1">
-                <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                ${closeButtonHTML} 
                 ${book_id}
                 ${departmentContent}
             </div>
@@ -192,7 +198,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
         // Nếu có 4 ô, phân bố từng phần nội dung vào từng ô
         selectedCells[0].innerHTML = `
             <div class="booking-content" data-id="${bookingId}_1">
-                <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                ${closeButtonHTML} 
                 ${book_id}
                 ${departmentContent}
             </div>
@@ -229,7 +235,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
             if (index === 0) {
                 cell.innerHTML = `
                     <div class="booking-content" data-id="${bookingId}">
-                        <button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>
+                        ${closeButtonHTML} 
                         ${book_id}
                         ${contentParts[index]}
                     </div>

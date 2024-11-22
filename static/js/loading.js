@@ -34,15 +34,21 @@ async function loadBookings() {
             const meetingContentText = `<div class="meetingContent wrap-text"><strong>Nội dung:</strong> ${booking.meeting_content}</div>`;
             //console.log(booking.username);
             //console.log(loggedInUser === booking.username);
+            let parentTd = null;
+            if(selectedCells.length >0 ){
+                parentTd = selectedCells[0];
+            }
 
-            const closeButtonHTML = loggedInUserRole === "Administrator" || loggedInUser === booking.username
-            ? `<button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>`
-            : ''; // Nếu không phải admin, không hiển thị nút
+            const hasInactiveClass = parentTd ? parentTd.classList.contains('inactive') : true;
+            //console.log(hasInactiveClass);
+            const closeButtonHTML = (loggedInUserRole === "Administrator" || loggedInUser === booking.username)
+                        ? `<button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>`
+                        : ''; // Nếu không phải admin hoặc <td> chứa class inactive, không hiển thị nút
             // Sử dụng logic phân bổ nội dung tương tự như khi người dùng tạo mới
             if (selectedCells.length === 1) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}">
-                        ${closeButtonHTML} 
+                        ${!hasInactiveClass ? closeButtonHTML : ''} 
                         ${id}
                         ${departmentContent}
                         ${nameContent}
@@ -54,7 +60,7 @@ async function loadBookings() {
             } else if (selectedCells.length === 2) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
-                        ${closeButtonHTML} 
+                        ${!hasInactiveClass ? closeButtonHTML : ''} 
                         ${id}
                         ${departmentContent}
                         ${nameContent}
@@ -70,8 +76,8 @@ async function loadBookings() {
             } else if (selectedCells.length === 3) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
-                        ${closeButtonHTML} 
-                         ${id}
+                        ${!hasInactiveClass ? closeButtonHTML : ''} 
+                        ${id}
                         ${departmentContent}
                     </div>
                 `;
@@ -90,7 +96,7 @@ async function loadBookings() {
             } else if (selectedCells.length === 4) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
-                         ${closeButtonHTML} 
+                         ${!hasInactiveClass ? closeButtonHTML : ''} 
                          ${id}
                         ${departmentContent}
                     </div>
@@ -121,7 +127,7 @@ async function loadBookings() {
                     if (index === 0) {
                         cell.innerHTML = `
                             <div class="booking-content" data-id="${bookingId}">
-                                ${closeButtonHTML} 
+                                ${!hasInactiveClass ? closeButtonHTML : ''} 
                                 ${id}
                                 ${contentParts[index]}
                             </div>
@@ -256,4 +262,11 @@ function clearHighlightedCells() {
     document.querySelectorAll('.schedule-table th.tmpDisable').forEach(cell => {
         cell.classList.remove('tmpDisable');
     });
+}
+
+function parseDate(dateString) {
+    // Tách ngày, tháng, năm từ chuỗi
+    const [day, month, year] = dateString.split('/');
+    // Tạo đối tượng Date (tháng trong JavaScript bắt đầu từ 0)
+    return new Date(year, month - 1, day);
 }

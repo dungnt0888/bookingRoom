@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from datetime import datetime, timedelta
+
+from sqlalchemy.sql.functions import current_time
+
 from log_in import authenticate_user
 from save_booking import save_booking
 from models.booking_room import Booking
@@ -7,6 +10,7 @@ from cnnDatabase import init_db, db
 from delete_booking import booking_delete_bp  # Import blueprint từ booking_delete.py
 from user_logon import login_bp
 from booking_api import booking_bp
+from user_management import user_bp
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
 
@@ -17,7 +21,7 @@ init_db(app)
 #   return 'Hello World!'
 
 app.register_blueprint(login_bp)
-
+app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(booking_bp, url_prefix='/api/booking')
 
 @app.route('/get_bookings', methods=['GET'])
@@ -54,7 +58,7 @@ app.register_blueprint(booking_delete_bp)
 def index():
     # Dữ liệu giả lập cho các khung giờ
     time_slots = [
-        "7:00-7:30", "7:30-8:00", "8:00-8:30", "8:30-9:00", "9:00-9:30", "9:30-10:00",
+        "7:00-07:30", "7:30-8:00", "8:00-8:30", "8:30-9:00", "9:00-9:30", "9:30-10:00",
         "10:00-10:30", "10:30-11:00", "11:00-11:30", "11:30-12:00",
         "12:00-13:30",
         "13:30-14:00", "14:00-14:30", "14:30-15:00", "15:00-15:30",
@@ -64,10 +68,19 @@ def index():
     # Lấy tuần hiện tại nếu không có tham số 'offset'
     offset = int(request.args.get('offset', 0))
 
+    current_year = datetime.now().year
+    current_week_num = datetime.now().isocalendar()[1]
+    week_num = int(request.args.get('week', current_week_num))
+
     # Ngày đầu tuần hiện tại
     today = datetime.now()
     start_of_week = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
     end_of_week = start_of_week + timedelta(days=6)
+
+    current_time_now = datetime.now().strftime("%H:%M")
+    current_time_obj = datetime.strptime(current_time_now, "%H:%M").time()
+
+    current_date = datetime.now().date()
 
     # Tạo danh sách ngày từ Thứ Hai đến Chủ Nhật
     #week_days = [(start_of_week + timedelta(days=i)).strftime('%d-%m-%Y') for i in range(7)]
@@ -78,12 +91,23 @@ def index():
 
     # Kiểm tra xem tuần hiển thị có phải là tuần hiện tại không
     is_current_week = (offset == 0)
-    week_label = "Lịch tuần này" if is_current_week else "Lịch"
+    week_label = "Tuần " + str(week_num + offset) + "  ---  Lịch tuần này" if is_current_week else "Tuần " + str(week_num + offset) + "  ---  Lịch"
+
+    inactive_slots = {}
+    for day_index, day in enumerate(week_days):
+        inactive_slots[day_index] = []
+        for time_slot in time_slots:
+            end_time = time_slot.split('-')[1]  # Lấy giờ kết thúc
+            end_time_obj = datetime.strptime(end_time, "%H:%M").time()
+            if day < current_date or (day == current_date and end_time_obj <= current_time_obj):
+                inactive_slots[day_index].append(time_slot)
 
     #current_date = datetime.now().strftime('%d-%m-%Y')  # Định dạng ngày để so sánh
-    current_date = datetime.now().date()
+
     return render_template('index.html', time_slots=time_slots, week_range=week_range,
-                           week_label=week_label, offset=offset, week_days=week_days, current_date=current_date)
+                           week_label=week_label, offset=offset, week_days=week_days, current_date=current_date, inactive_slots=inactive_slots, current_time_now=current_time_now)
+
+
 
 if __name__ == '__main__':
     app.run()

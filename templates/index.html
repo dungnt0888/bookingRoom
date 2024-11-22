@@ -23,7 +23,11 @@
 
         <!-- Kiểm tra nếu người dùng đã đăng nhập -->
     {% if 'username' in session %}
-        <p>Chào, {{ session['username'] }} <a href="{{ url_for('login.logout') }}">Log out</a></p>
+        <p>Chào, {{ session['username'] }} </p>
+        {% if 'role' in session and session['role'] == 'Administrator' %}
+            <p><a href="{{ url_for('user.admin_panel') }}">Go to Admin Panel</a></p>
+        {% endif %}
+        <a href="{{ url_for('login.logout') }}">Log out</a>
     {% else %}
         <!-- Form Đăng Nhập -->
         <div class="login">
@@ -94,22 +98,22 @@
             <tr class="{% if '12:00-13:30' in time %}time-break{% endif %}">
                 <td>{{ time }}</td>
                 <td id="monday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if week_days[0] < current_date %}inactive{% endif %}">
+                class="{% if time in inactive_slots[0] %}inactive{% endif %}">
                 </td>
                 <td id="tuesday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if week_days[1] < current_date %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[1] %}inactive{% endif %}">
                 </td>
                 <td id="wednesday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if week_days[2] < current_date %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[2] %}inactive{% endif %}">
                 </td>
                 <td id="thursday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if week_days[3] < current_date %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[3] %}inactive{% endif %}">
                 </td>
                 <td id="friday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if week_days[4] < current_date %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[4] %}inactive{% endif %}">
                 </td>
                 <td id="saturday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if week_days[5] < current_date %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[5] %}inactive{% endif %}">
                 </td>
             </tr>
             {% endfor %}

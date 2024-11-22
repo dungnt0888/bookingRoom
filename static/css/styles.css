@@ -21,6 +21,7 @@ body {
     border-radius: 8px;
     position: sticky;
     z-index: 50;
+    top: 0;
 }
 
 /* Tiêu đề */
@@ -219,8 +220,8 @@ body {
 /* Cột "Giờ" */
 .schedule-table th:first-child, .schedule-table td:first-child {
     width: 8%; /* Điều chỉnh độ rộng cho cột giờ */
-    min-width: 8%;
-    max-width: 8%;
+    min-width: 12px;
+    max-width: 16px;
 }
 
 /* Căn đều các cột thứ */
