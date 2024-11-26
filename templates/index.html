@@ -147,27 +147,37 @@
     </div>
 </div>
 
-<div id="edit-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeEditModal()">&times;</span>
-        <h3>Chỉnh sửa thông tin đặt phòng</h3>
-        <form id="edit-form">
-            <label for="edit-department">Khối:</label>
-            <input type="text" id="edit-department" name="department"><br>
-
-            <label for="edit-booking-name">Cuộc họp:</label>
-            <input type="text" id="edit-booking-name" name="booking_name"><br>
-
-            <label for="edit-chairman">Chủ trì:</label>
-            <input type="text" id="edit-chairman" name="chairman"><br>
-
-            <label for="edit-meeting-content">Nội dung:</label>
-            <textarea id="edit-meeting-content" name="meeting_content" rows="4"></textarea><br>
-
-            <button type="submit">Lưu</button>
-            <button type="button" onclick="closeEditModal()">Hủy</button>
-        </form>
-    </div>
+<div id="saving-modal" class="modal" style="display: none;">
+    <div class="booking-form-header">Đặt Phòng</div>
+        <div class="booking-form-content">
+            <h4>Ngày: <span id="booking-date"></span></h4>
+            <p><strong id="room-name">Tên phòng:</strong> </p>
+            <p><strong id="time-range">Thời gian:</strong> </p>
+            <form id="booking-form-content">
+                <label for="chairman">Người chủ trì:</label>
+                <input type="text" name="chairman" id="chairman" placeholder="Nhập tên người chủ trì"><br>
+                <label for="booking_name">Cuộc họp:</label>
+                <input type="text" name="booking_name" id="booking_name" placeholder="Nhập tên cuộc họp"><br>
+                <label for="department">Khối phòng ban:</label>
+                <input type="text" name="department" id="department" placeholder="Nhập tên phòng ban"><br>
+                <label for="meetingContent">Nội dung cuộc họp:</label>
+                <textarea name="meetingContent" id="meetingContent" placeholder="Nhập nội dung cuộc họp" rows="4"></textarea><br>
+                <label>Tần suất:</label>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <label>
+                        <input type="radio" id="frequency-once" name="frequency" value="once" checked>
+                        Một lần
+                    </label>
+                    <label>
+                        <input type="radio" id="frequency-weekly" name="frequency" value="weekly">
+                        Hàng tuần
+                    </label>
+                </div>
+                <br>
+                <button type="submit">Xác nhận</button>
+                <button type="button" onclick="hideForm()">Tắt</button>
+            </form>
+        </div>
 </div>
 <script>
     const loggedInUser = "{{ session['username'] }}";

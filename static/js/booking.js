@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
             resetRoomSelection();
             button.classList.add('active');
             button.disabled = true;
+            saveSelectedRoom(button.textContent.trim()); // Lưu tên phòng
             toggleBookRoomButton();
         });
     });
@@ -57,4 +58,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const endMinute = time.slice(6, 8);
         return `${endHour}:${endMinute}`;
     }
+// Hàm lưu trạng thái nút được chọn vào LocalStorage
+function saveSelectedRoom(roomName) {
+    localStorage.setItem('selectedRoom', roomName);
+}
+
+// Hàm khôi phục trạng thái từ LocalStorage
+function restoreSelectedRoom() {
+    const selectedRoom = localStorage.getItem('selectedRoom');
+    if (selectedRoom) {
+        roomButtons.forEach(button => {
+            if (button.textContent.trim() === selectedRoom) {
+                button.classList.add('active');
+                button.disabled = true;
+            }
+        });
+    }
+}
+
+restoreSelectedRoom();
 });
+

@@ -258,7 +258,7 @@
             <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.next_num, user_page=user_pagination.page) }}">Next</a>
         {% endif %}
     <!-- Nút Last -->
-        {% if booking_pagination.page < user_pagination.pages %}
+        {% if booking_pagination.page < booking_pagination.pages %}
             <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.pages, user_page=user_pagination.page) }}">Last</a>
         {% endif %}
     </div>

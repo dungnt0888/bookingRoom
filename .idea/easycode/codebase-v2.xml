@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/models/booking_room.py;D:/Flask/flaskProject/models/user.py;D:/Flask/flaskProject/static/css/styles.css;D:/Flask/flaskProject/static/js/booking.js;D:/Flask/flaskProject/static/js/highlight.js;D:/Flask/flaskProject/static/js/index.js;D:/Flask/flaskProject/static/js/loading.js;D:/Flask/flaskProject/static/js/saving.js;D:/Flask/flaskProject/static/js/update.js;D:/Flask/flaskProject/static/js/user_management.js;D:/Flask/flaskProject/templates/admin_panel.html;D:/Flask/flaskProject/templates/index.html;D:/Flask/flaskProject/app.py;D:/Flask/flaskProject/booking_api.py;D:/Flask/flaskProject/cnnDatabase.py;D:/Flask/flaskProject/delete_booking.py;D:/Flask/flaskProject/get_booking.py;D:/Flask/flaskProject/log_in.py;D:/Flask/flaskProject/save_booking.py;D:/Flask/flaskProject/user_logon.py;D:/Flask/flaskProject/user_management.py" />
+  </component>
+</project>

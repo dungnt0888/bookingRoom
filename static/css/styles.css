@@ -386,7 +386,7 @@ body {
 /* Các trường nhập liệu */
 .booking-form-content input[type="text"],
 .booking-form-content textarea {
-    width: 100%;
+    width: 90%;
     padding: 10px;
     margin-top: 5px;
     margin-bottom: 15px;
@@ -513,6 +513,7 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    overflow: auto;
 }
 
 /* Nội dung modal */
@@ -523,6 +524,7 @@ body {
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 300px;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 /* Nút trong modal */
@@ -536,6 +538,46 @@ body {
 
 .modal-content .btn:hover {
     background-color: #f1f1f1;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.saving-content {
+    background-color: white;
+    margin: 10% auto; /* 10% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%; /* Width of the popup */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    animation: popup-appear 0.3s ease-out;
+}
+
+/* Animation for the popup */
+@keyframes popup-appear {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Popup header */
+.booking-form-header {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 

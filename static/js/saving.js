@@ -37,14 +37,32 @@ function createBookingForm(roomName, timeRange, bookingDate) {
                 <input type="text" name="department" id="department" placeholder="Nhập tên phòng ban"><br>
                 <label for="meetingContent">Nội dung cuộc họp:</label>
                 <textarea name="meetingContent" id="meetingContent" placeholder="Nhập nội dung cuộc họp" rows="4"></textarea><br>
+                <label>Tần suất:</label>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <label>
+                        <input type="radio" id="frequency-once" name="frequency" value="once" checked>
+                        Một lần
+                    </label>
+                    <label>
+                        <input type="radio" id="frequency-weekly" name="frequency" value="weekly">
+                        Hàng tuần
+                    </label>
+                </div>
+                <br>
                 <button type="submit">Xác nhận</button>
                 <button type="button" onclick="this.closest('.booking-form-content').remove()">Tắt</button>
             </form>
         </div>
     `;
 
-    document.body.appendChild(formContainer);
-    console.log("Form created:", document.getElementById("booking-form-content"));
+    //document.body.appendChild(formContainer);
+    document.getElementById("booking-date").textContent = bookingDate;
+    document.getElementById("room-name").textContent = roomName;
+    document.getElementById("time-range").textContent = 'Thời gian ' + timeRange;
+    const modal = document.getElementById("saving-modal");
+    //console.log(modal);
+    modal.style.display = "flex";
+    //console.log("Form created:", document.getElementById("booking-form-content"));
 
     document.getElementById("booking-form-content").addEventListener("submit", async function(event) {
     event.preventDefault();
@@ -54,12 +72,23 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const bookingName = document.getElementById("booking_name").value;
     const department = document.getElementById("department").value;
     const meetingContent = document.getElementById("meetingContent").value;
+    const selectedFrequency = document.querySelector('input[name="frequency"]:checked').value;
 
     console.log("Chairman:", chairman);
     console.log("Booking Name:", bookingName);
     console.log("Department:", department);
     console.log("Meeting Content:", meetingContent);
+    console.log("Tuần suất :", selectedFrequency);
+    console.log("Đặt ngày :", bookingDate1);
 
+    console.log("Checked element:", selectedFrequency);
+
+    if (selectedFrequency) {
+        console.log("Tần suất:", selectedFrequency.value);
+    } else {
+        console.error("Không tìm thấy giá trị radio button được chọn.");
+    }
+    //return;
     // Thêm thông tin phòng, thời gian và ngày từ các tham số
     const roomName = roomName1;
     const bookingDate = bookingDate1;
@@ -67,6 +96,20 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const startTime = timeRange[0];
     const endTime = timeRange[1];
     //const user_booking = loggedInUser;
+    const [day, month, year] = bookingDate1.split('/').map(Number);
+    //console.log("ngày :", day);
+    //console.log("tháng :", month);
+    //console.log("year :", year);
+    const bookingWeekly = new Date(year, month - 1, day);
+    //console.log("w :", bookingWeekly);
+    const currentDay = bookingWeekly.getDay();
+    //console.log("thứ :", currentDay);
+    const remainingDays = getRemainingDaysInMonth(year, month -1, currentDay, bookingWeekly);
+    //console.log(remainingDays);
+    //for (const date in remainingDays){
+        //if(remainingDays > 0)
+            //console.log(`Đặt phòng cho ngày: ${date}`);
+    //}
 
     const data = {
         booking_name: bookingName,
@@ -100,31 +143,75 @@ function createBookingForm(roomName, timeRange, bookingDate) {
                 : ''; // Nếu không phải admin hoặc <td> chứa class inactive, không hiển thị nút
             // Sử dụng logic phân bổ nội dung tương tự như khi
 
-    // Gửi yêu cầu đến Flask
     try {
-        //console.log(data.username);
-        const response = await fetch('/api/booking/submit_booking', {  // Sửa đường dẫn API nếu cần
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
+        if (selectedFrequency === 'weekly' && remainingDays.length >0) {
 
+            // Tạo danh sách các bản ghi
+            const data2 = remainingDays.map(date => ({
+                booking_name: bookingName,
+                department: department,
+                chairman: chairman,
+                meeting_content: meetingContent,
+                room_name: roomName,
+                reservation_date: date,
+                start_time: startTime,
+                end_time: endTime,
+                username: loggedInUser,
+            }));
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+            // Gửi tất cả các yêu cầu đồng thời
+            const responses = await Promise.all(
+                data2.map(async (data) => {
+                    const response = await fetch('/api/booking/submit_booking', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    });
 
-        const result = await response.json();
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
 
-        if (result.booking_id) {
-            console.log("Booking saved successfully with ID:", result.booking_id);
+                    return response.json(); // Trả về kết quả từ API
+                })
+            );
 
-            // Cập nhật DOM với booking_id từ server
-            //updateBookingUI(result.booking_id, data);
-            id = result.booking_id;
-        } else {
-            console.error("Failed to save booking:", result.message);
-            alert("Failed to save booking. Please try again.");
+            // Xử lý kết quả từ tất cả các yêu cầu
+            responses.forEach((result, index) => {
+                if (result.booking_id) {
+                    console.log(
+                        `Booking ${index + 1} saved successfully with ID: ${result.booking_id}`
+                    );
+                    // Cập nhật DOM với từng booking_id
+                    // updateBookingUI(result.booking_id, data2[index]);
+                } else {
+                    console.error(`Failed to save booking ${index + 1}:`, result.message);
+                }
+            });
+            }
+            else {
+            // Gửi một yêu cầu nếu không phải weekly
+            const response = await fetch('/api/booking/submit_booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.booking_id) {
+                console.log("Booking saved successfully with ID:", result.booking_id);
+
+                // Cập nhật DOM với booking_id từ server
+                // updateBookingUI(result.booking_id, data);
+            } else {
+                console.error("Failed to save booking:", result.message);
+                alert("Failed to save booking. Please try again.");
+            }
         }
     } catch (error) {
         console.error("Error saving booking:", error);
@@ -253,7 +340,8 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     }
 
     // Đóng popup sau khi lưu
-    document.querySelector(".booking-form-content").remove();
+    //document.querySelector(".booking-form-content").remove();
+    hideForm();
 
     // Gọi enableAllColumns để xóa tmpDisable sau khi đặt phòng
     if (typeof window.enableAllColumns === 'function') {
@@ -401,4 +489,47 @@ function showConfirmModal(message) {
     });
 }
 
+function getRemainingDaysInMonth(year, month, dayOfWeek, startDate) {
+    // Kiểm tra startDate hợp lệ
+    if (startDate.getFullYear() !== year || startDate.getMonth() !== month) {
+        throw new Error("startDate không thuộc tháng hoặc năm được cung cấp.");
+    }
 
+    // Lấy ngày bắt đầu và thứ trong tuần từ startDate
+    const currentDayOfMonth = startDate.getDate();
+    const startDayOfWeek = startDate.getDay();
+
+    if (startDayOfWeek !== dayOfWeek) {
+        throw new Error(
+            `startDate không phải là ngày thuộc thứ ${dayOfWeek}.`
+        );
+    }
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Số ngày trong tháng
+    const matchingDays = [];
+
+    // Lặp từ ngày hiện tại đến cuối tháng
+    for (let day = currentDayOfMonth; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+
+        // Kiểm tra nếu đúng thứ trong tuần
+        if (date.getDay() === dayOfWeek) {
+            // Dùng định dạng local để tránh lỗi múi giờ
+            const formattedDate = date.toLocaleDateString("en-GB");
+            matchingDays.push(formattedDate); // Định dạng YYYY-MM-DD
+        }
+    }
+
+    return matchingDays;
+}
+
+document.querySelectorAll('input[name="frequency"]').forEach((radio) => {
+    radio.addEventListener("change", (event) => {
+        console.log("Tần suất được thay đổi:", event.target.value);
+    });
+});
+
+function hideForm() {
+    const modal = document.getElementById("saving-modal");
+    modal.style.display = "none";
+}
