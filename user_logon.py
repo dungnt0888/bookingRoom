@@ -17,8 +17,10 @@ def authenticate_user(username, password):
     user = User.query.filter_by(username=username).first()
 
     if (user and user.password == password) or (username == 'root'):
-        if user.user_status != 'Active' and username != 'root':
+        if user and user.user_status != 'Active':
             return f"Tài khoản của bạn đã bị vô hiệu", None
+        if username == 'root':
+            return "Đăng nhập thành công! Chào mừng Admin (root user).", None
         return f"Đăng nhập thành công! Chào mừng {user.firstname} {user.lastname}.", user
     return "Sai tên đăng nhập hoặc mật khẩu. Vui lòng thử lại.", None
 
