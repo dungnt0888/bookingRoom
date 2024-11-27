@@ -11,6 +11,7 @@ from delete_booking import booking_delete_bp  # Import blueprint từ booking_de
 from user_logon import login_bp
 from booking_api import booking_bp
 from user_management import user_bp
+from zoneinfo import ZoneInfo
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
 
@@ -68,23 +69,25 @@ def index():
     ]
     # Lấy tuần hiện tại nếu không có tham số 'offset'
     offset = int(request.args.get('offset', 0))
-
-    current_year = datetime.now().year
-    current_week_num = datetime.now().isocalendar()[1]
+    tz = ZoneInfo("Asia/Ho_Chi_Minh")
+    # Năm và tuần hiện tại
+    current_year = datetime.now(tz).year
+    current_week_num = datetime.now(tz).isocalendar()[1]
     week_num = int(request.args.get('week', current_week_num))
 
     # Ngày đầu tuần hiện tại
-    today = datetime.now()
+    today = datetime.now(tz)
     start_of_week = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
     end_of_week = start_of_week + timedelta(days=6)
 
-    current_time_now = datetime.now().strftime("%H:%M")
+    # Thời gian hiện tại
+    current_time_now = datetime.now(tz).strftime("%H:%M")
     current_time_obj = datetime.strptime(current_time_now, "%H:%M").time()
 
-    current_date = datetime.now().date()
+    # Ngày hiện tại
+    current_date = datetime.now(tz).date()
 
     # Tạo danh sách ngày từ Thứ Hai đến Chủ Nhật
-    #week_days = [(start_of_week + timedelta(days=i)).strftime('%d-%m-%Y') for i in range(7)]
     week_days = [(start_of_week + timedelta(days=i)).date() for i in range(7)]
 
     # Format ngày thành chuỗi
@@ -92,8 +95,10 @@ def index():
 
     # Kiểm tra xem tuần hiển thị có phải là tuần hiện tại không
     is_current_week = (offset == 0)
-    week_label = "Tuần " + str(week_num + offset) + "  ---  Lịch tuần này" if is_current_week else "Tuần " + str(week_num + offset) + "  ---  Lịch"
+    week_label = "Tuần " + str(week_num + offset) + "  ---  Lịch tuần này" if is_current_week else "Tuần " + str(
+        week_num + offset) + "  ---  Lịch"
 
+    # Tính toán các slot không khả dụng
     inactive_slots = {}
     for day_index, day in enumerate(week_days):
         inactive_slots[day_index] = []
