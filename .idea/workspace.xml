@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cnnDatabase.py" beforeDir="false" afterPath="$PROJECT_DIR$/cnnDatabase.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/7b395f099b0d_initial_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/versions/7b395f099b0d_initial_migration.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +118,7 @@
       <workItem from="1732325540522" duration="2367000" />
       <workItem from="1732497728345" duration="21045000" />
       <workItem from="1732585152408" duration="9206000" />
-      <workItem from="1732670747680" duration="1225000" />
+      <workItem from="1732670747680" duration="2546000" />
     </task>
     <servers />
   </component>
