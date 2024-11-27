@@ -1,10 +1,10 @@
-import os
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2
+from psycopg2 import sql
 from contextlib import contextmanager
 
-# Cấu hình mặc định cho kết nối cục bộ
-LOCAL_DB_CONFIG = {
+# Cấu hình kết nối cơ sở dữ liệu
+DB_CONFIG = {
     'host': 'localhost',
     'database': 'meeting_schedule',
     'user': 'postgres',
@@ -16,13 +16,7 @@ db = SQLAlchemy()
 
 def init_db(app):
     """Hàm để khởi tạo database với một Flask app."""
-    # Lấy URL từ biến môi trường hoặc sử dụng cấu hình local
-    database_url = os.getenv(
-        'DATABASE_URL',
-        f"postgresql://{LOCAL_DB_CONFIG['user']}:{LOCAL_DB_CONFIG['password']}@{LOCAL_DB_CONFIG['host']}/{LOCAL_DB_CONFIG['database']}"
-    )
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}/{DB_CONFIG['database']}"
     db.init_app(app)
 
 @contextmanager
@@ -30,12 +24,7 @@ def get_connection():
     """Hàm tạo kết nối với cơ sở dữ liệu bằng psycopg2."""
     conn = None
     try:
-        # Lấy URL từ biến môi trường hoặc sử dụng cấu hình local
-        database_url = os.getenv(
-            'DATABASE_URL',
-            f"postgresql://{LOCAL_DB_CONFIG['user']}:{LOCAL_DB_CONFIG['password']}@{LOCAL_DB_CONFIG['host']}/{LOCAL_DB_CONFIG['database']}"
-        )
-        conn = psycopg2.connect(database_url)
+        conn = psycopg2.connect(**DB_CONFIG)
         yield conn
     except psycopg2.DatabaseError as error:
         print(f"Lỗi kết nối cơ sở dữ liệu: {error}")
