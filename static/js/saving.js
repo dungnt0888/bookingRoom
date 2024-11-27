@@ -490,14 +490,36 @@ function showConfirmModal(message) {
 }
 
 function getRemainingDaysInMonth(year, month, dayOfWeek, startDate) {
-    // Kiểm tra startDate hợp lệ
-    if (startDate.getFullYear() !== year || startDate.getMonth() !== month) {
+    const timeZone = 'Asia/Bangkok'; // Múi giờ GMT+7
+
+    // Chuyển startDate thành thời gian trong múi giờ mong muốn
+    const startDateInTZ = new Date(startDate.toLocaleString('en-US', { timeZone }));
+
+    if (startDateInTZ.getFullYear() !== year || startDateInTZ.getMonth() !== month) {
         throw new Error("startDate không thuộc tháng hoặc năm được cung cấp.");
     }
 
     // Lấy ngày bắt đầu và thứ trong tuần từ startDate
-    const currentDayOfMonth = startDate.getDate();
-    const startDayOfWeek = startDate.getDay();
+    const currentDayOfMonth = startDateInTZ.getDate();
+
+    // Định dạng để lấy thứ trong tuần theo múi giờ mong muốn
+    const dayFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone,
+        weekday: 'short',
+    });
+    const startDayName = dayFormatter.format(startDateInTZ);
+
+    // Bản đồ thứ trong tuần sang số
+    const dayMap = {
+        Sun: 0,
+        Mon: 1,
+        Tue: 2,
+        Wed: 3,
+        Thu: 4,
+        Fri: 5,
+        Sat: 6,
+    };
+    const startDayOfWeek = dayMap[startDayName];
 
     if (startDayOfWeek !== dayOfWeek) {
         throw new Error(
@@ -505,18 +527,23 @@ function getRemainingDaysInMonth(year, month, dayOfWeek, startDate) {
         );
     }
 
-    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Số ngày trong tháng
+    // Số ngày trong tháng
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
     const matchingDays = [];
 
     // Lặp từ ngày hiện tại đến cuối tháng
     for (let day = currentDayOfMonth; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
+        const dateInTZ = new Date(date.toLocaleString('en-US', { timeZone }));
 
-        // Kiểm tra nếu đúng thứ trong tuần
-        if (date.getDay() === dayOfWeek) {
-            // Dùng định dạng local để tránh lỗi múi giờ
-            const formattedDate = date.toLocaleDateString("en-GB");
-            matchingDays.push(formattedDate); // Định dạng YYYY-MM-DD
+        // Lấy thứ trong tuần của ngày hiện tại trong múi giờ mong muốn
+        const dayName = dayFormatter.format(dateInTZ);
+        const dayOfWeekInTZ = dayMap[dayName];
+
+        if (dayOfWeekInTZ === dayOfWeek) {
+            // Định dạng ngày theo múi giờ mong muốn
+            const formattedDate = dateInTZ.toLocaleDateString("en-GB", { timeZone });
+            matchingDays.push(formattedDate); // Định dạng DD/MM/YYYY
         }
     }
 

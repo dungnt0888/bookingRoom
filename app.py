@@ -73,6 +73,7 @@ def index():
     # Năm và tuần hiện tại
     current_year = datetime.now(tz).year
     current_week_num = datetime.now(tz).isocalendar()[1]
+    #current_week_num = int(datetime.now(tz).strftime('%W'))
     week_num = int(request.args.get('week', current_week_num))
 
     # Ngày đầu tuần hiện tại
@@ -87,6 +88,10 @@ def index():
     # Ngày hiện tại
     current_date = datetime.now(tz).date()
 
+    new_date = current_date + timedelta(weeks=offset)
+    new_year = new_date.year
+    new_week_num = new_date.isocalendar()[1]
+
     # Tạo danh sách ngày từ Thứ Hai đến Chủ Nhật
     week_days = [(start_of_week + timedelta(days=i)).date() for i in range(7)]
 
@@ -95,8 +100,11 @@ def index():
 
     # Kiểm tra xem tuần hiển thị có phải là tuần hiện tại không
     is_current_week = (offset == 0)
-    week_label = "Tuần " + str(week_num + offset) + "  ---  Lịch tuần này" if is_current_week else "Tuần " + str(
-        week_num + offset) + "  ---  Lịch"
+    week_label = "Tuần " + str(new_week_num) + " - Năm " + str(new_year)
+    if is_current_week:
+        week_label += "  ---  Lịch tuần này"
+    else:
+        week_label += "  ---  Lịch"
 
     # Tính toán các slot không khả dụng
     inactive_slots = {}
