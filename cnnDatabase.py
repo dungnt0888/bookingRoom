@@ -2,6 +2,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2
 from contextlib import contextmanager
+from flask_migrate import Migrate
 
 # Cấu hình mặc định cho kết nối cục bộ
 LOCAL_DB_CONFIG = {
@@ -13,6 +14,9 @@ LOCAL_DB_CONFIG = {
 
 # Khởi tạo đối tượng SQLAlchemy mà không gắn vào một Flask app cụ thể
 db = SQLAlchemy()
+migrate = Migrate()
+
+
 
 def init_db(app):
     """Hàm để khởi tạo database với một Flask app."""
@@ -24,6 +28,7 @@ def init_db(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
+    migrate.init_app(app, db)
 
 @contextmanager
 def get_connection():

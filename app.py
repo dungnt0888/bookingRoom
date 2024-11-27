@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from datetime import datetime, timedelta
-
+from flask_migrate import Migrate, upgrade
+import os
 from sqlalchemy.sql.functions import current_time
-
 from log_in import authenticate_user
 from save_booking import save_booking
 from models.booking_room import Booking
@@ -16,7 +16,8 @@ app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng m
 
 init_db(app)
 
-#@app.route('/')
+with app.app_context():
+    db.create_all()
 #def hello_world():  # put application's code here
 #   return 'Hello World!'
 
