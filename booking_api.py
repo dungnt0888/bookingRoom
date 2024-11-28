@@ -2,6 +2,12 @@ from flask import Blueprint, request, jsonify
 from models.booking_room import Booking
 from cnnDatabase import db
 from save_booking import save_booking
+from send_email import EmailHandler
+
+from flask import current_app
+email_handler = EmailHandler()
+
+
 
 # Tạo Blueprint cho các API liên quan đến booking
 booking_bp = Blueprint('booking', __name__)
@@ -27,8 +33,38 @@ def submit_booking():
             username = data.get('username')
         )
         # Trả về booking_id sau khi lưu
-        print("Received booking data:", data)
-        print("Username received:", data.get('username'))
+
+        # Lấy thông tin người nhận email
+        user_email = 'trungtld@bcons.com.vn'  # Email người đặt phòng
+        if not user_email:
+            raise ValueError("Email không được cung cấp.")
+
+        # Nội dung email
+        subject = "Xác nhận đặt phòng thành công"
+        recipients = [user_email]
+        body = f"""
+                Xin chào {data.get('username')},
+
+                Phòng họp của bạn đã được đặt thành công!
+
+                Thông tin chi tiết:
+                - Mã đặt phòng: {booking_id}
+                - Tên phòng: {data.get('room_name')}
+                - Người chủ trì: {data.get('chairman')}
+                - Nội dung cuộc họp: {data.get('meeting_content')}
+                - Thời gian: {data.get('start_time')} - {data.get('end_time')}
+                - Ngày: {data.get('reservation_date')}
+                - Bộ phận: {data.get('department')}
+
+                Trân trọng,
+                Hệ thống đặt phòng.
+                """
+
+        # Gửi email
+        email_handler.send_email(subject, recipients, body)
+        print("Email đã được gửi thành công!")
+        #print("Received booking data:", data)
+        #print("Username received:", data.get('username'))
         return jsonify({"message": "Booking saved successfully!", "booking_id": booking_id}), 201
     except Exception as e:
         return jsonify({"message": f"Failed to save booking: {e}"}), 500

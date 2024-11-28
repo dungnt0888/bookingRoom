@@ -12,6 +12,9 @@ from user_logon import login_bp
 from booking_api import booking_bp
 from user_management import user_bp
 from zoneinfo import ZoneInfo
+from send_email import EmailHandler
+from flask_mail import Mail
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
 
@@ -22,9 +25,22 @@ with app.app_context():
 #def hello_world():  # put application's code here
 #   return 'Hello World!'
 
+# Cấu hình Flask
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'dungnt.0888@gmail.com'
+app.config['MAIL_PASSWORD'] = 'skdb fukz ujec jvcn'
+app.config['MAIL_DEFAULT_SENDER'] = 'dungnt.0888@gmail.com'
+
+# Khởi tạo EmailHandler
+email_handler = EmailHandler()
+email_handler.init_app(app)
 app.register_blueprint(login_bp)
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(booking_bp, url_prefix='/api/booking')
+
+
 
 @app.route('/get_bookings', methods=['GET'])
 def get_bookings():
@@ -56,6 +72,9 @@ def get_bookings():
 
 
 app.register_blueprint(booking_delete_bp)
+
+# Khởi tạo EmailHandler và cấu hình email
+
 @app.route('/')
 def index():
     # Dữ liệu giả lập cho các khung giờ
