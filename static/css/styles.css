@@ -62,6 +62,7 @@ body {
 
 /* Tùy chỉnh nút "Đặt Phòng" */
 .room-buttons button:last-child {
+    margin-top: 8px;
     margin-left: 20px; /* Tăng khoảng cách với các nút khác */
     padding: 10px 20px; /* Kích thước lớn hơn */
     font-size: 16px;
