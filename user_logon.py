@@ -14,14 +14,19 @@ def authenticate_user(username, password):
     :return: Thông báo xác thực thành công hoặc lỗi
     """
     # Truy vấn người dùng từ database
-    user = User.query.filter_by(username=username).first()
+    num_user = User.query.count()  # Đếm số lượng user
+    user = User.query.filter_by(username=username).first()  # Tìm user theo username
 
-    if (user and user.password == password) or (username == 'root'):
-        if user and user.user_status != 'Active':
+    if num_user == 0 and username == 'root':  # Trường hợp root user khi bảng trống
+        return "Đăng nhập thành công! Chào mừng Admin (root user).", None
+
+    if user:  # Nếu user tồn tại
+        if user.user_status != 'Active':  # Kiểm tra trạng thái user
             return f"Tài khoản của bạn đã bị vô hiệu", None
-        if username == 'root':
-            return "Đăng nhập thành công! Chào mừng Admin (root user).", None
-        return f"Đăng nhập thành công! Chào mừng {user.firstname} {user.lastname}.", user
+        if user.password == password:  # Kiểm tra mật khẩu
+            return f"Đăng nhập thành công! Chào mừng {user.firstname} {user.lastname}.", user
+
+    # Nếu không khớp bất kỳ trường hợp nào, trả về lỗi
     return "Sai tên đăng nhập hoặc mật khẩu. Vui lòng thử lại.", None
 
 
