@@ -17,7 +17,7 @@ def authenticate_user(username, password):
     num_user = User.query.count()  # Đếm số lượng user
     user = User.query.filter_by(username=username).first()  # Tìm user theo username
 
-    if num_user == 0 and username == 'root':  # Trường hợp root user khi bảng trống
+    if num_user < 1 and username == 'root':  # Trường hợp root user khi bảng trống
         return "Đăng nhập thành công! Chào mừng Admin (root user).", None
 
     if user:  # Nếu user tồn tại

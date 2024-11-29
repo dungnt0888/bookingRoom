@@ -138,9 +138,8 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const meetingContentText = `<div class="meetingContent wrap-text"><strong>Nội dung:</strong> ${meetingContent}</div>`;
     let id = null;
 
-    const closeButtonHTML = (loggedInUserRole === "Administrator" || loggedInUser === booking.username)
-                ? `<button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>`
-                : ''; // Nếu không phải admin hoặc <td> chứa class inactive, không hiển thị nút
+    const closeButtonHTML = `<button class="close-btn" onclick="removeBooking('${bookingId}')">X</button>`
+                 // Nếu không phải admin hoặc <td> chứa class inactive, không hiển thị nút
             // Sử dụng logic phân bổ nội dung tương tự như khi
 
     try {
