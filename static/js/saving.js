@@ -216,7 +216,7 @@ function createBookingForm(roomName, timeRange, bookingDate) {
         console.error("Error saving booking:", error);
         alert("Failed to save booking. Please try again.");
     }
-    const book_id = `<div style="display: none" class="booking-id" data-id="${id}"></div>`;
+    /*const book_id = `<div style="display: none" class="booking-id" data-id="${id}"></div>`;
     // Xử lý các trường hợp theo số lượng ô đã chọn
     //console.log(hasInactiveClass);
     if (selectedCells.length === 1) {
@@ -337,9 +337,10 @@ function createBookingForm(roomName, timeRange, bookingDate) {
             }
         });
     }
-
+    */
     // Đóng popup sau khi lưu
     //document.querySelector(".booking-form-content").remove();
+    window.loadBookings();
     hideForm();
 
     // Gọi enableAllColumns để xóa tmpDisable sau khi đặt phòng

@@ -61,7 +61,7 @@ def submit_booking():
                 """
 
         # Gửi email
-        email_handler.send_email(subject, recipients, body)
+        #email_handler.send_email(subject, recipients, body)
         print("Email đã được gửi thành công!")
         #print("Received booking data:", data)
         #print("Username received:", data.get('username'))
