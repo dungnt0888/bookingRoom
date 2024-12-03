@@ -282,3 +282,28 @@ function saveMeeting(id) {
         alert('An error occurred while updating the meeting');
     });
 }
+
+function searchBooking() {
+    const srcDate = document.getElementById('txtSrcBox').value;
+    const urlParams = new URLSearchParams(window.location.search); // Lấy query string hiện tại
+    urlParams.set('search', srcDate); // Cập nhật giá trị 'search'
+    urlParams.set('booking_page', '1'); // Quay lại trang đầu tiên khi tìm kiếm
+    window.location.search = urlParams.toString(); // Điều hướng với query string mới
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const calendarInput = document.getElementById('txtSrcBox'); // Ô tìm kiếm
+    const calendarButton = document.getElementById('btnCalendar'); // Nút 📅
+
+    // Tạo Flatpickr nhưng không tự động mở với input
+    const calendarPicker = flatpickr(calendarInput, {
+        dateFormat: "d/m/Y", // Định dạng ngày
+        allowInput: true, // Cho phép nhập thủ công
+        clickOpens: true, // Vô hiệu hóa tự động mở khi nhấn vào ô input
+    });
+
+    // Mở bảng chọn ngày khi nhấn nút 📅
+    calendarButton.addEventListener('click', function () {
+        calendarPicker.open();
+    });
+});

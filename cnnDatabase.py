@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import psycopg2
 from contextlib import contextmanager
 from flask_migrate import Migrate
+import logging
 
 # Cấu hình mặc định cho kết nối cục bộ
 LOCAL_DB_CONFIG = {
@@ -44,6 +45,8 @@ def get_connection():
         yield conn
     except psycopg2.DatabaseError as error:
         print(f"Lỗi kết nối cơ sở dữ liệu: {error}")
+        logging.error(f"Lỗi kết nối cơ sở dữ liệu: {error}")
+        raise
     finally:
         if conn:
             conn.close()
@@ -53,11 +56,16 @@ def execute_query(query, params=None):
     with get_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(query, params)
-            conn.commit()
+            try:
+                conn.commit()
+            except:
+                conn.rollback()
+                raise
 
 def fetch_query(query, params=None):
     """Hàm thực thi câu truy vấn và trả về kết quả (như SELECT)."""
     with get_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(query, params)
-            return cursor.fetchall()
+            results = cursor.fetchall()
+            return results if results else None

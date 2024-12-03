@@ -74,7 +74,7 @@
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
-    }
+        }
 
     /* Popup content */
     .popup-content {
@@ -126,6 +126,58 @@
 
     form button:hover {
         background-color: #45a049;
+    }
+    .booking-management {
+    position: relative;
+    padding: 15px;
+    }
+    .searchBox {
+        position: absolute;
+        right: 0; /* Đẩy sang bên phải */
+        top: 15px; /* Đẩy lên trên */
+        margin-right: 15px;
+    }
+    .searchBox input {
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-right: 5px;
+    }
+    .searchBox button {
+        padding: 8px 12px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .searchBox button:hover {
+        background-color: #0056b3;
+    }
+    #btnCalendar {
+        border: none;
+        background: #f0f0f0;
+        font-size: 16px;
+        border-radius: 4px;
+    }
+    #calendarContainer {
+        top: 40px; /* Khoảng cách phía dưới nút */
+        left: 0; /* Căn theo nút lịch */
+        width: 300px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    #calendarContainer table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    #calendarContainer th, #calendarContainer td {
+        text-align: center;
+        padding: 8px;
+        cursor: pointer;
+    }
+    #calendarContainer td:hover {
+        background: #f0f0f0;
     }
     </style>
 </head>
@@ -196,71 +248,77 @@
     <!-- Điều hướng phân trang người dùng -->
     <div style="text-align: center; margin-top: 10px;">
         {% if user_pagination.has_prev %}
-        <a href="{{ url_for('user.admin_panel', user_page=user_pagination.prev_num, booking_page=booking_pagination.page) }}">Previous</a>
+        <a href="{{ url_for('user.admin_panel', user_page=user_pagination.prev_num, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Previous</a>
         {% endif %}
         Page {{ user_pagination.page }} of {{ user_pagination.pages }}
         {% if user_pagination.has_next %}
-        <a href="{{ url_for('user.admin_panel', user_page=user_pagination.next_num, booking_page=booking_pagination.page) }}">Next</a>
+        <a href="{{ url_for('user.admin_panel', user_page=user_pagination.next_num, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Next</a>
         {% endif %}
     </div>
-
-    <h2 style="margin-top: 15px; margin-bottom: auto; text-align: center">Booking Management</h2>
-    <table style="width: 100%; border-collapse: collapse;border: 1px solid beige">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Booking Name</th>
-                <th>Department</th>
-                <th>Chairman</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Reservation Date</th>
-                <th>Room</th>
-                <th>User Booking</th>
-                <th>isDeleted</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for booking in bookings %}
-            <tr>
-                <td>{{ booking.booking_id }}</td>
-                <td>{{ booking.booking_name }}</td>
-                <td>{{ booking.department }}</td>
-                <td>{{ booking.chairman }}</td>
-                <td>{{ booking.start_time }}</td>
-                <td>{{ booking.end_time }}</td>
-                <td>{{ booking.reservation_date }}</td>
-                <td>{{ booking.room_name }}</td>
-                <td>{{ booking.username }}</td>
-                <td>
-                    <button
-                        class="btn-status"
-                        style="background-color: {% if booking.isDeleted %}red{% else %}green{% endif %}; color: white; padding: 5px 10px; border: none; cursor: pointer;"
-                        onclick="toggleStatusDeleted({{ booking.booking_id }}, {{ booking.isDeleted | tojson }})">
-                        {% if booking.isDeleted %}True{% else %}False{% endif %}
-                    </button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <!-- Điều hướng phân trang booking -->
-    <div style="text-align: center; margin-top: 10px;">
-        <!-- Nút First -->
-        {% if booking_pagination.page > 1 %}
-            <a href="{{ url_for('user.admin_panel', booking_page=1, user_page=user_pagination.page) }}">First</a>
-        {% endif %}
-        {% if booking_pagination.has_prev %}
-            <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.prev_num, user_page=user_pagination.page) }}">Previous</a>
-        {% endif %}
-        Page {{ booking_pagination.page }} of {{ booking_pagination.pages }}
-        {% if booking_pagination.has_next %}
-            <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.next_num, user_page=user_pagination.page) }}">Next</a>
-        {% endif %}
-    <!-- Nút Last -->
-        {% if booking_pagination.page < booking_pagination.pages %}
-            <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.pages, user_page=user_pagination.page) }}">Last</a>
-        {% endif %}
+    <div class="booking-management">
+        <h2 style="margin-top: 15px; margin-bottom: auto; text-align: center">Booking Management</h2>
+        <div class="searchBox">
+            <button id="btnCalendar" style="padding: 8px; cursor: pointer;">📅</button>
+            <input type="text" name="search" id="txtSrcBox" placeholder="Type here to search date.." value="{{ search_query }}"/>
+            <button name="srcBtn" id="srcBtn" onclick="searchBooking()">Search </button>
+        </div>
+        <table style="width: 100%; border-collapse: collapse;border: 1px solid beige">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Booking Name</th>
+                    <th>Department</th>
+                    <th>Chairman</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Reservation Date</th>
+                    <th>Room</th>
+                    <th>User Booking</th>
+                    <th>isDeleted</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.booking_id }}</td>
+                    <td>{{ booking.booking_name }}</td>
+                    <td>{{ booking.department }}</td>
+                    <td>{{ booking.chairman }}</td>
+                    <td>{{ booking.start_time }}</td>
+                    <td>{{ booking.end_time }}</td>
+                    <td>{{ booking.reservation_date }}</td>
+                    <td>{{ booking.room_name }}</td>
+                    <td>{{ booking.username }}</td>
+                    <td>
+                        <button
+                            class="btn-status"
+                            style="background-color: {% if booking.isDeleted %}red{% else %}green{% endif %}; color: white; padding: 5px 10px; border: none; cursor: pointer;"
+                            onclick="toggleStatusDeleted({{ booking.booking_id }}, {{ booking.isDeleted | tojson }})">
+                            {% if booking.isDeleted %}True{% else %}False{% endif %}
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Điều hướng phân trang booking -->
+        <div style="text-align: center; margin-top: 10px;">
+            <!-- Nút First -->
+            {% if booking_pagination.page > 1 %}
+                <a href="{{ url_for('user.admin_panel', booking_page=1, user_page=user_pagination.page, search=request.args.get('search', '')) }}">First</a>
+            {% endif %}
+            {% if booking_pagination.has_prev %}
+                <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.prev_num, user_page=user_pagination.page, search=request.args.get('search', '')) }}">Previous</a>
+            {% endif %}
+            Page {{ booking_pagination.page }} of {{ booking_pagination.pages }}
+            {% if booking_pagination.has_next %}
+                <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.next_num, user_page=user_pagination.page, search=request.args.get('search', '')) }}">Next</a>
+            {% endif %}
+        <!-- Nút Last -->
+            {% if booking_pagination.page < booking_pagination.pages %}
+                <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.pages, user_page=user_pagination.page, search=request.args.get('search', '')) }}">Last</a>
+            {% endif %}
+        </div>
     </div>
     <button id="addMeetingBtn" class="btn add" >Add Meeting</button>
     <h2 style="margin-top: 15px; margin-bottom: auto; text-align: center">Meeting Management</h2>
@@ -308,18 +366,18 @@
     <div style="text-align: center; margin-top: 10px;">
         <!-- Nút First -->
         {% if name_pagination.page > 1 %}
-            <a href="{{ url_for('user_bp.admin_panel', name_page=1, user_page=user_pagination.page, booking_page=booking_pagination.page) }}">First</a>
+            <a href="{{ url_for('user_bp.admin_panel', name_page=1, user_page=user_pagination.page, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">First</a>
         {% endif %}
         {% if name_pagination.has_prev %}
-            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.prev_num, user_page=user_pagination.page, booking_page=booking_pagination.page) }}">Previous</a>
+            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.prev_num, user_page=user_pagination.page, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Previous</a>
         {% endif %}
         Page {{ name_pagination.page }} of {{ name_pagination.pages }}
         {% if name_pagination.has_next %}
-            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.next_num, user_page=user_pagination.page, booking_page=booking_pagination.page) }}">Next</a>
+            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.next_num, user_page=user_pagination.page, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Next</a>
         {% endif %}
         <!-- Nút Last -->
         {% if name_pagination.page < name_pagination.pages %}
-            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.pages, user_page=user_pagination.page, booking_page=booking_pagination.page) }}">Last</a>
+            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.pages, user_page=user_pagination.page, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Last</a>
         {% endif %}
     </div>
     <div id="userFormPopup" class="popup">
@@ -376,9 +434,15 @@
         </div>
     </div>
 </div>
+<!-- Bảng lịch ẩn -->
+<div id="calendarContainer" style="display: none; position: absolute; z-index: 1000; background: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+    <div id="calendar"></div>
+</div>
     <script>
 
     </script>
 <script src="{{ url_for('static', filename='js/user_management.js') }}"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 </html>

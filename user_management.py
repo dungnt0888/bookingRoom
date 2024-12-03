@@ -3,6 +3,8 @@ from models.user import User
 from models.booking_room import Booking
 from cnnDatabase import db
 from models.booking_name import Booking_name
+import re
+from datetime import datetime
 
 user_bp = Blueprint('user', __name__, template_folder='templates')
 
@@ -29,12 +31,34 @@ def admin_panel():
     booking_page = request.args.get('booking_page', 1, type=int)  # Phân trang đặt phòng
     name_page = request.args.get('name_page', 1, type=int)  # Phân trang đặt phòng
 
+    # Lấy giá trị tìm kiếm từ query string
+    search_query = request.args.get('search', '')
+
     # Phân trang người dùng
     user_pagination = User.query.order_by(User.user_id).paginate(page=user_page, per_page=5)
     users = user_pagination.items
 
+    is_date = re.match(r"^\d{2}/\d{2}/\d{4}$", search_query)
+
+    if is_date:
+        try:
+            # Chuyển đổi chuỗi ngày sang đối tượng datetime
+            search_date = datetime.strptime(search_query, "%d/%m/%Y").date()
+            search_date_str = search_date.strftime("%d/%m/%Y")
+            booking_query = Booking.query.filter(Booking.reservation_date == search_date_str)
+        except ValueError:
+            # Nếu xảy ra lỗi khi chuyển đổi, bỏ qua tìm kiếm theo ngày
+            booking_query = Booking.query
+    elif search_query:
+        # Nếu không phải ngày, tìm kiếm theo tên phòng
+        booking_query = Booking.query.filter(Booking.room_name.like(f"%{search_query}%"))
+    else:
+        # Không có tìm kiếm
+        booking_query = Booking.query
+
     # Phân trang booking
-    booking_pagination = Booking.query.order_by(Booking.booking_id).paginate(
+
+    booking_pagination = booking_query.order_by(Booking.booking_id).paginate(
         page=booking_page, per_page=10
     )
     bookings = booking_pagination.items
@@ -52,7 +76,8 @@ def admin_panel():
         bookings=bookings,
         booking_pagination=booking_pagination,
         names=names,
-        name_pagination = name_pagination
+        name_pagination = name_pagination,
+        search_query=search_query
     )
 
 
