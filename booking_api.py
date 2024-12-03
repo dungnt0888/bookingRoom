@@ -3,6 +3,7 @@ from models.booking_room import Booking
 from cnnDatabase import db
 from save_booking import save_booking
 from send_email import EmailHandler
+from models.booking_name import Booking_name
 
 from flask import current_app
 email_handler = EmailHandler()

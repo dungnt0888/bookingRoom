@@ -17,12 +17,13 @@ def authenticate_user(username, password):
     num_user = User.query.count()  # Đếm số lượng user
     user = User.query.filter_by(username=username).first()  # Tìm user theo username
 
-    if num_user < 1 and username == 'root':  # Trường hợp root user khi bảng trống
-        return "Đăng nhập thành công! Chào mừng Admin (root user).", None
+    if num_user == 0 and username == 'root' and password == 'root':
+        # Cho phép đăng nhập root user với username và password mặc định nếu bảng rỗng
+        return "Đăng nhập thành công! Chào mừng Admin (root user).", {'username': 'root', 'role': 'Administrator'}
 
     if user:  # Nếu user tồn tại
         if user.user_status != 'Active':  # Kiểm tra trạng thái user
-            return f"Tài khoản của bạn đã bị vô hiệu", None
+            return "Tài khoản của bạn đã bị vô hiệu hóa.", None
         if user.password == password:  # Kiểm tra mật khẩu
             return f"Đăng nhập thành công! Chào mừng {user.firstname} {user.lastname}.", user
 
@@ -32,18 +33,18 @@ def authenticate_user(username, password):
 
 @login_bp.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    username = request.form.get('username', '').strip()
+    password = request.form.get('password', '').strip()
+
+    if not username or not password:  # Kiểm tra đầu vào rỗng
+        flash("Tên đăng nhập và mật khẩu không được để trống.", 'error')
+        return redirect(url_for('index'))
+
     message, user = authenticate_user(username, password)
 
     if user:  # Nếu xác thực thành công
-        session['username'] = user.username  # Lưu tên người dùng vào session
-        session['role'] = user.role  # Lưu vai trò vào session
-        flash(message, 'success')
-        return redirect(url_for('index'))
-    elif username == 'root':
-        session['username'] = 'root'  # Lưu tên người dùng vào session
-        session['role'] = 'Administrator'  # Lưu vai trò vào session
+        session['username'] = user['username'] if isinstance(user, dict) else user.username
+        session['role'] = user['role'] if isinstance(user, dict) else user.role
         flash(message, 'success')
         return redirect(url_for('index'))
     else:  # Nếu xác thực thất bại

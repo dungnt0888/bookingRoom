@@ -396,6 +396,16 @@ body {
     background-color: #f9f9f9;
     font-size: 14px;
 }
+.booking-form-content select{
+    position: relative;
+    top: -18px;
+    border: none;
+    font-size: 15px;
+    border-right: 6px;
+    cursor: pointer;
+    padding: 2px;
+    background:#c6c6c6;
+}
 
 /* Định dạng cho ô textarea của "Nội dung cuộc họp" */
 .booking-form-content textarea {

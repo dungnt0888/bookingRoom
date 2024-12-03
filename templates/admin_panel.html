@@ -205,7 +205,7 @@
     </div>
 
     <h2 style="margin-top: 15px; margin-bottom: auto; text-align: center">Booking Management</h2>
-    <table border="1" style="width: 100%; border-collapse: collapse;">
+    <table style="width: 100%; border-collapse: collapse;border: 1px solid beige">
         <thead>
             <tr>
                 <th>ID</th>
@@ -262,43 +262,120 @@
             <a href="{{ url_for('user.admin_panel', booking_page=booking_pagination.pages, user_page=user_pagination.page) }}">Last</a>
         {% endif %}
     </div>
+    <button id="addMeetingBtn" class="btn add" >Add Meeting</button>
+    <h2 style="margin-top: 15px; margin-bottom: auto; text-align: center">Meeting Management</h2>
+    <table border="1" style="width: 100%; border-collapse: collapse; border: 1px">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Meeting</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name in names %}
+            <tr>
+                <td>{{ name.name_id }}</td>
+                <td>{{ name.booking_name }}</td>
+                <td>
+                    <textarea
+                        style="width: 90%;"
+                        id="description-{{ name.name_id }}"
+                        name="description"
+                        rows="2"
+                    >{{ name.description }}</textarea>
+                </td>
+                <td>
+                    <button
+                        class="btn-status" id="meeting-status-btn-{{ name.name_id }}"
+                        onclick="toggleMeetingStatus({{ name.name_id }}, {{ name.isActive|lower }})"
+                        style="background-color: {% if name.isActive %}green{% else %}red{% endif %}; color: white; padding: 5px 10px; border: none; cursor: pointer;"
+                    >
+                        {% if name.isActive %}Active{% else %}Inactive{% endif %}
+                    </button>
+                </td>
+                <td>
+                    <button class="btn edit" onclick="saveMeeting({{ name.name_id }})">Save</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+<!-- Pagination Controls for Booking Name -->
+    <div style="text-align: center; margin-top: 10px;">
+        <!-- Nút First -->
+        {% if name_pagination.page > 1 %}
+            <a href="{{ url_for('user_bp.admin_panel', name_page=1, user_page=user_pagination.page, booking_page=booking_pagination.page) }}">First</a>
+        {% endif %}
+        {% if name_pagination.has_prev %}
+            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.prev_num, user_page=user_pagination.page, booking_page=booking_pagination.page) }}">Previous</a>
+        {% endif %}
+        Page {{ name_pagination.page }} of {{ name_pagination.pages }}
+        {% if name_pagination.has_next %}
+            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.next_num, user_page=user_pagination.page, booking_page=booking_pagination.page) }}">Next</a>
+        {% endif %}
+        <!-- Nút Last -->
+        {% if name_pagination.page < name_pagination.pages %}
+            <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.pages, user_page=user_pagination.page, booking_page=booking_pagination.page) }}">Last</a>
+        {% endif %}
+    </div>
     <div id="userFormPopup" class="popup">
-    <div class="popup-content">
-        <span class="close-btn" onclick="closePopup()">&times;</span>
-        <form id="addUserForm" method="POST">
-            <label for="username">Username (required):</label>
-            <input type="text" id="username" name="username" required>
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <form id="addUserForm" method="POST">
+                <label for="username">Username (required):</label>
+                <input type="text" id="username" name="username" required>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
 
-            <label for="confirm_password">Confirm Password:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
 
-            <label for="role">Role:</label>
-            {% if 'role' in session and session['role'] == 'Administrator' %}
-            <select id="role" name="role">
-                <option value="User" selected>User</option>
-                <option value="Administrator">Administrator</option>
-            </select>
-            {% else %}
-            <input type="hidden" name="role" value="User">
-            <p>Role: User (default)</p>
-            {% endif %}
+                <label for="role">Role:</label>
+                {% if 'role' in session and session['role'] == 'Administrator' %}
+                <select id="role" name="role">
+                    <option value="User" selected>User</option>
+                    <option value="Administrator">Administrator</option>
+                </select>
+                {% else %}
+                <input type="hidden" name="role" value="User">
+                <p>Role: User (default)</p>
+                {% endif %}
 
-            <label for="firstname">First Name:</label>
-            <input type="text" id="firstname" name="firstname">
+                <label for="firstname">First Name:</label>
+                <input type="text" id="firstname" name="firstname">
 
-            <label for="lastname">Last Name:</label>
-            <input type="text" id="lastname" name="lastname">
+                <label for="lastname">Last Name:</label>
+                <input type="text" id="lastname" name="lastname">
 
-            <button type="button" onclick="submitUserForm()">Register</button>
-        </form>
+                <button type="button" onclick="submitUserForm()">Register</button>
+            </form>
+        </div>
+
     </div>
+    <div id="meetingFormPopup" class="popup">
+        <div class="popup-content">
+                <button class="close-btn" onclick="closePopup()">✖</button>
+            `   <h2>Create Meeting</h2>
+                <form id="meetingForm" method="post">
+                    <label for="meetingTitle">Meeting Title:</label>
+                    <input type="text" id="meetingTitle" name="meetingTitle" placeholder="Enter title" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" placeholder="Enter meeting description" rows="3" style="width: 100%; padding: 8px; margin-bottom: 10px;"></textarea>
+
+                    <button type="button" class="btn" onclick="submitMeetingForm()">Save</button>
+                </form>
+        </div>
     </div>
+</div>
     <script>
 
     </script>

@@ -157,7 +157,20 @@
                 <label for="chairman">Người chủ trì:</label>
                 <input type="text" name="chairman" id="chairman" placeholder="Nhập tên người chủ trì"><br>
                 <label for="booking_name">Cuộc họp:</label>
-                <input type="text" name="booking_name" id="booking_name" placeholder="Nhập tên cuộc họp"><br>
+                <select id="booking_name" name="booking_name">
+                    <option value="" selected disabled>-- Chọn một tùy chọn --</option>
+                    {%  if meetings|length == 0 %}
+                        <option value="Họp giao ban">Họp giao ban</option>
+                        <option value="Báo cáo thử việc">Báo cáo thử việc</option>
+                        <option value="Họp đối tác" >Họp đối tác</option>
+                        <option value="Họp nội bộ">Họp nội bộ</option>
+                    {% else %}
+                        {% for meeting in meetings %}
+                        <option value="{{meeting.booking_name}}">{{meeting.booking_name}}</option>
+                        {%  endfor %}
+                    {% endif %}
+                </select>
+                <!--<input type="text" name="booking_name" id="booking_name" placeholder="Nhập tên cuộc họp">--><br>
                 <label for="department">Khối phòng ban:</label>
                 <input type="text" name="department" id="department" placeholder="Nhập tên phòng ban"><br>
                 <label for="meetingContent">Nội dung cuộc họp:</label>

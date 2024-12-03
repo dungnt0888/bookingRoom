@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, render_template, session, redirec
 from models.user import User
 from models.booking_room import Booking
 from cnnDatabase import db
+from models.booking_name import Booking_name
 
 user_bp = Blueprint('user', __name__, template_folder='templates')
 
@@ -18,7 +19,7 @@ def admin_required(f):
 
     return decorated_function
 
-@user_bp.route('/admin_panel')
+@user_bp.route('/admin_panel', methods=['GET', 'POST'])
 @admin_required
 def admin_panel():
     """Hiển thị danh sách người dùng và booking với phân trang."""
@@ -26,6 +27,7 @@ def admin_panel():
     # Lấy số trang hiện tại từ query string
     user_page = request.args.get('user_page', 1, type=int)  # Phân trang người dùng
     booking_page = request.args.get('booking_page', 1, type=int)  # Phân trang đặt phòng
+    name_page = request.args.get('name_page', 1, type=int)  # Phân trang đặt phòng
 
     # Phân trang người dùng
     user_pagination = User.query.order_by(User.user_id).paginate(page=user_page, per_page=5)
@@ -37,13 +39,20 @@ def admin_panel():
     )
     bookings = booking_pagination.items
 
+    name_pagination = Booking_name.query.order_by(Booking_name.name_id).paginate(
+        page=name_page, per_page = 5
+    )
+    names = name_pagination.items
+
     # Truyền dữ liệu phân trang vào template
     return render_template(
         'admin_panel.html',
         users=users,
         user_pagination=user_pagination,
         bookings=bookings,
-        booking_pagination=booking_pagination
+        booking_pagination=booking_pagination,
+        names=names,
+        name_pagination = name_pagination
     )
 
 
@@ -154,3 +163,86 @@ def update_booking_status(booking_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+
+@user_bp.route('/add_meeting', methods=['POST'])
+def add_meeting():
+    # Fetch data from the form
+    meeting = request.form.get('meetingTitle')  # Safely fetch form data
+    description = request.form.get('description')
+
+    if not meeting :
+        return jsonify({'success': False, 'error': 'Missing required fields'}), 400
+
+    # Check if the meeting already exists
+    existing_meeting = Booking_name.query.filter(Booking_name.booking_name == meeting).first()
+    if existing_meeting:
+        return jsonify({'success': False, 'error': 'Meeting already exists'}), 400
+
+    # Create new meeting object
+    new_meeting = Booking_name(booking_name=meeting, description=description)
+
+    # Attempt to add to the database
+    try:
+        db.session.add(new_meeting)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Meeting added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@user_bp.route('/update_meeting_status/<int:name_id>', methods=['POST'])
+def update_meeting_status(name_id):
+    # Lấy dữ liệu từ yêu cầu
+    data = request.json
+    new_status = data.get('status')
+
+    # Kiểm tra tính hợp lệ của new_status
+    if new_status not in [True, False]:
+        return jsonify({'success': False, 'error': 'Invalid status value. Must be True or False'}), 400
+
+    # Tìm meeting trong database
+    meeting = Booking_name.query.get(name_id)
+    if not meeting:
+        return jsonify({'success': False, 'error': 'Meeting not found'}), 404
+
+    # Cập nhật trạng thái
+    meeting.isActive = new_status
+
+    # Lưu thay đổi vào database
+    try:
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Meeting status updated successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': 'Database error', 'details': str(e)}), 500
+
+
+@user_bp.route('/update_meeting/<int:name_id>', methods=['POST'])
+def update_meeting(name_id):
+    # Lấy dữ liệu từ yêu cầu
+    data = request.json
+
+    # Kiểm tra dữ liệu đầu vào
+    if not data or 'description' not in data:
+        return jsonify({'success': False, 'error': 'Invalid input data'}), 400
+
+    # Tìm cuộc họp trong database
+    meeting = Booking_name.query.get(name_id)
+    if not meeting:
+        return jsonify({'success': False, 'error': 'Meeting not found'}), 404
+
+    # Cập nhật thông tin mô tả
+    description = data.get('description')
+    if description:
+        if len(description) > 100:
+            return jsonify({'success': False, 'error': 'Description is too long (max 100 characters)'}), 400
+        meeting.description = description
+
+    # Lưu thay đổi vào database
+    try:
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Meeting updated successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': 'Database error', 'details': str(e)}), 500

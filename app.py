@@ -14,6 +14,7 @@ from user_management import user_bp
 from zoneinfo import ZoneInfo
 from send_email import EmailHandler
 from flask_mail import Mail
+from models.booking_name import Booking_name
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
@@ -77,6 +78,7 @@ app.register_blueprint(booking_delete_bp)
 
 @app.route('/')
 def index():
+    meetings = Booking_name.query.filter_by(isActive = True).all()
     # Dữ liệu giả lập cho các khung giờ
     time_slots = [
         "7:00-07:30", "7:30-8:00", "8:00-8:30", "8:30-9:00", "9:00-9:30", "9:30-10:00",
@@ -138,7 +140,9 @@ def index():
     #current_date = datetime.now().strftime('%d-%m-%Y')  # Định dạng ngày để so sánh
 
     return render_template('index.html', time_slots=time_slots, week_range=week_range,
-                           week_label=week_label, offset=offset, week_days=week_days, current_date=current_date, inactive_slots=inactive_slots, current_time_now=current_time_now)
+                           week_label=week_label, offset=offset, week_days=week_days, current_date=current_date, inactive_slots=inactive_slots,
+                           current_time_now=current_time_now,
+                           meetings = meetings)
 
 
 

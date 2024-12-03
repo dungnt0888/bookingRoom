@@ -2,6 +2,8 @@
 function createBookingForm(roomName, timeRange, bookingDate) {
     const roomName1 = roomName;
     const timeRange1 = timeRange;
+    const startTime = timeRange1.split(' - ')[0];
+    const endTime = timeRange1.split(' - ')[1];
     const bookingDate1 = bookingDate;
     const maxPopups = 6;
     const spacing = 20;
@@ -62,6 +64,16 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const modal = document.getElementById("saving-modal");
     //console.log(modal);
     modal.style.display = "flex";
+    const dropdown = document.getElementById("booking_name");
+    const checkDisable = dropdown.querySelector('option[value="Họp giao ban"]');
+    console.log('startTime: ', startTime);
+    if(startTime === '08:30' || startTime === '17:00'){
+        checkDisable.disabled = false;
+         console.log(checkDisable.disabled);
+    }
+    else{
+        checkDisable.disabled = true;
+    }
     //console.log("Form created:", document.getElementById("booking-form-content"));
 
     document.getElementById("booking-form-content").addEventListener("submit", async function(event) {
@@ -73,7 +85,11 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const department = document.getElementById("department").value;
     const meetingContent = document.getElementById("meetingContent").value;
     const selectedFrequency = document.querySelector('input[name="frequency"]:checked').value;
-
+    if(bookingName === ''){
+        alert("Vui lòng chọn cuộc họp hợp lệ!");
+        event.preventDefault(); // Ngăn chặn việc submit form
+        return
+    }
     console.log("Chairman:", chairman);
     console.log("Booking Name:", bookingName);
     console.log("Department:", department);
@@ -93,8 +109,9 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     const roomName = roomName1;
     const bookingDate = bookingDate1;
     const timeRange = timeRange1.split(" - ");
-    const startTime = timeRange[0];
-    const endTime = timeRange[1];
+    //const startTime = timeRange[0];
+
+
     //const user_booking = loggedInUser;
     const [day, month, year] = bookingDate1.split('/').map(Number);
     //console.log("ngày :", day);
