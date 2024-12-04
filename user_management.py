@@ -31,6 +31,10 @@ def admin_panel():
     booking_page = request.args.get('booking_page', 1, type=int)  # Phân trang đặt phòng
     name_page = request.args.get('name_page', 1, type=int)  # Phân trang đặt phòng
 
+    #Sort
+    sort_by = request.args.get('sort_by', 'booking_id')  # Sắp xếp mặc định theo ID
+    sort_order = request.args.get('sort_order', 'asc')  # Mặc định là sắp xếp tăng dần
+
     # Lấy giá trị tìm kiếm từ query string
     search_query = request.args.get('search', '')
 
@@ -56,7 +60,13 @@ def admin_panel():
         # Không có tìm kiếm
         booking_query = Booking.query
 
-    # Phân trang booking
+    # Phân trang booking với sort
+
+    if sort_order == 'asc':
+        booking_query = booking_query.order_by(getattr(Booking, sort_by).asc())
+    else:
+        booking_query = booking_query.order_by(getattr(Booking, sort_by).desc())
+
 
     booking_pagination = booking_query.order_by(Booking.booking_id).paginate(
         page=booking_page, per_page=10

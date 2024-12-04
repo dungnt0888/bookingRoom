@@ -61,7 +61,8 @@
                         id="status-btn-{{ user.user_id }}"
                         class="btn status"
                         onclick="toggleStatus({{ user.user_id }}, '{{ user.user_status }}')"
-                        style="padding: 5px 10px; border: none; cursor: pointer; background-color: {{ 'green' if user.user_status == 'Active' else 'red' }}; color: white;"
+                        style="padding: 5px 10px; border: none; {% if user.role == "Administrator" and user.username != "root" %}cursor: not-allowed;{% else %} cursor: pointer; {% endif %}background-color: {{ 'green' if user.user_status == 'Active' else 'red' }}; color: white;"
+                        {% if user.role == "Administrator" and user.username != "root" %} disabled {% endif %}
                     >
                         {{ user.user_status }}
                     </button>
@@ -93,15 +94,33 @@
         <table style="width: 100%; border-collapse: collapse;border: 1px solid beige">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Booking Name</th>
-                    <th>Department</th>
+                    <th>ID
+                        <a href="{{ url_for('user.admin_panel', sort_by='booking_id', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='booking_id', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                    </th>
+                    <th>Booking Name
+                        <a href="{{ url_for('user.admin_panel', sort_by='booking_name', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='booking_name', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                    </th>
+                    <th>Department
+                        <a href="{{ url_for('user.admin_panel', sort_by='department', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='department', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                    </th>
                     <th>Chairman</th>
                     <th>Start Time</th>
                     <th>End Time</th>
-                    <th>Reservation Date</th>
-                    <th>Room</th>
-                    <th>User Booking</th>
+                    <th>Reservation Date
+                        <a href="{{ url_for('user.admin_panel', sort_by='reservation_date', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='reservation_date', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                    </th>
+                    <th>Room
+                        <a href="{{ url_for('user.admin_panel', sort_by='room_name', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='room_name', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                    </th>
+                    <th>User Booking
+                        <a href="{{ url_for('user.admin_panel', sort_by='username', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='username', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                    </th>
                     <th>isDeleted</th>
                 </tr>
             </thead>
