@@ -172,3 +172,41 @@ body {
     #calendarContainer td:hover {
         background: #f0f0f0;
     }
+
+    /* Styling for the tab buttons */
+.tab {
+    overflow: hidden;
+    background-color: #f1f1f1;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.tab button {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 20px;
+    transition: 0.3s;
+    font-size: 17px;
+    margin: 0 5px;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: #ccc;
+    color: #000;
+}
+
+/* Styling for the tab content */
+.tab-content {
+    display: none;
+    padding: 20px;
+    border-top: 2px solid #ccc;
+    background-color: #ffffff;
+}

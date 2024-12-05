@@ -12,78 +12,88 @@
 <body>
     <header>
         <h1>Administrator Panel</h1>
-    </header>
-    <div class="container">
-        <button id="addUserBtn" class="btn add" >Add User</button>
-    <h2 style="margin-top: auto; margin-bottom: auto; text-align: center">User Management</h2>
         <button class="btn back" onclick="window.location.href='{{ url_for('index') }}'">Back</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>User ID</th>
-                    <th>Username</th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Password</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="userTable">
-                <!-- Example rows -->
-            {% for user in users %}
-            <tr>
-                <td>{{ user.user_id }}</td>
-                <td>{{ user.username }}</td>
-                <td>
-                    <input type="text" id="firstname-{{ user.user_id }}" name="firstname" value="{{ user.firstname }}">
-                </td>
-                <td>
-                    <input type="text" id="lastname-{{ user.user_id }}" name="lastname" value="{{ user.lastname }}">
-                </td>
-                <td>
-                    <input type="email" id="email-{{ user.user_id }}" name="email" value="{{ user.email }}">
-                </td>
-                <td>
-                    <select id="role-{{ user.user_id }}" name="role">
-                        <option value="User" {% if user.role == "User" %}selected{% endif %}>User</option>
-                        <option value="Administrator" {% if user.role == "Administrator" %}selected{% endif %}>Administrator</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="password" id="password-{{ user.user_id }}" name="password" value="{{ user.password }}" onclick="togglePassword({{ user.user_id }})"
-                            onblur="hidePassword({{ user.user_id }})">
-                </td>
-                <td>
-                    <button
-                        id="status-btn-{{ user.user_id }}"
-                        class="btn status"
-                        onclick="toggleStatus({{ user.user_id }}, '{{ user.user_status }}')"
-                        style="padding: 5px 10px; border: none; {% if user.role == "Administrator" and user.username != "root" %}cursor: not-allowed;{% else %} cursor: pointer; {% endif %}background-color: {{ 'green' if user.user_status == 'Active' else 'red' }}; color: white;"
-                        {% if user.role == "Administrator" and user.username != "root" %} disabled {% endif %}
-                    >
-                        {{ user.user_status }}
-                    </button>
-                </td>
-                <td>
-                    <button class="btn edit" onclick="saveUser({{ user.user_id }})">Save</button>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    <!-- Điều hướng phân trang người dùng -->
-    <div style="text-align: center; margin-top: 10px;">
-        {% if user_pagination.has_prev %}
-        <a href="{{ url_for('user.admin_panel', user_page=user_pagination.prev_num, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Previous</a>
-        {% endif %}
-        Page {{ user_pagination.page }} of {{ user_pagination.pages }}
-        {% if user_pagination.has_next %}
-        <a href="{{ url_for('user.admin_panel', user_page=user_pagination.next_num, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Next</a>
-        {% endif %}
+    </header>
+     <!-- Tab buttons -->
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'UserManagement')">User Management</button>
+        <button class="tablinks" onclick="openTab(event, 'BookingManagement')">Booking Management</button>
+        <button class="tablinks" onclick="openTab(event, 'MeetingManagement')">Meeting Management</button>
     </div>
+    <div class="container">
+    <div id="UserManagement" class="tab-content">
+        <button id="addUserBtn" class="btn add" >Add User</button>
+        <h2 style="margin-top: auto; margin-bottom: auto; text-align: center">User Management</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Password</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable">
+                    <!-- Example rows -->
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.user_id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>
+                        <input type="text" id="firstname-{{ user.user_id }}" name="firstname" value="{{ user.firstname }}">
+                    </td>
+                    <td>
+                        <input type="text" id="lastname-{{ user.user_id }}" name="lastname" value="{{ user.lastname }}">
+                    </td>
+                    <td>
+                        <input type="email" id="email-{{ user.user_id }}" name="email" value="{{ user.email }}">
+                    </td>
+                    <td>
+                        <select id="role-{{ user.user_id }}" name="role">
+                            <option value="User" {% if user.role == "User" %}selected{% endif %}>User</option>
+                            <option value="Administrator" {% if user.role == "Administrator" %}selected{% endif %}>Administrator</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="password" id="password-{{ user.user_id }}" name="password" value="{{ user.password }}" onclick="togglePassword({{ user.user_id }})"
+                                onblur="hidePassword({{ user.user_id }})">
+                    </td>
+                    <td>
+                        <button
+                            id="status-btn-{{ user.user_id }}"
+                            class="btn status"
+                            onclick="toggleStatus({{ user.user_id }}, '{{ user.user_status }}')"
+                            style="padding: 5px 10px; border: none; {% if user.role == "Administrator" and user.username != "root" %}cursor: not-allowed;{% else %} cursor: pointer; {% endif %}background-color: {{ 'green' if user.user_status == 'Active' else 'red' }}; color: white;"
+                            {% if user.role == "Administrator" and user.username != "root" %} disabled {% endif %}
+                        >
+                            {{ user.user_status }}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn edit" onclick="saveUser({{ user.user_id }})">Save</button>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        <!-- Điều hướng phân trang người dùng -->
+        <div style="text-align: center; margin-top: 10px;">
+            {% if user_pagination.has_prev %}
+            <a href="{{ url_for('user.admin_panel', user_page=user_pagination.prev_num, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Previous</a>
+            {% endif %}
+            Page {{ user_pagination.page }} of {{ user_pagination.pages }}
+            {% if user_pagination.has_next %}
+            <a href="{{ url_for('user.admin_panel', user_page=user_pagination.next_num, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    <div id="BookingManagement" class="tab-content">
     <div class="booking-management">
         <h2 style="margin-top: 15px; margin-bottom: auto; text-align: center">Booking Management</h2>
         <div class="searchBox">
@@ -98,7 +108,7 @@
                         <a href="{{ url_for('user.admin_panel', sort_by='booking_id', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
                         <a href="{{ url_for('user.admin_panel', sort_by='booking_id', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
                     </th>
-                    <th>Booking Name
+                    <th><!--Booking Name-->Meeting
                         <a href="{{ url_for('user.admin_panel', sort_by='booking_name', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
                         <a href="{{ url_for('user.admin_panel', sort_by='booking_name', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
                     </th>
@@ -106,7 +116,10 @@
                         <a href="{{ url_for('user.admin_panel', sort_by='department', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
                         <a href="{{ url_for('user.admin_panel', sort_by='department', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
                     </th>
-                    <th>Chairman</th>
+                    <th>Chairman
+                        <a href="{{ url_for('user.admin_panel', sort_by='chairman', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='chairman', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                    </th>
                     <th>Start Time</th>
                     <th>End Time</th>
                     <th>Reservation Date
@@ -167,6 +180,8 @@
             {% endif %}
         </div>
     </div>
+    </div>
+    <div id="MeetingManagement" class="tab-content">
     <button id="addMeetingBtn" class="btn add" >Add Meeting</button>
     <h2 style="margin-top: 15px; margin-bottom: auto; text-align: center">Meeting Management</h2>
     <table border="1" style="width: 100%; border-collapse: collapse; border: 1px">
@@ -226,6 +241,7 @@
         {% if name_pagination.page < name_pagination.pages %}
             <a href="{{ url_for('user_bp.admin_panel', name_page=name_pagination.pages, user_page=user_pagination.page, booking_page=booking_pagination.page, search=request.args.get('search', '')) }}">Last</a>
         {% endif %}
+    </div>
     </div>
     <div id="userFormPopup" class="popup">
         <div class="popup-content">

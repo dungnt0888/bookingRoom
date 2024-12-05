@@ -39,7 +39,7 @@ def admin_panel():
     search_query = request.args.get('search', '')
 
     # Phân trang người dùng
-    user_pagination = User.query.order_by(User.user_id).paginate(page=user_page, per_page=5)
+    user_pagination = User.query.order_by(User.user_id).paginate(page=user_page, per_page=10)
     users = user_pagination.items
 
     is_date = re.match(r"^\d{2}/\d{2}/\d{4}$", search_query)
@@ -69,12 +69,12 @@ def admin_panel():
 
 
     booking_pagination = booking_query.order_by(Booking.booking_id).paginate(
-        page=booking_page, per_page=10
+        page=booking_page, per_page=20
     )
     bookings = booking_pagination.items
 
     name_pagination = Booking_name.query.order_by(Booking_name.name_id).paginate(
-        page=name_page, per_page = 5
+        page=name_page, per_page = 10
     )
     names = name_pagination.items
 

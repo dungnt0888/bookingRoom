@@ -307,3 +307,37 @@ document.addEventListener('DOMContentLoaded', function () {
         calendarPicker.open();
     });
 });
+
+function openTab(evt, tabName) {
+    // Hide all tab contents
+    let tabcontent = document.getElementsByClassName("tab-content");
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Remove 'active' class from all tab links
+    let tablinks = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab and add 'active' class to the clicked button
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+
+    // Save selected tab to localStorage
+    localStorage.setItem('selectedTab', tabName);
+}
+
+// Set default tab to be displayed on page load
+document.addEventListener("DOMContentLoaded", function() {
+    // Get the last selected tab from localStorage, if available
+    let selectedTab = localStorage.getItem('selectedTab');
+    console.log(selectedTab);
+    if (selectedTab) {
+        document.querySelector(`button[onclick="openTab(event, '${selectedTab}')"]`).click();
+    } else {
+        // If no tab is selected, click the first one
+        document.getElementsByClassName("tablinks")[0].click();
+    }
+});
