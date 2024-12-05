@@ -27,11 +27,22 @@ init_db(app)
 migrate = Migrate(app, db)
 
 
-
-
 with app.app_context():
-    #db.drop_all(tables=[Booking.__table__])
+    # **Xóa bảng booking** nếu tồn tại
+    if Booking.__table__.exists(db.engine):
+        Booking.__table__.drop(db.engine)
+        print("Bảng 'booking' đã bị xóa.")
+
+    # **Tạo lại bảng booking**
     db.create_all()
+    print("Bảng 'booking' đã được tạo lại.")
+
+
+
+
+#with app.app_context():
+    #db.drop_all(tables=[Booking.__table__])
+    #db.create_all()
 #def hello_world():  # put application's code here
 #   return 'Hello World!'
 
