@@ -23,9 +23,12 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
 
 migrate = Migrate(app, db)
+
+
 init_db(app)
 
 with app.app_context():
+    db.drop_all(tables=[Booking.__table__])
     db.create_all()
 #def hello_world():  # put application's code here
 #   return 'Hello World!'
