@@ -28,7 +28,7 @@ migrate = Migrate(app, db)
 init_db(app)
 
 with app.app_context():
-    db.drop_all(tables=[Booking.__table__])
+    #db.drop_all(tables=[Booking.__table__])
     db.create_all()
 #def hello_world():  # put application's code here
 #   return 'Hello World!'
