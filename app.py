@@ -30,10 +30,10 @@ migrate = Migrate(app, db)
 
 with app.app_context():
     # **Xóa bảng booking** nếu tồn tại
-    inspector = inspect(db.engine)
-    if 'booking' in inspector.get_table_names():
-        Booking.__table__.drop(db.engine)
-        print("Bảng 'booking' đã bị xóa.")
+    #inspector = inspect(db.engine)
+    #if 'booking' in inspector.get_table_names():
+    #    Booking.__table__.drop(db.engine)
+    #    print("Bảng 'booking' đã bị xóa.")
 
     # **Tạo lại bảng booking**
     db.create_all()
