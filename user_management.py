@@ -4,7 +4,7 @@ from models.booking_room import Booking
 from cnnDatabase import db
 from models.booking_name import Booking_name
 import re
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 user_bp = Blueprint('user', __name__, template_folder='templates')
 
@@ -176,11 +176,10 @@ def add_user():
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
 
-
 @user_bp.route('/update_booking_status/<int:booking_id>', methods=['POST'])
 def update_booking_status(booking_id):
     """
-    Cập nhật trạng thái isDeleted cho một booking.
+    Cập nhật trạng thái isDeleted cho một booking và cập nhật date_deleted nếu cần.
     """
     try:
         data = request.json
@@ -191,8 +190,14 @@ def update_booking_status(booking_id):
         if not booking:
             return jsonify({'success': False, 'error': 'Booking not found'}), 404
 
-        # Cập nhật trạng thái
+        # Cập nhật trạng thái và ngày xóa
         booking.isDeleted = new_status
+        if new_status:
+            gmt_plus_7 = timezone(timedelta(hours=7))  # Tạo múi giờ GMT+7
+            booking.date_deleted = datetime.now(gmt_plus_7)  # Cập nhật ngày xóa nếu isDeleted = True
+        else:
+            booking.date_deleted = None  # Xóa giá trị date_deleted nếu isDeleted = False
+
         db.session.commit()
         return jsonify({'success': True})
     except Exception as e:

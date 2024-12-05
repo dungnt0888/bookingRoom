@@ -113,10 +113,13 @@ function closePopup() {
 }
 
 // Gửi form
-function submitUserForm() {
+function submitUserForm(){
     const form = document.getElementById('addUserForm');
     const formData = new FormData(form);
-
+    if(!form.checkValidity()){
+        alert("Please fill out all required fields correctly.");
+        return
+    }
     fetch('/user/add_user', {
         method: 'POST',
         body: formData,

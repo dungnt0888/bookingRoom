@@ -135,6 +135,7 @@
                         <a href="{{ url_for('user.admin_panel', sort_by='username', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
                     </th>
                     <th>isDeleted</th>
+                    <th>Date Deleted</th>
                 </tr>
             </thead>
             <tbody>
@@ -157,6 +158,7 @@
                             {% if booking.isDeleted %}True{% else %}False{% endif %}
                         </button>
                     </td>
+                    <td>{{ booking.date_deleted }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

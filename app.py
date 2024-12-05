@@ -15,6 +15,9 @@ from zoneinfo import ZoneInfo
 from send_email import EmailHandler
 from flask_mail import Mail
 from models.booking_name import Booking_name
+from auto_delete_schedule import delete_expired_bookings
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
@@ -41,6 +44,12 @@ app.register_blueprint(login_bp)
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(booking_bp, url_prefix='/api/booking')
 
+scheduler = BackgroundScheduler()
+scheduler.add_job(delete_expired_bookings, 'interval', days=1)
+scheduler.start()
+
+# Đảm bảo scheduler được tắt khi ứng dụng dừng
+atexit.register(lambda: scheduler.shutdown())
 
 
 @app.route('/get_bookings', methods=['GET'])

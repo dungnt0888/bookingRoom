@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/auto_delete_schedule.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/booking_room.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/booking_room.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/css/admin_panel.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/admin_panel.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/user_management.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/user_management.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/admin_panel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel.html" afterDir="false" />
@@ -127,7 +130,7 @@
       <workItem from="1733103047087" duration="19282000" />
       <workItem from="1733189243328" duration="23239000" />
       <workItem from="1733275600505" duration="13491000" />
-      <workItem from="1733362282020" duration="3142000" />
+      <workItem from="1733362282020" duration="8767000" />
     </task>
     <servers />
   </component>
