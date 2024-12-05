@@ -18,6 +18,7 @@ from models.booking_name import Booking_name
 from auto_delete_schedule import delete_expired_bookings
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
+from sqlalchemy import inspect
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
@@ -29,7 +30,8 @@ migrate = Migrate(app, db)
 
 with app.app_context():
     # **Xóa bảng booking** nếu tồn tại
-    if Booking.__table__.exists(db.engine):
+    inspector = inspect(db.engine)
+    if 'booking' in inspector.get_table_names():
         Booking.__table__.drop(db.engine)
         print("Bảng 'booking' đã bị xóa.")
 
