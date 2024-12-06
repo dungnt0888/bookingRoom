@@ -1,179 +1,186 @@
 body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-        }
-        .container {
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            padding: 10px 15px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn.add {
-            background-color: #4CAF50;
-            margin-bottom: 10px;
-        }
-        .btn.edit {
-            background-color: #2196F3;
-        }
-        .btn.delete {
-            background-color: #f44336;
-        }
-        .btn.back {
-            background-color: #f44336; /* Đỏ cho nút Back */
-            right: 2%;
-            top: 3%;
-            position: absolute;
-        }
-        .btn:hover {
-            background-color: #385739; /* Hiệu ứng hover */
-        }
-        .popup {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        }
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+.container {
+    padding: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+table, th, td {
+    border: 1px solid #ddd;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+.actions {
+    display: flex;
+    gap: 10px;
+}
+.btn {
+    padding: 10px 15px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn.add {
+    background-color: #4CAF50;
+    margin-bottom: 10px;
+}
+.btn.edit {
+    background-color: #2196F3;
+}
+.btn.delete {
+    background-color: #f44336;
+}
+.btn.back {
+    background-color: #f44336; /* Đỏ cho nút Back */
+    right: 2%;
+    top: 3%;
+    position: absolute;
+}
 
-    /* Popup content */
-    .popup-content {
-        position: relative;
-        margin: 10% auto;
-        padding: 20px;
-        background: white;
-        width: 40%;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
+.btn.logs {
+    background-color: #a3cced; /* Đỏ cho nút Back */
+    right: 15%;
+    top: 3%;
+    position: absolute;
+}
+.btn:hover {
+    background-color: #385739; /* Hiệu ứng hover */
+}
+.popup {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.5);
+z-index: 1000;
+}
 
-    /* Close button */
-    .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 20px;
-        font-weight: bold;
-        color: black;
-        cursor: pointer;
-    }
-
-    .close-btn:hover {
-        color: red;
-    }
-
-    /* Form styles */
-    form label {
-        display: block;
-        margin-top: 10px;
-    }
-
-    form input, form select, form button {
-        width: 90%;
-        padding: 10px;
-        margin-top: 5px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    form button {
-        background-color: #4CAF50;
-        color: white;
-        font-size: 16px;
-        border: none;
-    }
-
-    form button:hover {
-        background-color: #45a049;
-    }
-    .booking-management {
+/* Popup content */
+.popup-content {
     position: relative;
-    padding: 15px;
-    }
-    .searchBox {
-        position: absolute;
-        right: 0; /* Đẩy sang bên phải */
-        top: 15px; /* Đẩy lên trên */
-        margin-right: 15px;
-    }
-    .searchBox input {
-        padding: 8px;
-        font-size: 14px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin-right: 5px;
-    }
-    .searchBox button {
-        padding: 8px 12px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    .searchBox button:hover {
-        background-color: #0056b3;
-    }
-    #btnCalendar {
-        border: none;
-        background: #f0f0f0;
-        font-size: 16px;
-        border-radius: 4px;
-    }
-    #calendarContainer {
-        top: 40px; /* Khoảng cách phía dưới nút */
-        left: 0; /* Căn theo nút lịch */
-        width: 300px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    #calendarContainer table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    #calendarContainer th, #calendarContainer td {
-        text-align: center;
-        padding: 8px;
-        cursor: pointer;
-    }
-    #calendarContainer td:hover {
-        background: #f0f0f0;
-    }
+    margin: 10% auto;
+    padding: 20px;
+    background: white;
+    width: 40%;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
-    /* Styling for the tab buttons */
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: red;
+}
+
+/* Form styles */
+form label {
+    display: block;
+    margin-top: 10px;
+}
+
+form input, form select, form button {
+    width: 90%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form button {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    border: none;
+}
+
+form button:hover {
+    background-color: #45a049;
+}
+.booking-management {
+position: relative;
+padding: 15px;
+}
+.searchBox {
+    position: absolute;
+    right: 0; /* Đẩy sang bên phải */
+    top: 15px; /* Đẩy lên trên */
+    margin-right: 15px;
+}
+.searchBox input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+.searchBox button {
+    padding: 8px 12px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.searchBox button:hover {
+    background-color: #0056b3;
+}
+#btnCalendar {
+    border: none;
+    background: #f0f0f0;
+    font-size: 16px;
+    border-radius: 4px;
+}
+#calendarContainer {
+    top: 40px; /* Khoảng cách phía dưới nút */
+    left: 0; /* Căn theo nút lịch */
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+#calendarContainer table {
+    width: 100%;
+    border-collapse: collapse;
+}
+#calendarContainer th, #calendarContainer td {
+    text-align: center;
+    padding: 8px;
+    cursor: pointer;
+}
+#calendarContainer td:hover {
+    background: #f0f0f0;
+}
+
+/* Styling for the tab buttons */
 .tab {
     overflow: hidden;
     background-color: #f1f1f1;

@@ -4,7 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="" />
+    <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/models/logs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js/bootstrap.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/view_logs.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/view_logs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/write_logs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/booking_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delete_booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/delete_booking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/admin_panel.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/admin_panel.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/user_management.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/user_management.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin_panel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_management.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,9 +29,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Flask Main" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -121,7 +136,8 @@
       <workItem from="1733103047087" duration="19282000" />
       <workItem from="1733189243328" duration="23239000" />
       <workItem from="1733275600505" duration="13491000" />
-      <workItem from="1733362282020" duration="14917000" />
+      <workItem from="1733362282020" duration="18180000" />
+      <workItem from="1733448516708" duration="9214000" />
     </task>
     <servers />
   </component>

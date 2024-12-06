@@ -19,6 +19,7 @@ from auto_delete_schedule import delete_expired_bookings
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 from sqlalchemy import inspect
+from view_logs import admin_bp
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
@@ -37,7 +38,7 @@ with app.app_context():
 
     # **Tạo lại bảng booking**
     db.create_all()
-    print("Bảng 'booking' đã được tạo lại.")
+    #print("Bảng 'booking' đã được tạo lại.")
 
 
 
@@ -62,6 +63,8 @@ email_handler.init_app(app)
 app.register_blueprint(login_bp)
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(booking_bp, url_prefix='/api/booking')
+
+app.register_blueprint(admin_bp, url_prefix='/admin')
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(delete_expired_bookings, 'interval', days=1)
@@ -176,3 +179,5 @@ def index():
 
 if __name__ == '__main__':
     app.run()
+
+

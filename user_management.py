@@ -5,6 +5,7 @@ from cnnDatabase import db
 from models.booking_name import Booking_name
 import re
 from datetime import datetime, timezone, timedelta
+from write_logs import log_operation
 
 user_bp = Blueprint('user', __name__, template_folder='templates')
 
@@ -27,6 +28,7 @@ def admin_panel():
     """Hiển thị danh sách người dùng và booking với phân trang."""
 
     # Lấy số trang hiện tại từ query string
+    user_logon = session.get('username')
     user_page = request.args.get('user_page', 1, type=int)  # Phân trang người dùng
     booking_page = request.args.get('booking_page', 1, type=int)  # Phân trang đặt phòng
     name_page = request.args.get('name_page', 1, type=int)  # Phân trang đặt phòng
@@ -181,14 +183,21 @@ def update_booking_status(booking_id):
     """
     Cập nhật trạng thái isDeleted cho một booking và cập nhật date_deleted nếu cần.
     """
+    user = None
     try:
         data = request.json
         new_status = data.get('isDeleted')
-
+        user = data.get('loggedInUser','')
         # Tìm booking trong database
         booking = Booking.query.get(booking_id)
         if not booking:
             return jsonify({'success': False, 'error': 'Booking not found'}), 404
+
+        # Lưu trạng thái trước khi cập nhật (old_data)
+        old_data = {
+            "isDeleted": booking.isDeleted,
+            "date_deleted": booking.date_deleted.isoformat() if booking.date_deleted else None
+        }
 
         # Cập nhật trạng thái và ngày xóa
         booking.isDeleted = new_status
@@ -198,10 +207,31 @@ def update_booking_status(booking_id):
         else:
             booking.date_deleted = None  # Xóa giá trị date_deleted nếu isDeleted = False
 
+        # Ghi log cho thao tác UPDATE
+        log_operation(
+            table_name="booking",
+            operation_type="UPDATE",
+            user_name=user,  # Thay bằng user hiện tại (nếu có)
+            record_id=booking_id,
+            old_data=old_data,
+            new_data={
+                "isDeleted": booking.isDeleted,
+                "date_deleted": booking.date_deleted.isoformat() if booking.date_deleted else None
+            },
+            additional_info="Booking status isDeleted updated successfully"
+        )
+
         db.session.commit()
         return jsonify({'success': True})
     except Exception as e:
         db.session.rollback()
+        log_operation(
+            table_name="booking",
+            operation_type="ERROR",
+            user_name=user,  # Thay bằng user hiện tại (nếu có)
+            record_id=booking_id,
+            additional_info=f"Failed to update booking status: {e}"
+        )
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @user_bp.route('/add_meeting', methods=['POST'])

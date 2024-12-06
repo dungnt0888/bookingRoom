@@ -6,6 +6,9 @@ from send_email import EmailHandler
 from models.booking_name import Booking_name
 
 from flask import current_app
+
+from write_logs import log_operation
+
 email_handler = EmailHandler()
 
 
@@ -60,7 +63,15 @@ def submit_booking():
                 Trân trọng,
                 Hệ thống đặt phòng.
                 """
-
+        # Ghi log cho thao tác CREATE
+        log_operation(
+            table_name="booking",
+            operation_type="CREATE",
+            user_name=data.get('username'),
+            record_id=booking_id,
+            new_data=data,
+            additional_info="Booking created successfully"
+        )
         # Gửi email
         #email_handler.send_email(subject, recipients, body)
         print("Email đã được gửi thành công!")
@@ -68,6 +79,13 @@ def submit_booking():
         #print("Username received:", data.get('username'))
         return jsonify({"message": "Booking saved successfully!", "booking_id": booking_id}), 201
     except Exception as e:
+        log_operation(
+            table_name="booking",
+            operation_type="ERROR",
+            user_name=data.get('username'),
+            new_data=data,
+            additional_info=f"Failed to save booking: {e}"
+        )
         return jsonify({"message": f"Failed to save booking: {e}"}), 500
 
 @booking_bp.route('/get_booking/<int:booking_id>', methods=['GET'])

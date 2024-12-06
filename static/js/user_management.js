@@ -146,15 +146,21 @@ function submitUserForm(){
 }
 
 // Toggle status
-function toggleStatusDeleted(bookingId, currentStatus) {
+function toggleStatusDeleted(bookingId, currentStatus, loggedInUser) {
     const newStatus = !currentStatus; // Đảo trạng thái hiện tại
+
+    if (!loggedInUser) {
+        console.error('User not logged in!');
+        alert('Cannot update status: User not logged in.');
+        return;
+    }
 
     fetch(`/user/update_booking_status/${bookingId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ isDeleted: newStatus }),
+        body: JSON.stringify({ isDeleted: newStatus, loggedInUser }),
     })
     .then(response => {
         if (!response.ok) {
@@ -164,16 +170,24 @@ function toggleStatusDeleted(bookingId, currentStatus) {
     })
     .then(data => {
         if (data.success) {
-            //alert(`Status updated to ${newStatus ? 'True' : 'False'}`);
+            // Cập nhật giao diện mà không cần reload trang
             window.location.reload(); // Reload lại trang để cập nhật giao diện
+            /*const buttonElement = document.querySelector(`#toggle-btn-${bookingId}`);
+            if (buttonElement) {
+                buttonElement.textContent = newStatus ? 'True' : 'False';
+                buttonElement.style.backgroundColor = newStatus ? 'red' : 'green';
+            }*/
         } else {
+            console.warn(`Failed to update booking ID ${bookingId}: ${data.error}`);
             alert(`Failed to update status: ${data.error}`);
         }
     })
     .catch(error => {
-        console.error('Error updating status:', error);
+        console.error(`Error updating booking ID ${bookingId} with new status ${newStatus}:`, error);
+        alert('Error updating status. Please try again later.');
     });
 }
+
 
 
 function submitMeetingForm() {

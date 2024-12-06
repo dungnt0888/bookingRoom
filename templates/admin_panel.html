@@ -13,6 +13,7 @@
     <header>
         <h1>Administrator Panel</h1>
         <button class="btn back" onclick="window.location.href='{{ url_for('index') }}'">Back</button>
+        <button class="btn logs" onclick="window.location.href='{{ url_for('admin.view_logs') }}'">View Log</button>
     </header>
      <!-- Tab buttons -->
     <div class="tab">
@@ -150,11 +151,12 @@
                     <td>{{ booking.reservation_date }}</td>
                     <td>{{ booking.room_name }}</td>
                     <td>{{ booking.username }}</td>
-                    <td>
+                    <td id = "status-{{ booking.booking_id }}">
                         <button
+                            id = "toggle-btn-{{ booking.booking_id }}"
                             class="btn-status"
                             style="background-color: {% if booking.isDeleted %}red{% else %}green{% endif %}; color: white; padding: 5px 10px; border: none; cursor: pointer;"
-                            onclick="toggleStatusDeleted({{ booking.booking_id }}, {{ booking.isDeleted | tojson }})">
+                            onclick="toggleStatusDeleted({{ booking.booking_id }}, {{ booking.isDeleted | tojson }}, '{{ session.get('username', '') }}')">
                             {% if booking.isDeleted %}True{% else %}False{% endif %}
                         </button>
                     </td>
@@ -306,6 +308,10 @@
     <script>
 
     </script>
+<script>
+    const loggedInUser = "{{ session.get('username', '') }}";
+    const loggedInUserRole = "{{ session.get('role', '') }}";
+</script>
 <script src="{{ url_for('static', filename='js/user_management.js') }}"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
