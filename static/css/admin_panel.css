@@ -218,3 +218,49 @@ padding: 15px;
     /*border-top: 1px solid #ccc;*/
     background-color: #e5e5e5;
 }
+
+/* Tô màu header và căn giữa văn bản */
+th {
+    background-color: #9fe3a3;
+    color: #fff;
+    padding: 10px 15px;
+    text-align: center;
+    font-size: 14px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Định dạng nút sort */
+.sort-btn {
+    font-size: 12px;
+    color: #fff;
+    margin-left: 5px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.sort-btn.sort-asc:hover {
+    color: #d4d4d4;
+}
+
+.sort-btn.sort-desc:hover {
+    color: #d4d4d4;
+}
+
+/* Hiệu ứng hover cho hàng */
+tr:hover {
+    background-color: #f2f2f2;
+}
+
+/* Kích thước phù hợp với thiết bị nhỏ */
+@media (max-width: 768px) {
+    th {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .sort-btn {
+        font-size: 10px;
+    }
+}

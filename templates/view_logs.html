@@ -5,48 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Logs</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <style>
+        body {
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #343a40;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: #fff;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        table td {
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .page-link {
+            color: #007bff;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+            color: #0056b3;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="text-center">Admin Logs</h1>
-        <table class="table table-striped mt-4">
-            <thead>
-                <tr>
-                    <th style="background: darkgray">#</th>
-                    <th style="background: darkgray">Table Name</th>
-                    <th style="background: darkgray">Operation</th>
-                    <th style="background: darkgray">Time</th>
-                    <th style="background: darkgray">User</th>
-                    <th style="background: darkgray">Record ID</th>
-                    <th style="background: darkgray">Old Data</th>
-                    <th style="background: darkgray">New Data</th>
-                    <th style="background: darkgray">Additional Info</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for log in logs %}
-                <tr>
-                    <td>{{ loop.index + ((pagination.page - 1) * pagination.per_page) }}</td>
-                    <td>{{ log.table_name }}</td>
-                    <td>{{ log.operation_type }}</td>
-                    <td>{{ log.operation_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                    <td>{{ log.user_name }}</td>
-                    <td>{{ log.record_id }}</td>
-                    <td>
-                        <pre>{{ log.old_data | tojson(indent=2) }}</pre>
-                    </td>
-                    <td>
-                        <pre>{{ log.new_data | tojson(indent=2) }}</pre>
-                    </td>
-                    <td>{{ log.additional_info }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <h1 class="text-center mb-4">Admin Logs</h1>
+
+        <!-- Bọc bảng trong div có lớp "table-wrapper" để xử lý tràn dữ liệu -->
+        <div class="table-wrapper">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Table Name</th>
+                        <th>Operation</th>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Record ID</th>
+                        <th>Old Data</th>
+                        <th>New Data</th>
+                        <th>Additional Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ loop.index + ((pagination.page - 1) * pagination.per_page) }}</td>
+                        <td>{{ log.table_name }}</td>
+                        <td>{{ log.operation_type }}</td>
+                        <td>{{ log.operation_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{{ log.user_name }}</td>
+                        <td>{{ log.record_id }}</td>
+                        <td>
+                            <pre>{{ log.old_data | tojson(indent=2) }}</pre>
+                        </td>
+                        <td>
+                            <pre>{{ log.new_data | tojson(indent=2) }}</pre>
+                        </td>
+                        <td>{{ log.additional_info }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
         <!-- Điều hướng phân trang -->
         <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
+            <ul class="pagination justify-content-center mt-3">
                 {% if pagination.has_prev %}
                 <li class="page-item">
                     <a class="page-link" href="{{ url_for('admin.view_logs', page=pagination.prev_num) }}">Previous</a>

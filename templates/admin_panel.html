@@ -102,42 +102,43 @@
             <input type="text" name="search" id="txtSrcBox" placeholder="Type here to search date.." value="{{ search_query }}"/>
             <button name="srcBtn" id="srcBtn" onclick="searchBooking()">Search </button>
         </div>
-        <table style="width: 100%; border-collapse: collapse;border: 1px solid beige">
+        <table class="booking-management-table" style="width: 100%; border-collapse: collapse;border: 1px solid beige">
             <thead>
                 <tr>
                     <th>ID
-                        <a href="{{ url_for('user.admin_panel', sort_by='booking_id', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
-                        <a href="{{ url_for('user.admin_panel', sort_by='booking_id', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='booking_id', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-asc">▲</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='booking_id', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-desc">▼</a>
                     </th>
-                    <th><!--Booking Name-->Meeting
-                        <a href="{{ url_for('user.admin_panel', sort_by='booking_name', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
-                        <a href="{{ url_for('user.admin_panel', sort_by='booking_name', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                    <th>Meeting
+                        <a href="{{ url_for('user.admin_panel', sort_by='booking_name', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-asc">▲</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='booking_name', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-desc">▼</a>
                     </th>
                     <th>Department
-                        <a href="{{ url_for('user.admin_panel', sort_by='department', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
-                        <a href="{{ url_for('user.admin_panel', sort_by='department', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='department', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-asc">▲</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='department', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-desc">▼</a>
                     </th>
                     <th>Chairman
-                        <a href="{{ url_for('user.admin_panel', sort_by='chairman', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
-                        <a href="{{ url_for('user.admin_panel', sort_by='chairman', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='chairman', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-asc">▲</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='chairman', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-desc">▼</a>
                     </th>
                     <th>Start Time</th>
                     <th>End Time</th>
                     <th>Reservation Date
-                        <a href="{{ url_for('user.admin_panel', sort_by='reservation_date', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
-                        <a href="{{ url_for('user.admin_panel', sort_by='reservation_date', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='reservation_date', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-asc">▲</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='reservation_date', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-desc">▼</a>
                     </th>
                     <th>Room
-                        <a href="{{ url_for('user.admin_panel', sort_by='room_name', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
-                        <a href="{{ url_for('user.admin_panel', sort_by='room_name', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='room_name', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-asc">▲</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='room_name', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-desc">▼</a>
                     </th>
                     <th>User Booking
-                        <a href="{{ url_for('user.admin_panel', sort_by='username', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬆️</a>
-                        <a href="{{ url_for('user.admin_panel', sort_by='username', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}">⬇️</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='username', sort_order='asc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-asc">▲</a>
+                        <a href="{{ url_for('user.admin_panel', sort_by='username', sort_order='desc', booking_page=booking_pagination.page, user_page=user_pagination.page, search=request.args.get('search', '')) }}" class="sort-btn sort-desc">▼</a>
                     </th>
                     <th>isDeleted</th>
                     <th>Date Deleted</th>
                 </tr>
+
             </thead>
             <tbody>
                 {% for booking in bookings %}
@@ -155,7 +156,7 @@
                         <button
                             id = "toggle-btn-{{ booking.booking_id }}"
                             class="btn-status"
-                            style="background-color: {% if booking.isDeleted %}red{% else %}green{% endif %}; color: white; padding: 5px 10px; border: none; cursor: pointer;"
+                            style="background-color: {% if booking.isDeleted %}red{% else %}green{% endif %}; color: white; padding: 5px 10px; border: none; cursor: not-allowed;"
                             onclick="toggleStatusDeleted({{ booking.booking_id }}, {{ booking.isDeleted | tojson }}, '{{ session.get('username', '') }}')">
                             {% if booking.isDeleted %}True{% else %}False{% endif %}
                         </button>

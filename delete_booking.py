@@ -2,6 +2,7 @@ from models.booking_room import Booking
 from cnnDatabase import db
 from flask import Blueprint, request, jsonify
 from write_logs import log_operation
+from datetime import datetime, timezone, timedelta
 
 # Tạo blueprint để quản lý route cho việc xóa booking
 booking_delete_bp = Blueprint('delete_booking', __name__)
@@ -41,6 +42,12 @@ def delete_booking():
 
         # Cập nhật isDeleted thành True (soft delete)
         booking.isDeleted = True
+        if booking.isDeleted:
+            gmt_plus_7 = timezone(timedelta(hours=7))  # Tạo múi giờ GMT+7
+            booking.date_deleted = datetime.now(gmt_plus_7)  # Cập nhật ngày xóa nếu isDeleted = True
+        else:
+            booking.date_deleted = None  # Xóa giá trị date_deleted nếu isDeleted = False
+
         db.session.commit()
 
         # Ghi log cho thao tác DELETE
