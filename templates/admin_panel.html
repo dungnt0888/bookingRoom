@@ -137,6 +137,8 @@
                     </th>
                     <th>isDeleted</th>
                     <th>Date Deleted</th>
+                    <th>Status</th>
+                    <th>User Approved</th>
                 </tr>
 
             </thead>
@@ -162,6 +164,15 @@
                         </button>
                     </td>
                     <td>{{ booking.date_deleted }}</td>
+                <td>
+                    <select onchange="updateStatus({{ booking.booking_id }}, this.value, '{{ session.get('username', '') }}')"
+                            style="padding: 5px; border-radius: 5px;">
+                        <option value="Pending" {% if booking.temp_status  == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Approve" {% if booking.temp_status  == 'Approve' %}selected{% endif %}>Approve</option>
+                        <option value="Denied" {% if booking.temp_status  == 'Denied' %}selected{% endif %}>Denied</option>
+                    </select>
+                </td>
+                <td id="user-approved-{{ booking.booking_id }}">{{ booking.temp_changed_by  }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

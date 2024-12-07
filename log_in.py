@@ -1,5 +1,6 @@
 # log_in.py
-
+# not use anymore
+#
 from cnnDatabase import fetch_query
 
 def authenticate_user(username, password):

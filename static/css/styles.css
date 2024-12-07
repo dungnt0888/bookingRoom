@@ -1,17 +1,22 @@
 /* ========== Global Styles ========== */
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9; /* Màu nền nhẹ */
 }
 
 .container {
-    width: 92%;
+    width: 95%;
     margin: auto;
+    max-width: 1380px;
 }
 
 /* ========== Top-Bar Styles ========== */
 .top-bar {
     /* Nền và đổ bóng cho toàn top-bar */
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
@@ -22,6 +27,7 @@ body {
     position: sticky;
     z-index: 50;
     top: 0;
+    color: #fff;
 }
 
 /* Tiêu đề */
@@ -48,7 +54,7 @@ body {
 /* Hiệu ứng hover cho nút */
 .room-buttons button:hover, .time-navigation button:hover {
     background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
+    transform: scale(1.1) translateY(-2px);
 }
 
 /* Kiểu cho nút được chọn */
@@ -70,13 +76,13 @@ body {
     background-color: #68d73a; /* Nền màu xanh lá nổi bật hơn */
     color: #ffffff;
     border: 1px solid #28a745;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 /* Hiệu ứng hover riêng cho nút "Đặt Phòng" */
 .room-buttons button:last-child:hover {
     background-color: #218838;
-    transform: scale(1.08);
+    transform: scale(1.12);
 }
 
 /* Kiểu cho nút "Đặt Phòng" khi bị vô hiệu hóa */
@@ -135,7 +141,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    border: 2px solid #9fa190; /* Viền bao quanh bên ngoài bảng */
+    border: 1px solid #9fa190; /* Viền bao quanh bên ngoài bảng */
     border-spacing: 0; /* Loại bỏ khoảng cách giữa các ô nếu cần */
     overflow: hidden; /* Ngăn phần tử con đè lên viền */
 }
@@ -149,12 +155,13 @@ body {
 /* Tiêu đề cột */
 .schedule-table th {
     background-color: #f4f4f4;
+    text-align: center;
 }
 
 /* Hover hiệu ứng cho các ô trong bảng (tùy chọn) */
 .schedule-table td:hover {
     background-color: #d0f0c0;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s;
 }
 
 .schedule-table td {
@@ -603,3 +610,40 @@ body {
     padding: 5px;
 }
 
+/* ========== Responsive Design ========== */
+@media (max-width: 768px) {
+    .top-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .room-buttons {
+        justify-content: center;
+    }
+
+    .schedule-table th, .schedule-table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .login {
+        max-width: 100%;
+        margin: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 18px;
+    }
+
+    .room-buttons button {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .schedule-table th, .schedule-table td {
+        font-size: 10px;
+        padding: 5px;
+    }
+}

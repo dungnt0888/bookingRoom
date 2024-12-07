@@ -12,3 +12,5 @@ instance/
 # Bỏ qua các file hệ thống
 .DS_Store
 *.pyc
+
+styles1.css

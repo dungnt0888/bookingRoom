@@ -6,6 +6,7 @@ from models.booking_name import Booking_name
 import re
 from datetime import datetime, timezone, timedelta
 from write_logs import log_operation
+from models.status_booking_log import StatusBooking
 
 user_bp = Blueprint('user', __name__, template_folder='templates')
 
@@ -74,6 +75,18 @@ def admin_panel():
         page=booking_page, per_page=20
     )
     bookings = booking_pagination.items
+
+    # Lấy trạng thái và người duyệt từ StatusBooking
+    for booking in bookings:
+        # Truy vấn trạng thái mới nhất
+        status_log = (
+            StatusBooking.query.filter_by(booking_id=booking.booking_id)
+            .order_by(StatusBooking.changed_at.desc())
+            .first()
+        )
+        # Gán giá trị tạm thời
+        booking.temp_status = status_log.status if status_log else "Pending"
+        booking.temp_changed_by = status_log.changed_by if status_log else "N/A"
 
     name_pagination = Booking_name.query.order_by(Booking_name.name_id).paginate(
         page=name_page, per_page = 10

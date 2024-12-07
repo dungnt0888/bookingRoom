@@ -128,8 +128,13 @@ form button:hover {
     background-color: #45a049;
 }
 .booking-management {
-position: relative;
-padding: 15px;
+
+    max-width: 1380px;
+    max-height: 1500px;
+    position: relative;
+    padding: 15px;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 .searchBox {
     position: absolute;
@@ -255,12 +260,15 @@ tr:hover {
 
 /* Kích thước phù hợp với thiết bị nhỏ */
 @media (max-width: 768px) {
-    th {
+    th, td {
         font-size: 12px;
-        padding: 8px 10px;
+        padding: 5px 8px;
     }
 
     .sort-btn {
         font-size: 10px;
+    }
+    table {
+        font-size: 14px; /* Tùy chỉnh kích thước chung cho bảng */
     }
 }

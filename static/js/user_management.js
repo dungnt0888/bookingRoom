@@ -358,3 +358,9 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementsByClassName("tablinks")[0].click();
     }
 });
+
+function updateStatus(bookingId, newStatus, user) {
+    console.log('Booking ID:', bookingId);
+    console.log('Status: ', newStatus);
+    document.getElementById('user-approved-'+bookingId).textContent  = user;
+}

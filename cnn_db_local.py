@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2 import sql
 from contextlib import contextmanager
 
+# not used
 # Cấu hình kết nối cơ sở dữ liệu
 DB_CONFIG = {
     'host': 'localhost',

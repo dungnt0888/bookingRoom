@@ -1,5 +1,6 @@
 from cnnDatabase import db
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 class Booking(db.Model):
     __tablename__ = 'booking'
@@ -17,6 +18,12 @@ class Booking(db.Model):
     isDeleted = db.Column(db.Boolean, default=False)  # Cột đánh dấu đã xóa (false là chưa xóa)
     date_deleted = db.Column(db.DateTime, nullable=True)  # Thời gian bị xóa
     username = db.Column(db.String(50), nullable=False)
+
+    status_logs = relationship(
+        "StatusBooking",
+        back_populates="booking",
+        cascade="all, delete-orphan"
+    )
 
     def __init__(self, booking_name, department, meeting_content, chairman, start_time, end_time, reservation_date, room_name, username, isdeleted = False):
         self.booking_name = booking_name
