@@ -10,9 +10,9 @@ class Booking(db.Model):
     department = db.Column(db.String(100), nullable=False)
     meeting_content = db.Column(db.Text, nullable=True)
     chairman = db.Column(db.String(100), nullable=False)
-    start_time = db.Column(db.String(20), nullable=False)
-    end_time = db.Column(db.String(20), nullable=False)
-    reservation_date = db.Column(db.String(10), nullable=False)  # Lưu ở dạng VARCHAR để giữ định dạng DD/MM/YYYY
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    reservation_date = db.Column(db.Date, nullable=False)  # Lưu ở dạng VARCHAR để giữ định dạng DD/MM/YYYY
     date_booking = db.Column(db.Date, default=datetime.now)  # Ngày đặt phòng, mặc định là ngày hiện tại
     room_name = db.Column(db.String(100), nullable=False)
     isDeleted = db.Column(db.Boolean, default=False)  # Cột đánh dấu đã xóa (false là chưa xóa)

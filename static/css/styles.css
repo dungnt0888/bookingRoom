@@ -3,13 +3,19 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9; /* Màu nền nhẹ */
+    background-color: #e8efcc; /* Màu nền nhẹ */
 }
 
 .container {
     width: 95%;
     margin: auto;
-    max-width: 1380px;
+    max-width: 1400px;
+}
+.schedule-wrapper{
+    max-width: 1350px;
+    position: relative;
+    overflow-x: auto;
+    background-color: white;
 }
 
 /* ========== Top-Bar Styles ========== */
@@ -21,7 +27,7 @@ body {
     align-items: center;
     margin-top: 20px;
     padding: 15px;
-    background: linear-gradient(135deg, #8fbb91, #2E7D32);
+    background: linear-gradient(135deg, #d6ea54, #d2f106);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     position: sticky;
@@ -42,9 +48,9 @@ body {
 .room-buttons button, .time-navigation button {
     margin: 0 5px;
     padding: 8px 12px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid #fff;
-    color: #fff;
+    background-color: rgb(77, 204, 104);
+    border: 1px solid #231717;
+    color: #7af19e;
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -87,7 +93,7 @@ body {
 
 /* Kiểu cho nút "Đặt Phòng" khi bị vô hiệu hóa */
 .room-buttons button:disabled {
-    background-color: rgba(255, 255, 255, 0.2); /* Nền xám mờ khi disabled */
+    background-color: rgb(62, 67, 33); /* Nền xám mờ khi disabled */
     color: rgba(255, 255, 255, 0.5); /* Màu chữ nhạt hơn */
     border: 1px solid rgba(255, 255, 255, 0.5);
     cursor: not-allowed;
@@ -139,11 +145,13 @@ body {
 /* ========== Schedule Table Styles ========== */
 .schedule-table {
     width: 100%;
+    max-width: 1250px;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 5px;
     border: 1px solid #9fa190; /* Viền bao quanh bên ngoài bảng */
     border-spacing: 0; /* Loại bỏ khoảng cách giữa các ô nếu cần */
     overflow: hidden; /* Ngăn phần tử con đè lên viền */
+    table-layout: fixed; /* Đảm bảo các cột có kích thước cố định */
 }
 
 .schedule-table th, .schedule-table td {
@@ -213,11 +221,7 @@ body {
 
 
 /* ========== Schedule Table Styles ========== */
-.schedule-table {
-    width: 100%;
-    margin-top: 10px;
-    table-layout: fixed; /* Đảm bảo các cột có kích thước cố định */
-}
+
 
 .schedule-table th, .schedule-table td {
     border: 1px solid #ddd;
@@ -340,7 +344,7 @@ body {
     border: 1px solid #ddd;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
-    width: 350px;
+    min-width: 450px;
     max-width: 90%;
     text-align: center;
     position: absolute;
@@ -405,13 +409,19 @@ body {
 }
 .booking-form-content select{
     position: relative;
-    top: -18px;
+    top: -22px;
     border: none;
     font-size: 15px;
     border-right: 6px;
     cursor: pointer;
     padding: 2px;
     background:#c6c6c6;
+}
+
+#edit-start-time,
+#edit-end-time {
+    width: 30%;
+    left: 10%;
 }
 
 /* Định dạng cho ô textarea của "Nội dung cuộc họp" */
@@ -465,8 +475,8 @@ body {
 
 
 .schedule-table td.booked {
-    background-color: #d1e7dd; /* Màu xanh nhạt */
-    color: #0c5460;
+    background-color: #cde158; /* Màu xanh nhạt */
+    color: #1c2020;
     font-weight: bold;
     pointer-events: none;
 }

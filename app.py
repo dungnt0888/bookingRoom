@@ -89,9 +89,9 @@ def get_bookings():
                 "department": booking.department,
                 "meeting_content": booking.meeting_content,
                 "chairman": booking.chairman,
-                "start_time": booking.start_time,
-                "end_time": booking.end_time,
-                "reservation_date": booking.reservation_date,
+                "start_time": booking.start_time.strftime('%H:%M') if booking.start_time else None,
+                "end_time": booking.end_time.strftime('%H:%M') if booking.end_time else None,
+                "reservation_date": booking.reservation_date.strftime("%d/%m/%Y") if booking.reservation_date else None,
                 "room_name": booking.room_name,
                 "username": booking.username
             })

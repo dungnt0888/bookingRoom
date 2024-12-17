@@ -5,17 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/models/status_booking_log.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cnn_db_local.py" beforeDir="false" afterPath="$PROJECT_DIR$/cnn_db_local.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log_in.py" beforeDir="false" afterPath="$PROJECT_DIR$/log_in.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/booking_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/alembic.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/script.py.mako" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/models/booking_room.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/booking_room.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/admin_panel.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/admin_panel.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/save_booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/save_booking.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/user_management.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/user_management.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin_panel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_management.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/loading.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/loading.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +66,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
+    "last_opened_file_path": "D:/Flask/flaskProject",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -137,7 +139,20 @@
       <workItem from="1733275600505" duration="13491000" />
       <workItem from="1733362282020" duration="18180000" />
       <workItem from="1733448516708" duration="22281000" />
-      <workItem from="1733535404773" duration="7482000" />
+      <workItem from="1733535404773" duration="10378000" />
+      <workItem from="1733708189457" duration="8584000" />
+      <workItem from="1733812181045" duration="279000" />
+      <workItem from="1733812496343" duration="648000" />
+      <workItem from="1733813159005" duration="2674000" />
+      <workItem from="1733821874598" duration="5737000" />
+      <workItem from="1733880628007" duration="2104000" />
+      <workItem from="1733910409593" duration="867000" />
+      <workItem from="1733915438214" duration="800000" />
+      <workItem from="1733966679743" duration="5809000" />
+      <workItem from="1733997920253" duration="3202000" />
+      <workItem from="1734054014104" duration="4742000" />
+      <workItem from="1734139852649" duration="26000" />
+      <workItem from="1734142703290" duration="5502000" />
     </task>
     <servers />
   </component>

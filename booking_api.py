@@ -4,6 +4,10 @@ from cnnDatabase import db
 from save_booking import save_booking
 from send_email import EmailHandler
 from models.booking_name import Booking_name
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+import logging
+from sqlalchemy import and_, or_
 
 from flask import current_app
 
@@ -36,6 +40,7 @@ def submit_booking():
             room_name=data.get('room_name'),
             username = data.get('username')
         )
+
         # Trả về booking_id sau khi lưu
 
         # Lấy thông tin người nhận email
@@ -94,19 +99,79 @@ def get_booking(booking_id):
     API để lấy thông tin một booking dựa trên booking_id.
     """
     booking = Booking.query.filter_by(booking_id=booking_id, isDeleted=False).first()
+
     if booking:
+        # Kiểm tra thông tin booking
+        logging.debug(f"Booking Data: {booking.__dict__}")
+
+        start_time_str = booking.start_time.strftime('%H:%M') if booking.start_time else None
+        end_time_str = booking.end_time.strftime('%H:%M') if booking.end_time else None
+        date_booking_str = booking.date_booking.strftime("%Y-%m-%d") if booking.date_booking else None
+        reservation_date_str = booking.reservation_date.strftime("%d/%m/%Y") if booking.reservation_date else None
+
         return jsonify({
             "booking_id": booking.booking_id,
             "booking_name": booking.booking_name,
             "department": booking.department,
             "meeting_content": booking.meeting_content,
             "chairman": booking.chairman,
-            "start_time": booking.start_time,
-            "end_time": booking.end_time,
-            "reservation_date": booking.reservation_date,
+            "start_time": start_time_str,
+            "end_time": end_time_str,
+            "reservation_date": reservation_date_str,
             "room_name": booking.room_name,
-            "date_booking": booking.date_booking.strftime("%Y-%m-%d"),
+            "date_booking": date_booking_str,
             "username": booking.username,
         })
     else:
         return jsonify({"message": "Booking not found or deleted."}), 404
+
+
+@booking_bp.route('/edit_booking/<int:booking_id>', methods=['PUT'])
+def edit_booking(booking_id):
+    """
+        API để chỉnh sửa thông tin đặt phòng dựa trên booking_id.
+        """
+    # Lấy dữ liệu JSON từ request
+    data = request.get_json()
+    try:
+        booking = Booking.query.filter_by(booking_id=booking_id, isDeleted=False).first()
+        if not booking:
+            return jsonify({"message": "Booking not found"}), 404
+
+        # Chuyển đổi dữ liệu ngày và giờ thành object
+        reservation_date_obj = datetime.strptime(data.get('reservation_date'), '%d/%m/%Y').date()
+        start_time_obj = datetime.strptime(data.get('start_time'), '%H:%M').time()
+        end_time_obj = datetime.strptime(data.get('end_time'), '%H:%M').time()
+
+        existing_booking = Booking.query.filter_by(
+            room_name=data.get('room_name'),
+            reservation_date=reservation_date_obj
+        ).filter(
+            and_(
+                or_(
+                    (Booking.start_time <= start_time_obj) & (Booking.end_time > start_time_obj),
+                    (Booking.start_time < end_time_obj) & (Booking.end_time >= end_time_obj)
+                ),
+                Booking.booking_id != booking_id,  # Loại trừ chính booking hiện tại
+                Booking.isDeleted != True
+            )
+        ).first()
+
+        if existing_booking:
+            return jsonify({
+                "message": "Không thể chỉnh sửa. Thời gian này đã có phòng được đặt."
+            }), 400
+            # Cập nhật thông tin booking
+
+        booking.chairman = data.get('chairman', booking.chairman)
+        booking.booking_name = data.get('booking_name', booking.booking_name)
+        booking.department = data.get('department', booking.department)
+        booking.meeting_content = data.get('meeting_content', booking.meeting_content)
+        booking.start_time = data.get('start_time', booking.start_time)
+        booking.end_time = data.get('end_time', booking.end_time)
+
+        # Commit thay đổi
+        db.session.commit()
+        return jsonify({"message": "Booking updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"message": f"Failed to save booking: {e}"}), 500

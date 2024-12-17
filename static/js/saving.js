@@ -369,7 +369,8 @@ function createBookingForm(roomName, timeRange, bookingDate) {
     if (typeof window.clearSelectedCells === 'function') {
         window.clearSelectedCells();
     }
-});
+    window.location.reload();
+    });
 
     dragElement(formContainer);
 
@@ -573,7 +574,10 @@ document.querySelectorAll('input[name="frequency"]').forEach((radio) => {
     });
 });
 
-function hideForm() {
-    const modal = document.getElementById("saving-modal");
-    modal.style.display = "none";
-}
+window.hideForm = function() {
+    const save_modal = document.getElementById("saving-modal");
+    if (save_modal) save_modal.style.display = "none";
+
+    const edit_modal = document.getElementById("edit-modal");
+    if (edit_modal) edit_modal.style.display = "none";
+};

@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Lịch Đặt Phòng Họp Bcons</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+
 </head>
 <body>
 
@@ -172,7 +175,15 @@
                 </select>
                 <!--<input type="text" name="booking_name" id="booking_name" placeholder="Nhập tên cuộc họp">--><br>
                 <label for="department">Khối phòng ban:</label>
-                <input type="text" name="department" id="department" placeholder="Nhập tên phòng ban" required><br>
+                <select name="department" id="department" style="left: 20px">
+                    <option value="" selected disabled>-- Chọn một tùy chọn --</option>
+                    <option value="HCNS">HCNS</option>
+                    <option value="Thiết kế 1">Thiết kế 1</option>
+                    <option value="Thiết kế 2">Thiết kế 2</option>
+                    <option value="Kiểm soát & Phát Triển">Kiểm soát & Phát Triển</option>
+                    <option value="Kế toán">Kế toán</option>
+                    <option value="Đấu thầu">Đấu thầu</option>
+                </select>
                 <label for="meetingContent">Nội dung cuộc họp:</label>
                 <textarea name="meetingContent" id="meetingContent" placeholder="Nhập nội dung cuộc họp" rows="4"></textarea><br>
                 <label>Tần suất:</label>
@@ -188,10 +199,68 @@
                 </div>
                 <br>
                 <button type="submit">Xác nhận</button>
-                <button type="button" onclick="hideForm()">Tắt</button>
+                <button type="button" onclick="hideForm(this.closest('.modal'))">Tắt</button>
             </form>
         </div>
 </div>
+
+<div id="edit-modal" class="modal" style="display: none;">
+    <div class="booking-form-header">Chỉnh sừa</div>
+        <div class="booking-form-content" style="left: 30%">
+            <form id="edit-booking-form-content">
+                <div id="edit-booking-id" class="booking-form-id" style="display: none;"></div>
+                <h4>Ngày: <span id="edit-booking-date"></span></h4>
+                <p><strong id="edit-room-name">Tên phòng:</strong> </p>
+                <p><strong id="edit-time-range">Thời gian:</strong> </p>
+                <!-- Thời gian bắt đầu -->
+                <label for="edit-start-time">Thời gian bắt đầu:</label>
+                <select id="edit-start-time" name="start_time" required></select><br>
+
+                <!-- Thời gian kết thúc -->
+                <label for="edit-end-time">Thời gian kết thúc:</label>
+                <select id="edit-end-time" name="end_time" required></select><br>
+
+
+                <label for="edit-chairman">Người chủ trì:</label>
+                <input type="text" name="chairman" id="edit-chairman" placeholder="Nhập tên người chủ trì" required><br>
+                <label for="edit-booking_name">Cuộc họp:</label>
+                <select id="edit-booking_name" name="booking_name">
+                    <option value="" selected disabled>-- Chọn một tùy chọn --</option>
+                    {%  if meetings|length == 0 %}
+                        <option value="Họp giao ban">Họp giao ban</option>
+                        <option value="Báo cáo thử việc">Báo cáo thử việc</option>
+                        <option value="Họp đối tác" >Họp đối tác</option>
+                        <option value="Họp nội bộ">Họp nội bộ</option>
+                    {% else %}
+                        {% for meeting in meetings %}
+                        <option value="{{meeting.booking_name}}">{{meeting.booking_name}}</option>
+                        {%  endfor %}
+                    {% endif %}
+                </select>
+                <!--<input type="text" name="booking_name" id="booking_name" placeholder="Nhập tên cuộc họp">--><br>
+                <label for="edit-department">Khối phòng ban:</label>
+                <select name="department" id="edit-department" style="left: 20px">
+                    <option value="" selected disabled>-- Chọn một tùy chọn --</option>
+                    <option value="HCNS">HCNS</option>
+                    <option value="Thiết kế 1">Thiết kế 1</option>
+                    <option value="Thiết kế 2">Thiết kế 2</option>
+                    <option value="Kiểm soát & Phát Triển">Kiểm soát & Phát Triển</option>
+                    <option value="Kế toán">Kế toán</option>
+                    <option value="Đấu thầu">Đấu thầu</option>
+                </select>
+                <label for="edit-meetingContent">Nội dung cuộc họp:</label>
+                <textarea name="meetingContent" id="edit-meetingContent" placeholder="Nhập nội dung cuộc họp" rows="4"></textarea><br>
+
+                <br>
+                <button type="submit">Xác nhận</button>
+                <button type="button" onclick="hideForm(this.closest('.modal'))">Tắt</button>
+            </form>
+        </div>
+</div>
+
+<footer class="bg-dark text-center text-white py-2">
+        <p class="mb-0">&copy; 2024 Lịch đặt phòng họp Bcons</p>
+</footer>
 <script>
     const loggedInUser = "{{ session['username'] }}";
     const loggedInUserRole = "{{ session['role'] }}";

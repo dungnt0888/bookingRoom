@@ -1,7 +1,14 @@
 async function loadBookings() {
     try {
         const response = await fetch('/get_bookings');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const bookings = await response.json();
+        if (!Array.isArray(bookings)) {
+            throw new Error("Invalid response format: Expected an array.");
+        }
         //console.log(bookings);
         const activeRoomButton = document.querySelector('.room-select.active');
         if (!activeRoomButton) {
@@ -14,10 +21,6 @@ async function loadBookings() {
         bookings.forEach(booking => {
             if (booking.room_name !== activeRoomName) {
 
-                //console.log("--Skip--");
-                //console.log(booking.room_name);
-                //console.log(activeRoomName);
-                //console.log("-------");
                 return; // Bỏ qua booking này nếu phòng không khớp
             }
             // Giả định bạn đã có hàm để tìm và chọn đúng các ô dựa trên thời gian
@@ -28,8 +31,8 @@ async function loadBookings() {
             const id = `<div style="display: none" class="booking-id" data-id="${booking.booking_id}"></div>`;
             //console.log("ID: " + booking.booking_id);
             const nameContent = `<div class="nameContent wrap-text"><strong>Cuộc họp:</strong> ${booking.booking_name}</div>`;
-            const departmentContent = `<div class="department wrap-text" style="background-color: #07f407; color: black; font-weight: bold; padding: 5px;width: 100%; left: -5px;"><strong>Khối:</strong> ${booking.department}</div>`;
-            const chairmanContent = `<div class="chairman wrap-text"><strong>Chủ trì:</strong> ${booking.chairman}</div>`;
+            const departmentContent = `<div class="department wrap-text" style="background-color: #07f407; color: black; font-weight: bold; padding: 6px;width: 100%; left: 0; min-height: 40px;"><strong>Khối:</strong> ${booking.department}</div>`;
+            const chairmanContent = `<div class="chairman wrap-text"><strong>Chủ trì: ${booking.chairman}</strong></div>`;
             const timeContent = `<div><strong>Thời gian:</strong> ${booking.start_time} - ${booking.end_time}</div>`;
             const meetingContentText = `<div class="meetingContent wrap-text"><strong>Nội dung:</strong> ${booking.meeting_content}</div>`;
             //console.log(booking.username);
@@ -132,7 +135,15 @@ async function loadBookings() {
                                 ${contentParts[index]}
                             </div>
                         `;
-                    } else if (index < contentParts.length) {
+                    } else if (index === 1){
+                        cell.innerHTML = `
+                            <div class="booking-content" data-id="${bookingId}">
+                          
+                                ${contentParts[index]}
+                            </div>
+                            `;
+                    }
+                    else  if (index < contentParts.length) {
                         cell.innerHTML = `
                             <div class="booking-content" data-id="${bookingId}_${index}">
                                 ${contentParts[index]}
