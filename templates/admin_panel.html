@@ -20,6 +20,7 @@
         <button class="tablinks" onclick="openTab(event, 'UserManagement')">User Management</button>
         <button class="tablinks" onclick="openTab(event, 'BookingManagement')">Booking Management</button>
         <button class="tablinks" onclick="openTab(event, 'MeetingManagement')">Meeting Management</button>
+        <button class="tablinks" onclick="openTab(event, 'DepartmentManagement')">Department Management</button>
     </div>
     <div class="container">
     <div id="UserManagement" class="tab-content">
@@ -259,6 +260,34 @@
         {% endif %}
     </div>
     </div>
+    <div id="DepartmentManagement" class="tab-content" style="display: none;">
+    <h2 style="text-align: center; margin-bottom: 10px;">Department Management</h2>
+    <button id="addDepartmentBtn" class="btn add">Add Department</button>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Department Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for department in departments %}
+            <tr>
+                <td>{{ department.id }}</td>
+                <td>
+                    <input type="text" id="department-name-{{ department.id }}" value="{{ department.name }}" style="width: 80%">
+                </td>
+                <td>
+                    <button class="btn edit" onclick="saveDepartment({{ department.id }})">Save</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+    <!-- ================================================================================= -->
     <div id="userFormPopup" class="popup">
         <div class="popup-content">
             <span class="close-btn" onclick="closePopup()">&times;</span>
@@ -309,6 +338,20 @@
                     <textarea id="description" name="description" placeholder="Enter meeting description" rows="3" style="width: 100%; padding: 8px; margin-bottom: 10px;"></textarea>
 
                     <button type="button" class="btn" onclick="submitMeetingForm()">Save</button>
+                </form>
+        </div>
+    </div>
+
+    <div id="departmentFormPopup" class="popup">
+        <div class="popup-content">
+                <button class="close-btn" onclick="closePopup()">✖</button>
+            `   <h2>Create Meeting</h2>
+                <form id="departmentForm" method="post">
+                    <label for="departmentName">Department Name:</label>
+                    <input type="text" id="departmentName" name="departmentName" placeholder="Điền tên khối phòng ban" required style="width: 90%; padding: 8px; margin-bottom: 10px;">
+
+
+                    <button type="submit" class="btn">Save</button>
                 </form>
         </div>
     </div>

@@ -3,6 +3,7 @@ from models.user import User
 from models.booking_room import Booking
 from cnnDatabase import db
 from models.booking_name import Booking_name
+from models.department import Department
 import re
 from datetime import datetime, timezone, timedelta
 from write_logs import log_operation
@@ -33,6 +34,7 @@ def admin_panel():
     user_page = request.args.get('user_page', 1, type=int)  # Phân trang người dùng
     booking_page = request.args.get('booking_page', 1, type=int)  # Phân trang đặt phòng
     name_page = request.args.get('name_page', 1, type=int)  # Phân trang đặt phòng
+    department = Department.query.all()
 
     #Sort
     sort_by = request.args.get('sort_by', 'booking_id')  # Sắp xếp mặc định theo ID
@@ -102,7 +104,8 @@ def admin_panel():
         booking_pagination=booking_pagination,
         names=names,
         name_pagination = name_pagination,
-        search_query=search_query
+        search_query=search_query,
+        departments = department
     )
 
 
@@ -329,3 +332,55 @@ def update_meeting(name_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': 'Database error', 'details': str(e)}), 500
+
+@user_bp.route('/add_department', methods=['POST'])
+def create_department():
+    data = request.get_json()
+    try:
+        if not data.get('name') or not isinstance(data.get('name'), str):
+            return jsonify({"message": "Invalid department name!"}), 400  # Bad Request
+
+        # Kiểm tra department đã tồn tại
+        exist_department = Department.query.filter_by(name=data.get('name')).first()
+        if exist_department:
+            return jsonify({"message": "Department already exists!"}), 409  # Conflict
+
+        # Thêm mới department
+        new_department = Department(name=data.get('name').strip())
+        db.session.add(new_department)
+        db.session.commit()
+
+        return jsonify({"message": "Department added successfully!"}), 201  # Created
+    except Exception as e:
+        # Trả về lỗi server 500
+        return jsonify({"message": f"Failed to add department: {e}"}), 500
+
+
+
+@user_bp.route('/update_department/<int:id>', methods=['POST'])
+def update_department(id):
+    data = request.get_json()
+    try:
+        # Kiểm tra dữ liệu đầu vào
+        if not data or 'name' not in data:
+            return jsonify({'success': False, 'error': 'Invalid input data'}), 400
+        department = Department.query.get(id)
+        if not department:
+            return jsonify({'success': False, 'error': 'Department not found'}), 400
+
+        name = data.get('name')
+        if name:
+            if len(name) > 100:
+                return jsonify({'success': False, 'error': 'Name is too long (max 100 characters)'}), 400
+
+
+            # Cập nhật dữ liệu
+            department.name = name
+            db.session.commit()  # Lưu thay đổi vào database
+
+            # Phản hồi thành công
+            return jsonify({'success': True, 'message': 'Department updated successfully!'}), 200
+
+    except Exception as e:
+        # Trả về lỗi server 500
+        return jsonify({"message": f"Failed to update department: {e}"}), 500

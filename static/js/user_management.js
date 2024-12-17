@@ -96,10 +96,16 @@ document.getElementById('addMeetingBtn').addEventListener('click', function() {
     popup.style.display = 'block';
 });
 
+document.getElementById('addDepartmentBtn').addEventListener('click', function() {
+    const popup = document.getElementById('departmentFormPopup');
+    popup.style.display = 'block';
+});
+
 // Đóng popup
 function closePopup() {
     const userPopup = document.getElementById('userFormPopup');
     const meetingPopup = document.getElementById('meetingFormPopup');
+    const departmentPopup = document.getElementById('departmentFormPopup');
 
     // Hide the user form popup if it exists
     if (userPopup.style.display !== 'none') {
@@ -109,6 +115,9 @@ function closePopup() {
     // Hide the meeting form popup if it exists
     if (meetingPopup.style.display !== 'none') {
         meetingPopup.style.display = 'none';
+    }
+    if (departmentPopup.style.display !== 'none') {
+        departmentPopup.style.display = 'none';
     }
 }
 
@@ -363,4 +372,75 @@ function updateStatus(bookingId, newStatus, user) {
     console.log('Booking ID:', bookingId);
     console.log('Status: ', newStatus);
     document.getElementById('user-approved-'+bookingId).textContent  = user;
+}
+
+document.getElementById("departmentForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const departmentName = document.getElementById("departmentName").value.trim();
+    if (!departmentName) {
+        alert("Please enter a department name.");
+        return;
+    }
+
+    try {
+        const response = await fetch("/user/add_department", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: departmentName }),
+        });
+
+        const result = await response.json();
+
+        if (response.status === 201) {
+            alert(result.message);
+            window.location.reload();
+        } else if (response.status === 409) {
+            alert("Department already exists!");
+        } else {
+            alert(`Error: ${result.message}`);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to add department. Please try again.");
+    }
+});
+
+async function saveDepartment(id) {
+    // Thu thập dữ liệu từ các trường input
+    const department = document.getElementById(`department-name-${id}`).value.trim();
+
+    // Validation dữ liệu trước khi gửi
+    if (!department) {
+        alert('Department name cannot be empty.');
+        return;
+    }
+
+    try {
+        // Gửi dữ liệu đến server
+        const response = await fetch(`/user/update_department/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: department,
+            }),
+        });
+
+        // Chuyển đổi phản hồi thành JSON
+        const data = await response.json();
+
+        // Xử lý kết quả từ server
+        if (response.ok && data.success) {
+            alert('Department updated successfully');
+            window.location.reload(); // Reload lại trang sau khi cập nhật thành công
+        } else {
+            alert(`Failed to update department: ${data.error || 'Unknown error'}`);
+        }
+    } catch (error) {
+        // Xử lý lỗi kết nối hoặc lỗi không mong muốn
+        console.error('Error updating department:', error);
+        alert('An unexpected error occurred while updating the department.');
+    }
 }

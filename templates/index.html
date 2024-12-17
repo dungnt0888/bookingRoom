@@ -177,12 +177,18 @@
                 <label for="department">Khối phòng ban:</label>
                 <select name="department" id="department" style="left: 20px">
                     <option value="" selected disabled>-- Chọn một tùy chọn --</option>
-                    <option value="HCNS">HCNS</option>
-                    <option value="Thiết kế 1">Thiết kế 1</option>
-                    <option value="Thiết kế 2">Thiết kế 2</option>
-                    <option value="Kiểm soát & Phát Triển">Kiểm soát & Phát Triển</option>
-                    <option value="Kế toán">Kế toán</option>
-                    <option value="Đấu thầu">Đấu thầu</option>
+                         {% if departments|length > 0 %}
+                            {% for department in departments %}
+                                <option value="{{ department.name }}">{{ department.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="HCNS">HCNS</option>
+                            <option value="Thiết kế 1">Thiết kế 1</option>
+                            <option value="Thiết kế 2">Thiết kế 2</option>
+                            <option value="Kiểm soát & Phát Triển">Kiểm soát & Phát Triển</option>
+                            <option value="Kế toán">Kế toán</option>
+                            <option value="Đấu thầu">Đấu thầu</option>
+                        {% endif %}
                 </select>
                 <label for="meetingContent">Nội dung cuộc họp:</label>
                 <textarea name="meetingContent" id="meetingContent" placeholder="Nhập nội dung cuộc họp" rows="4"></textarea><br>
@@ -241,12 +247,18 @@
                 <label for="edit-department">Khối phòng ban:</label>
                 <select name="department" id="edit-department" style="left: 20px">
                     <option value="" selected disabled>-- Chọn một tùy chọn --</option>
-                    <option value="HCNS">HCNS</option>
-                    <option value="Thiết kế 1">Thiết kế 1</option>
-                    <option value="Thiết kế 2">Thiết kế 2</option>
-                    <option value="Kiểm soát & Phát Triển">Kiểm soát & Phát Triển</option>
-                    <option value="Kế toán">Kế toán</option>
-                    <option value="Đấu thầu">Đấu thầu</option>
+                         {% if departments|length > 0 %}
+                            {% for department in departments %}
+                                <option value="{{ department.name }}">{{ department.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="HCNS">HCNS</option>
+                            <option value="Thiết kế 1">Thiết kế 1</option>
+                            <option value="Thiết kế 2">Thiết kế 2</option>
+                            <option value="Kiểm soát & Phát Triển">Kiểm soát & Phát Triển</option>
+                            <option value="Kế toán">Kế toán</option>
+                            <option value="Đấu thầu">Đấu thầu</option>
+                        {% endif %}
                 </select>
                 <label for="edit-meetingContent">Nội dung cuộc họp:</label>
                 <textarea name="meetingContent" id="edit-meetingContent" placeholder="Nhập nội dung cuộc họp" rows="4"></textarea><br>
@@ -260,6 +272,7 @@
 
 <footer class="bg-dark text-center text-white py-2">
         <p class="mb-0">&copy; 2024 Lịch đặt phòng họp Bcons</p>
+
 </footer>
 <script>
     const loggedInUser = "{{ session['username'] }}";

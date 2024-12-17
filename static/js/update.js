@@ -7,11 +7,13 @@ document.body.addEventListener("click", function (event) {
         if(departmentElement){
             const bookingContent = departmentElement.closest(".booking-content");
             //console.log("Booking ID:", bookingContent);
-            if(bookingContent){
+
+            const checkInactive = bookingContent.closest(".inactive");
+            if(bookingContent && !checkInactive){
                 // Lấy giá trị `data-id` từ `.booking-content`
                 const bookingId = bookingContent.getElementsByClassName ("booking-id")[0].dataset.id;
                 console.log("Booking ID:", bookingId);
-                openEditForm(bookingId)
+                openEditForm(bookingId);
                 //console.log("Booking ID:", bookingId);
             }
         }

@@ -475,16 +475,17 @@ body {
 
 
 .schedule-table td.booked {
-    background-color: #cde158; /* Màu xanh nhạt */
+    background-color: #e4eaaa; /* Màu xanh nhạt */
     color: #1c2020;
     font-weight: bold;
     pointer-events: none;
+    padding: 0;
 }
 
 .booking-content {
     position: relative;
     padding: 5px;
-    background-color: #d1e7dd;
+    background-color: #d5e73d;
     border-radius: 5px;
 }
 .booking-content div.department {
