@@ -35,6 +35,7 @@ async function loadBookings() {
             const chairmanContent = `<div class="chairman wrap-text"><strong>Chủ trì: ${booking.chairman}</strong></div>`;
             const timeContent = `<div><strong>Thời gian:</strong> ${booking.start_time} - ${booking.end_time}</div>`;
             const meetingContentText = `<div class="meetingContent wrap-text"><strong>Nội dung:</strong> ${booking.meeting_content}</div>`;
+            const userBooking = `<div class="username" style="display: none" data-id="${booking.username}"> ${booking.role}</div>`;
             //console.log(booking.username);
             //console.log(loggedInUser === booking.username);
             let parentTd = null;
@@ -53,11 +54,13 @@ async function loadBookings() {
                     <div class="booking-content" data-id="${bookingId}">
                         ${!hasInactiveClass ? closeButtonHTML : ''} 
                         ${id}
+                        ${userBooking}
                         ${departmentContent}
                         ${nameContent}
                         ${chairmanContent}
                         ${timeContent}
                         ${meetingContentText}
+                        
                     </div>
                 `;
             } else if (selectedCells.length === 2) {
@@ -65,6 +68,7 @@ async function loadBookings() {
                     <div class="booking-content" data-id="${bookingId}_1">
                         ${!hasInactiveClass ? closeButtonHTML : ''} 
                         ${id}
+                        ${userBooking}
                         ${departmentContent}
                         ${nameContent}
                     </div>
@@ -81,6 +85,7 @@ async function loadBookings() {
                     <div class="booking-content" data-id="${bookingId}_1">
                         ${!hasInactiveClass ? closeButtonHTML : ''} 
                         ${id}
+                        ${userBooking}
                         ${departmentContent}
                     </div>
                 `;
@@ -101,6 +106,7 @@ async function loadBookings() {
                     <div class="booking-content" data-id="${bookingId}_1">
                          ${!hasInactiveClass ? closeButtonHTML : ''} 
                          ${id}
+                         ${userBooking}
                         ${departmentContent}
                     </div>
                 `;
@@ -132,6 +138,7 @@ async function loadBookings() {
                             <div class="booking-content" data-id="${bookingId}">
                                 ${!hasInactiveClass ? closeButtonHTML : ''} 
                                 ${id}
+                                ${userBooking}
                                 ${contentParts[index]}
                             </div>
                         `;

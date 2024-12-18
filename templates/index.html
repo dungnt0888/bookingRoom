@@ -27,7 +27,7 @@
         <!-- Kiểm tra nếu người dùng đã đăng nhập -->
     {% if 'username' in session %}
         <p>Chào, {{ session['username'] }} </p>
-        {% if 'role' in session and session['role'] == 'Administrator' %}
+        {% if 'role' in session and (session['role'] == 'Administrator' or session['role'] == 'admin') %}
             <p><a href="{{ url_for('user.admin_panel') }}">Go to Admin Panel</a></p>
         {% endif %}
         <a href="{{ url_for('login.logout') }}">Log out</a>
@@ -215,6 +215,7 @@
         <div class="booking-form-content" style="left: 30%">
             <form id="edit-booking-form-content">
                 <div id="edit-booking-id" class="booking-form-id" style="display: none;"></div>
+                <div id="edit-booking-username" class="booking-form-username" style="display: none;"></div>
                 <h4>Ngày: <span id="edit-booking-date"></span></h4>
                 <p><strong id="edit-room-name">Tên phòng:</strong> </p>
                 <p><strong id="edit-time-range">Thời gian:</strong> </p>

@@ -60,12 +60,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 // Hàm lưu trạng thái nút được chọn vào LocalStorage
 function saveSelectedRoom(roomName) {
-    localStorage.setItem('selectedRoom', roomName);
+    sessionStorage.setItem('selectedRoom', roomName);
 }
 
 // Hàm khôi phục trạng thái từ LocalStorage
 function restoreSelectedRoom() {
-    const selectedRoom = localStorage.getItem('selectedRoom');
+    const selectedRoom = sessionStorage.getItem('selectedRoom');
     if (selectedRoom) {
         roomButtons.forEach(button => {
             if (button.textContent.trim() === selectedRoom) {

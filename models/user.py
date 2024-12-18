@@ -1,5 +1,5 @@
 from email.policy import default
-
+from sqlalchemy.orm import relationship
 from cnnDatabase import db
 
 
@@ -13,6 +13,9 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)  # Mật khẩu (hashed)
     role = db.Column(db.String(50), nullable=False)  # Vai trò (admin, user, etc.)
     user_status = db.Column(db.String(20), default='Active')
+
+    # Quan hệ với bảng Booking
+    bookings = relationship('Booking', back_populates='user', cascade='all, delete-orphan')
 
     def __init__(self, username, firstname, lastname, email, password, role, user_status= 'Active'):
         self.username = username

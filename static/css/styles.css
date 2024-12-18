@@ -12,10 +12,12 @@ body {
     max-width: 1400px;
 }
 .schedule-wrapper{
-    max-width: 1350px;
+    max-width: 100%;
     position: relative;
-    overflow-x: auto;
+    overflow-x: auto; /* Hiển thị thanh cuộn ngang khi cần */
+    overflow-y: auto; /* Hiển thị thanh cuộn dọc khi cần */
     background-color: white;
+    -webkit-overflow-scrolling: touch; /* Hỗ trợ cuộn mượt trên thiết bị cảm ứng */
 }
 
 /* ========== Top-Bar Styles ========== */
@@ -144,14 +146,14 @@ body {
 
 /* ========== Schedule Table Styles ========== */
 .schedule-table {
+    min-width: 1280px;
     width: 100%;
-    max-width: 1250px;
     border-collapse: collapse;
     margin-top: 5px;
     border: 1px solid #9fa190; /* Viền bao quanh bên ngoài bảng */
     border-spacing: 0; /* Loại bỏ khoảng cách giữa các ô nếu cần */
     overflow: hidden; /* Ngăn phần tử con đè lên viền */
-    table-layout: fixed; /* Đảm bảo các cột có kích thước cố định */
+    table-layout: auto; /* Đảm bảo các cột có kích thước cố định */
 }
 
 .schedule-table th, .schedule-table td {

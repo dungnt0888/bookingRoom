@@ -6,15 +6,21 @@ document.body.addEventListener("click", function (event) {
         //openEditForm(departmentElement); // Gọi hàm chỉnh sửa với phần tử .department
         if(departmentElement){
             const bookingContent = departmentElement.closest(".booking-content");
-            //console.log("Booking ID:", bookingContent);
-
-            const checkInactive = bookingContent.closest(".inactive");
-            if(bookingContent && !checkInactive){
-                // Lấy giá trị `data-id` từ `.booking-content`
-                const bookingId = bookingContent.getElementsByClassName ("booking-id")[0].dataset.id;
-                console.log("Booking ID:", bookingId);
-                openEditForm(bookingId);
-                //console.log("Booking ID:", bookingId);
+            //console.log("bookingContent:", bookingContent);
+            const user = bookingContent.querySelector(".username");
+            //console.log("user:", user);
+            const userId = user.getAttribute("data-id").trim();
+            //console.log("user:", userId === loggedInUser);
+            // Lấy nội dung văn bản và kiểm tra điều kiện
+            if (userId === loggedInUser.trim() || loggedInUserRole.trim() === 'Administrator') {
+                const checkInactive = bookingContent.closest(".inactive");
+                if (bookingContent && !checkInactive) {
+                    // Lấy giá trị `data-id` từ `.booking-content`
+                    const bookingId = bookingContent.getElementsByClassName("booking-id")[0].dataset.id;
+                    console.log("Booking ID:", bookingId);
+                    openEditForm(bookingId);
+                    //console.log("Booking ID:", bookingId);
+                }
             }
         }
         event.stopPropagation(); // Ngăn sự kiện lan đến các thành phần cha
@@ -47,6 +53,7 @@ async function openEditForm(bookingId) {
         document.getElementById('edit-meetingContent').value = data.meeting_content || '';
         document.getElementById('edit-start-time').value = data.start_time || '';
         document.getElementById('edit-end-time').value = data.end_time || '';
+        document.getElementById('edit-booking-username').innerText = data.username || '';
 
         // Hiển thị modal chỉnh sửa
         document.getElementById('edit-modal').style.display = 'block';

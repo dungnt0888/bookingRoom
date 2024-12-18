@@ -19,6 +19,7 @@ migrate = Migrate()
 
 
 
+
 def init_db(app):
     """Hàm để khởi tạo database với một Flask app."""
     # Lấy URL từ biến môi trường hoặc sử dụng cấu hình local
@@ -30,6 +31,7 @@ def init_db(app):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     migrate.init_app(app, db)
+    print(f"Connecting to database: {app.config['SQLALCHEMY_DATABASE_URI']}")
 
 @contextmanager
 def get_connection():

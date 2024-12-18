@@ -6,6 +6,7 @@ from sqlalchemy.sql.functions import current_time
 from log_in import authenticate_user
 from save_booking import save_booking
 from models.booking_room import Booking
+from models.user import User
 from cnnDatabase import init_db, db
 from delete_booking import booking_delete_bp  # Import blueprint từ booking_delete.py
 from user_logon import login_bp
@@ -80,7 +81,7 @@ def get_bookings():
     """Lấy tất cả các booking chưa bị xóa từ cơ sở dữ liệu và trả về dưới dạng JSON."""
     try:
         # Lọc các booking chưa bị xóa
-        bookings = Booking.query.filter_by(isDeleted=False).all()
+        bookings = Booking.query.filter_by(isDeleted=False).join(User, Booking.username == User.username).all()
         bookings_data = []
 
         for booking in bookings:
@@ -94,7 +95,8 @@ def get_bookings():
                 "end_time": booking.end_time.strftime('%H:%M') if booking.end_time else None,
                 "reservation_date": booking.reservation_date.strftime("%d/%m/%Y") if booking.reservation_date else None,
                 "room_name": booking.room_name,
-                "username": booking.username
+                "username": booking.username,
+                "role": booking.user.role
             })
         #print("Dữ liệu bookings:", bookings_data)  # Ghi lại dữ liệu booking trước khi trả về
         return jsonify(bookings_data)

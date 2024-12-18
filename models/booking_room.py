@@ -1,6 +1,7 @@
 from cnnDatabase import db
 from datetime import datetime
 from sqlalchemy.orm import relationship
+from sqlalchemy.schema import ForeignKey
 
 class Booking(db.Model):
     __tablename__ = 'booking'
@@ -17,7 +18,15 @@ class Booking(db.Model):
     room_name = db.Column(db.String(100), nullable=False)
     isDeleted = db.Column(db.Boolean, default=False)  # Cột đánh dấu đã xóa (false là chưa xóa)
     date_deleted = db.Column(db.DateTime, nullable=True)  # Thời gian bị xóa
-    username = db.Column(db.String(50), nullable=False)
+    # Thêm khóa ngoại cho username
+    username = db.Column(
+        db.String(50),
+        db.ForeignKey('user_table.username', ondelete='CASCADE'),
+        nullable=False
+    )
+
+    # Quan hệ ngược với bảng User
+    user = relationship('User', back_populates='bookings')
 
     status_logs = relationship(
         "StatusBooking",
