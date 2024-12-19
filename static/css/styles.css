@@ -21,8 +21,10 @@ body {
 }
 
 /* ========== Top-Bar Styles ========== */
+/* Nền và đổ bóng cho toàn top-bar */
+/*
 .top-bar {
-    /* Nền và đổ bóng cho toàn top-bar */
+
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -37,6 +39,26 @@ body {
     top: 0;
     color: #fff;
 }
+*/
+
+
+.top-bar {
+    display: flex;
+    /*flex-direction: row; */ /* Sắp xếp các phần tử theo chiều dọc */
+    justify-content: center; /* Căn giữa các phần tử con theo trục dọc */
+    align-items: center; /* Căn giữa nội dung theo trục ngang */
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #d6ea54, #d2f106);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    color: #fff;
+    gap: 10px; /* Tạo khoảng cách giữa các phần tử */
+}
+
 
 /* Tiêu đề */
 .title {
@@ -48,7 +70,8 @@ body {
 
 /* Nút trong top-bar */
 .room-buttons button, .time-navigation button {
-    margin: 0 5px;
+    margin: 0 5px 5px;
+
     padding: 8px 12px;
     background-color: rgb(77, 204, 104);
     border: 1px solid #231717;
@@ -76,8 +99,11 @@ body {
 
 /* Tùy chỉnh nút "Đặt Phòng" */
 .room-buttons button:last-child {
-    margin-top: 8px;
-    margin-left: 20px; /* Tăng khoảng cách với các nút khác */
+    margin: auto;
+    margin-top: 15px;
+    justify-content: center;
+    display: grid;
+    /*margin-left: 20px;  Tăng khoảng cách với các nút khác */
     padding: 10px 20px; /* Kích thước lớn hơn */
     font-size: 16px;
     font-weight: bold;
@@ -241,6 +267,7 @@ body {
 /* Căn đều các cột thứ */
 .schedule-table th:not(:first-child), .schedule-table td:not(:first-child) {
     width: auto; /* Các cột còn lại sẽ tự động chia đều không gian */
+    min-width: 80px;
 }
 
 .schedule-table th {
@@ -623,6 +650,13 @@ body {
     padding: 5px;
 }
 
+.sticky-col {
+    position: sticky !important;
+    left: 0; /* Cố định cột đầu tiên tại vị trí bên trái */
+    /*background-color: #f1f1f1;  Tô màu nền để dễ nhận biết */
+    z-index: 2; /* Đảm bảo cột cố định luôn ở trên các phần tử khác */
+}
+
 /* ========== Responsive Design ========== */
 @media (max-width: 768px) {
     .top-bar {
@@ -643,12 +677,18 @@ body {
         max-width: 100%;
         margin: 0 15px;
     }
+
+    .logo{
+         display: none;
+    }
 }
 
 @media (max-width: 480px) {
     .title {
         font-size: 18px;
     }
+
+
 
     .room-buttons button {
         font-size: 12px;
@@ -659,4 +699,15 @@ body {
         font-size: 10px;
         padding: 5px;
     }
+}
+
+.logo {
+    background-image: url('/static/img/logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 100px;
+    width: 150px;
+    display: block; /* Đảm bảo logo là một khối */
+    position: relative;
+    top: 18px;
 }

@@ -13,7 +13,9 @@
 <div class="container">
 
     <!-- Phần tiêu đề và các button phòng -->
+
     <div class="top-bar">
+        <div class="logo"></div>
         <div class="title">Lịch Đặt Phòng Họp</div>
         <div class="room-buttons">
             <button class="room-select">Phòng họp nhỏ lầu 1</button>
@@ -30,13 +32,13 @@
         {% if 'role' in session and (session['role'] == 'Administrator' or session['role'] == 'admin') %}
             <p><a href="{{ url_for('user.admin_panel') }}">Go to Admin Panel</a></p>
         {% endif %}
-        <a href="{{ url_for('login.logout') }}">Log out</a>
+        <p><a href="{{ url_for('login.logout') }}">Log out</a></p>
     {% else %}
         <!-- Form Đăng Nhập -->
         <div class="login">
             <p><strong>Login </strong></p>
             <form action="{{ url_for('login.login') }}" method="post">
-                <input type="text" name="username" placeholder="Username/admin" required><br>
+                <input type="text" name="username" placeholder="Username/admin" required/><br>
                 <input type="password" name="password" placeholder="Password/admin1234" required><br>
                 <button type="submit">Login</button>
             </form>
@@ -99,7 +101,7 @@
         <tbody>
             {% for time in time_slots %}
             <tr class="{% if '12:00-13:30' in time %}time-break{% endif %}">
-                <td>{{ time }}</td>
+                <td class="sticky-col">{{ time }}</td>
                 <td id="monday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
                 class="{% if time in inactive_slots[0] %}inactive{% endif %}">
                 </td>

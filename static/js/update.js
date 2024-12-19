@@ -53,8 +53,8 @@ async function openEditForm(bookingId) {
         document.getElementById('edit-meetingContent').value = data.meeting_content || '';
         document.getElementById('edit-start-time').value = data.start_time || '';
         document.getElementById('edit-end-time').value = data.end_time || '';
-        document.getElementById('edit-booking-username').innerText = data.username || '';
-
+        document.getElementById('edit-booking-username').innerText = data.role || '';
+        document.getElementById('edit-booking-username').setAttribute("data-id", data.username);
         // Hiển thị modal chỉnh sửa
         document.getElementById('edit-modal').style.display = 'block';
 
@@ -130,7 +130,10 @@ document.getElementById("edit-booking-form-content").addEventListener("submit", 
     // Kiểm tra dữ liệu (validate)
     const startTime = new Date(`1970-01-01T${formData.start_time}:00`);
     const endTime = new Date(`1970-01-01T${formData.end_time}:00`);
-
+    const [day, month, year] = formData.reservation_date.split('/'); // Tách chuỗi ngày
+    const combinedDateTime = new Date(`${year}-${month}-${day}T${formData.start_time}`);
+    const currentDateTime = new Date(new Date().toISOString());
+    const gmt7DateTime = new Date(currentDateTime.getTime() + (7 * 60 * 60 * 1000));
     if (!formData.start_time || !formData.end_time || startTime >= endTime) {
         //console.log("start_time ", formData.start_time);
         //console.log("end_time ", formData.end_time);
@@ -138,8 +141,13 @@ document.getElementById("edit-booking-form-content").addEventListener("submit", 
         alert("Vui lòng chọn thời gian hợp lệ. Thời gian kết thúc phải lớn hơn thời gian bắt đầu.");
         return;
     }
+    if (combinedDateTime < gmt7DateTime) {
+        alert("Không thể sửa vào khoảng thời gian đã qua.");
+        event.preventDefault();
+        return;
+    }
 
-    if(formData.booking_name === "Họp giao ban" && (formData.start_time !=="8:30" || formData.start_time !=="17:00")){
+    if(formData.booking_name === "Họp giao ban" && !(formData.start_time ==="8:30" || formData.start_time ==="17:00")){
          alert("Vui lòng chọn thời gian hợp lệ. Thời gian họp giao ban chỉ đầu giờ cuối giờ.");
          return;
     }

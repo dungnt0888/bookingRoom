@@ -60,9 +60,9 @@ async function loadBookings() {
                         ${chairmanContent}
                         ${timeContent}
                         ${meetingContentText}
-                        
                     </div>
                 `;
+
             } else if (selectedCells.length === 2) {
                 selectedCells[0].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_1">
@@ -71,13 +71,15 @@ async function loadBookings() {
                         ${userBooking}
                         ${departmentContent}
                         ${nameContent}
-                    </div>
-                `;
-                selectedCells[1].innerHTML = `
-                    <div class="booking-content" data-id="${bookingId}_2">
                         ${chairmanContent}
                         ${timeContent}
                         ${meetingContentText}
+                    </div>
+                `;
+
+                selectedCells[1].innerHTML = `
+                    <div class="booking-content" data-id="${bookingId}_2">
+                        
                     </div>
                 `;
             } else if (selectedCells.length === 3) {
@@ -87,18 +89,20 @@ async function loadBookings() {
                         ${id}
                         ${userBooking}
                         ${departmentContent}
+                        ${nameContent}
+                        ${chairmanContent}
+                        ${timeContent}
+                        ${meetingContentText}
                     </div>
                 `;
                 selectedCells[1].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_2">
-                        ${nameContent}
+                        
                     </div>
                 `;
                 selectedCells[2].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_3">
-                        ${chairmanContent}
-                        ${timeContent}
-                        ${meetingContentText}
+                        
                     </div>
                 `;
             } else if (selectedCells.length === 4) {
@@ -107,23 +111,26 @@ async function loadBookings() {
                          ${!hasInactiveClass ? closeButtonHTML : ''} 
                          ${id}
                          ${userBooking}
-                        ${departmentContent}
+                         ${departmentContent}
+                         ${nameContent}
+                         ${chairmanContent}
+                         ${timeContent}
+                         ${meetingContentText}
                     </div>
                 `;
                 selectedCells[1].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_2">
-                        ${nameContent}
+                        
                     </div>
                 `;
                 selectedCells[2].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_3">
-                        ${chairmanContent}
+                        
                     </div>
                 `;
                 selectedCells[3].innerHTML = `
                     <div class="booking-content" data-id="${bookingId}_4">
-                        ${timeContent}
-                        ${meetingContentText}
+                        
                     </div>
                 `;
             } else {
@@ -137,23 +144,28 @@ async function loadBookings() {
                         cell.innerHTML = `
                             <div class="booking-content" data-id="${bookingId}">
                                 ${!hasInactiveClass ? closeButtonHTML : ''} 
-                                ${id}
-                                ${userBooking}
-                                ${contentParts[index]}
+                                 ${id}
+                                 ${userBooking}
+                                 ${departmentContent}
+                                 ${nameContent}
+                                 ${chairmanContent}
+                                 ${timeContent}
+                                 ${meetingContentText}
+                                    
                             </div>
-                        `;
+                        `;/*${contentParts[index]}*/
                     } else if (index === 1){
                         cell.innerHTML = `
                             <div class="booking-content" data-id="${bookingId}">
                           
-                                ${contentParts[index]}
+                                
                             </div>
                             `;
                     }
                     else  if (index < contentParts.length) {
                         cell.innerHTML = `
                             <div class="booking-content" data-id="${bookingId}_${index}">
-                                ${contentParts[index]}
+                                
                             </div>
                         `;
                     } else {
@@ -162,7 +174,16 @@ async function loadBookings() {
                 });
 
             }
+            if(selectedCells.length >0){
+                syncDivHeightWithTd(selectedCells);
+            }
+
+
+
+
             selectedCells.forEach(cell => cell.classList.add('booked'));
+
+
         });
     } catch (error) {
         console.error("Failed to load bookings:", error);
@@ -287,4 +308,17 @@ function parseDate(dateString) {
     const [day, month, year] = dateString.split('/');
     // Tạo đối tượng Date (tháng trong JavaScript bắt đầu từ 0)
     return new Date(year, month - 1, day);
+}
+
+function syncDivHeightWithTd(selectedCells) {
+    const observer = new ResizeObserver(() => {
+        selectedCells.forEach(td => {
+            const div = td.querySelector('.booking-content');
+            if (div) {
+                div.style.height = `${td.offsetHeight}px`;
+            }
+        });
+    });
+
+    selectedCells.forEach(td => observer.observe(td));
 }

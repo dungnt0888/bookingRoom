@@ -5,6 +5,7 @@ from save_booking import save_booking
 from send_email import EmailHandler
 from models.booking_name import Booking_name
 from datetime import datetime, timedelta
+import pytz
 from zoneinfo import ZoneInfo
 import logging
 from sqlalchemy import and_, or_
@@ -121,6 +122,7 @@ def get_booking(booking_id):
             "room_name": booking.room_name,
             "date_booking": date_booking_str,
             "username": booking.username,
+            "role": booking.user.role,
         })
     else:
         return jsonify({"message": "Booking not found or deleted."}), 404
@@ -129,8 +131,8 @@ def get_booking(booking_id):
 @booking_bp.route('/edit_booking/<int:booking_id>', methods=['PUT'])
 def edit_booking(booking_id):
     """
-        API để chỉnh sửa thông tin đặt phòng dựa trên booking_id.
-        """
+    API để chỉnh sửa thông tin đặt phòng dựa trên booking_id.
+    """
     # Lấy dữ liệu JSON từ request
     data = request.get_json()
     try:
@@ -138,13 +140,24 @@ def edit_booking(booking_id):
         if not booking:
             return jsonify({"message": "Booking not found"}), 404
 
-        # Chuyển đổi dữ liệu ngày và giờ thành object
-        reservation_date_obj = datetime.strptime(data.get('reservation_date'), '%d/%m/%Y').date()
-        start_time_obj = datetime.strptime(data.get('start_time'), '%H:%M').time()
-        end_time_obj = datetime.strptime(data.get('end_time'), '%H:%M').time()
+        # Lấy múi giờ GMT+7
+        gmt7 = pytz.timezone('Asia/Bangkok')
 
+        # Kiểm tra và chuyển đổi dữ liệu ngày, giờ
+        reservation_date_obj = datetime.strptime(data.get('reservation_date', booking.reservation_date.strftime('%d/%m/%Y')), '%d/%m/%Y').date()
+        start_time_obj = datetime.strptime(data.get('start_time', booking.start_time.strftime('%H:%M')), '%H:%M').time()
+        end_time_obj = datetime.strptime(data.get('end_time', booking.end_time.strftime('%H:%M')), '%H:%M').time()
+
+        # Kết hợp ngày và giờ để kiểm tra thời gian đã qua
+        combined_start_datetime = gmt7.localize(datetime.combine(reservation_date_obj, start_time_obj))
+        current_datetime = datetime.now(gmt7)
+
+        if combined_start_datetime < current_datetime:
+            return jsonify({"message": "Không thể chỉnh sửa vào khoảng thời gian đã qua."}), 400
+
+        # Kiểm tra xung đột phòng
         existing_booking = Booking.query.filter_by(
-            room_name=data.get('room_name'),
+            room_name=data.get('room_name', booking.room_name),
             reservation_date=reservation_date_obj
         ).filter(
             and_(
@@ -152,7 +165,7 @@ def edit_booking(booking_id):
                     (Booking.start_time <= start_time_obj) & (Booking.end_time > start_time_obj),
                     (Booking.start_time < end_time_obj) & (Booking.end_time >= end_time_obj)
                 ),
-                Booking.booking_id != booking_id,  # Loại trừ chính booking hiện tại
+                Booking.booking_id != booking_id,
                 Booking.isDeleted != True
             )
         ).first()
@@ -161,17 +174,67 @@ def edit_booking(booking_id):
             return jsonify({
                 "message": "Không thể chỉnh sửa. Thời gian này đã có phòng được đặt."
             }), 400
-            # Cập nhật thông tin booking
 
+        # Lưu dữ liệu cũ
+        old_data = {
+            "booking_id": booking_id,
+            "booking_name": booking.booking_name,
+            "department": booking.department,
+            "chairman": booking.chairman,
+            "start_time": booking.start_time.strftime('%H:%M'),
+            "end_time": booking.end_time.strftime('%H:%M'),
+            "reservation_date": booking.reservation_date.strftime('%d/%m/%Y'),
+            "meeting_content": booking.meeting_content,
+            "room_name": booking.room_name,
+            "username": booking.username,
+            "role": booking.user.role
+        }
+
+        # Cập nhật thông tin booking
         booking.chairman = data.get('chairman', booking.chairman)
         booking.booking_name = data.get('booking_name', booking.booking_name)
         booking.department = data.get('department', booking.department)
         booking.meeting_content = data.get('meeting_content', booking.meeting_content)
-        booking.start_time = data.get('start_time', booking.start_time)
-        booking.end_time = data.get('end_time', booking.end_time)
+        booking.start_time = start_time_obj
+        booking.end_time = end_time_obj
+        booking.reservation_date = reservation_date_obj
+
+        # Lưu dữ liệu mới
+        new_data = {
+            "booking_id": booking.booking_id,
+            "booking_name": booking.booking_name,
+            "department": booking.department,
+            "chairman": booking.chairman,
+            "start_time": booking.start_time.strftime('%H:%M'),
+            "end_time": booking.end_time.strftime('%H:%M'),
+            "reservation_date": booking.reservation_date.strftime('%d/%m/%Y'),
+            "meeting_content": booking.meeting_content,
+            "room_name": booking.room_name,
+            "username": booking.username,
+            "role": booking.user.role
+        }
+
+        # Ghi log
+        log_operation(
+            table_name="booking",
+            operation_type="EDIT",
+            user_name=data.get('username'),
+            record_id=booking_id,
+            old_data=old_data,
+            new_data=new_data,
+            additional_info="Booking edited successfully"
+        )
 
         # Commit thay đổi
         db.session.commit()
         return jsonify({"message": "Booking updated successfully"}), 200
+
     except Exception as e:
+        log_operation(
+            table_name="booking",
+            operation_type="EDIT",
+            user_name=data.get('username'),
+            record_id=booking_id,
+            additional_info=f"Booking edit failed: {str(e)}"
+        )
         return jsonify({"message": f"Failed to save booking: {e}"}), 500
