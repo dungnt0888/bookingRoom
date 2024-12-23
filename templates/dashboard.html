@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Tổng số phòng đặt -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{ total_bookings }}</h3>
+                <p>Các cuộc họp</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <a href="{{ url_for('user.admin_panel') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    <!-- Tổng số phòng ban -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ total_department }}</h3>
+                <p>Khối phòng ban</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <a href="{{ url_for('user.admin_panel') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    <!-- Số cuộc họp -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ total_b_name }}</h3>
+                <p>Cuộc họp</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-door-open"></i>
+            </div>
+            <a href="{{ url_for('user.admin_panel') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <!-- Bộ lọc thời gian -->
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Filter by Time</h3>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary time-filter" data-time="day">Today</button>
+                <button class="btn btn-secondary time-filter" data-time="week">This Week</button>
+                <button class="btn btn-info time-filter" data-time="month">This Month</button>
+                <button class="btn btn-success time-filter" data-time="year">This Year</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Biểu đồ -->
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Booking Trends</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="bookingChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    document.querySelectorAll('.time-filter').forEach(button => {
+        button.addEventListener('click', () => {
+            const timeFilter = button.getAttribute('data-time');
+
+            // Gửi yêu cầu Ajax để lấy dữ liệu theo thời gian
+            fetch(`/dashboard/filter?time=${timeFilter}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Cập nhật biểu đồ với dữ liệu mới
+                    bookingChart.data.labels = data.labels;
+                    bookingChart.data.datasets = data.datasets;
+                    bookingChart.update();
+                });
+        });
+    });
+    var ctx = document.getElementById('bookingChart').getContext('2d');
+
+    // Labels cho từng phòng
+    var roomLabels = {{ labels_rooms | tojson | safe }};
+    // Labels cho từng bộ phận
+    var departmentLabels = {{ labels_departments | tojson | safe }};
+    // Dữ liệu dạng ma trận
+    var dataMatrix = {{ data_matrix | tojson | safe }};
+
+    // Chuyển dữ liệu dạng ma trận thành datasets cho Chart.js
+    var datasets = departmentLabels.map((department, index) => ({
+        label: department, // Tên bộ phận
+        data: roomLabels.map(room => dataMatrix[room][index]), // Dữ liệu cho từng phòng
+        backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.6)`,
+        borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`,
+        borderWidth: 1
+    }));
+
+    // Khởi tạo biểu đồ
+    var bookingChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: roomLabels, // Tên phòng
+            datasets: datasets  // Dữ liệu cho từng bộ phận
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { stacked: true },
+                y: { beginAtZero: true, stacked: true }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

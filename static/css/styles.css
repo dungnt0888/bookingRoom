@@ -361,6 +361,7 @@ body {
     color: #999;  /* Màu chữ xám */
     pointer-events: none !important;  /* Vô hiệu hóa tương tác chuột */
     user-select: none;  /* Không cho phép chọn văn bản */
+
 }
 
 
@@ -710,4 +711,13 @@ body {
     display: block; /* Đảm bảo logo là một khối */
     position: relative;
     top: 18px;
+}
+
+.schedule-table .today-column:hover {
+    background-color: #def630; /* Đổi màu nền khi hover */
+    color: white; /* Đổi màu chữ */
+    transform: scale(1.1); /* Phóng to nhẹ khi hover */
+    cursor: pointer; /* Đổi con trỏ thành bàn tay */
+    z-index: 10;
+    transition: all 0.3s ease;
 }

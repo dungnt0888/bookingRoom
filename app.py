@@ -22,6 +22,7 @@ import atexit
 from sqlalchemy import inspect
 from view_logs import admin_bp
 from models.department import Department
+from dashboard import dashboard_bp
 
 
 app = Flask(__name__)
@@ -68,6 +69,8 @@ app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(booking_bp, url_prefix='/api/booking')
 
 app.register_blueprint(admin_bp, url_prefix='/admin')
+
+app.register_blueprint(dashboard_bp)
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(delete_expired_bookings, 'interval', days=1)

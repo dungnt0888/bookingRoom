@@ -6,6 +6,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 </head>
 <body>
@@ -60,16 +61,19 @@
 
     <!-- Phần điều hướng thời gian -->
     <div class="time-navigation">
-    <a href="{{ url_for('index', offset=offset-1) }}">
-        <button>Tuần trước</button>
-    </a>
-    <a href="{{ url_for('index', offset=0) }}">
-        <button class="current-week">Tuần này</button>
-    </a>
-    <a href="{{ url_for('index', offset=offset + 1) }}">
-        <button>Tuần sau</button>
-    </a>
-    <span>{{ week_label }}: {{ week_range }}</span>
+        <a href="{{ url_for('index', offset=offset-1) }}">
+            <button id="btn-lastWeek">Tuần trước</button>
+        </a>
+        <a href="{{ url_for('index', offset=0) }}">
+            <button class="current-week">Tuần này</button>
+        </a>
+        <a href="{{ url_for('index', offset=offset + 1) }}">
+            <button id="btn-nextWeek">Tuần sau</button>
+        </a>
+        <span>{{ week_label }}: {{ week_range }}</span>
+
+
+
     </div>
 
     <!-- Bảng lịch đặt phòng -->
@@ -78,22 +82,22 @@
         <thead>
             <tr>
                 <th>Giờ</th>
-                <th class="{% if week_days[0] < current_date %}inactive{% elif week_days[0] == current_date %}today-column{% endif %}">
+                <th class="{% if week_days[0] < current_date %}inactive{% elif week_days[0] == current_date %}today-column{% endif %}" >
                     Thứ 2<br><span>{{ week_days[0].strftime('%d/%m/%Y') }}</span>
                 </th>
-                <th class="{% if week_days[1] < current_date %}inactive{% elif week_days[1] == current_date %}today-column{% endif %}">
+                <th class="{% if week_days[1] < current_date %}inactive{% elif week_days[1] == current_date %}today-column{% endif %}" >
                     Thứ 3<br><span>{{ week_days[1].strftime('%d/%m/%Y') }}</span>
                 </th>
-                <th class="{% if week_days[2] < current_date %}inactive{% elif week_days[2] == current_date %}today-column{% endif %}">
+                <th class="{% if week_days[2] < current_date %}inactive{% elif week_days[2] == current_date %}today-column{% endif %}" >
                     Thứ 4<br><span>{{ week_days[2].strftime('%d/%m/%Y') }}</span>
                 </th>
-                <th class="{% if week_days[3] < current_date %}inactive{% elif week_days[3] == current_date %}today-column{% endif %}">
+                <th class="{% if week_days[3] < current_date %}inactive{% elif week_days[3] == current_date %}today-column{% endif %}" >
                     Thứ 5<br><span>{{ week_days[3].strftime('%d/%m/%Y') }}</span>
                 </th>
-                <th class="{% if week_days[4] < current_date %}inactive{% elif week_days[4] == current_date %}today-column{% endif %}">
+                <th class="{% if week_days[4] < current_date %}inactive{% elif week_days[4] == current_date %}today-column{% endif %}" >
                     Thứ 6<br><span>{{ week_days[4].strftime('%d/%m/%Y') }}</span>
                 </th>
-                <th class="{% if week_days[5] < current_date %}inactive{% elif week_days[5] == current_date %}today-column{% endif %}">
+                <th class="{% if week_days[5] < current_date %}inactive{% elif week_days[5] == current_date %}today-column{% endif %}" >
                     Thứ 7<br><span>{{ week_days[5].strftime('%d/%m/%Y') }}</span>
                 </th>
             </tr>
@@ -103,22 +107,22 @@
             <tr class="{% if '12:00-13:30' in time %}time-break{% endif %}">
                 <td class="sticky-col">{{ time }}</td>
                 <td id="monday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                class="{% if time in inactive_slots[0] %}inactive{% endif %}">
+                class="{% if time in inactive_slots[0] %}inactive{% endif %}" >
                 </td>
                 <td id="tuesday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if time in inactive_slots[1] %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[1] %}inactive{% endif %}" >
                 </td>
                 <td id="wednesday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if time in inactive_slots[2] %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[2] %}inactive{% endif %}" >
                 </td>
                 <td id="thursday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if time in inactive_slots[3] %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[3] %}inactive{% endif %}" >
                 </td>
                 <td id="friday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if time in inactive_slots[4] %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[4] %}inactive{% endif %}" >
                 </td>
                 <td id="saturday_{{ time.split('-')[0].replace(':', '').zfill(4) }}{{ time.split('-')[1].replace(':', '').zfill(4) }}"
-                    class="{% if time in inactive_slots[5] %}inactive{% endif %}">
+                    class="{% if time in inactive_slots[5] %}inactive{% endif %}" >
                 </td>
             </tr>
             {% endfor %}
@@ -281,11 +285,16 @@
     const loggedInUser = "{{ session['username'] }}";
     const loggedInUserRole = "{{ session['role'] }}";
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="{{ url_for('static', filename='js/highlight.js') }}"></script>
 <script src="{{ url_for('static', filename='js/booking.js') }}"></script>
 <script src="{{ url_for('static', filename='js/saving.js') }}"></script>
 <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
 <script src="{{ url_for('static', filename='js/update.js') }}"></script>
+<script>
+
+</script>
 <!--<script src="{{ url_for('static', filename='js/index.js') }}"></script> -->
 </body>
 </html>

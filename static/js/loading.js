@@ -182,7 +182,7 @@ async function loadBookings() {
 
 
             selectedCells.forEach(cell => cell.classList.add('booked'));
-
+            toggleThCell();
 
         });
     } catch (error) {
@@ -321,4 +321,75 @@ function syncDivHeightWithTd(selectedCells) {
     });
 
     selectedCells.forEach(td => observer.observe(td));
+}
+
+
+document.body.addEventListener("click", function (event) {
+    // Kiểm tra xem phần tử được click có phải là cột cần xử lý hay không
+    const clickedColumn = event.target.closest(".today-column");
+    //console.log("Bạn đã click vào:", clickedColumn);
+
+    if (clickedColumn) {
+        const table = clickedColumn.closest(".schedule-table");
+        const btnLastWeek = document.getElementById("btn-lastWeek");
+        // Toggle trạng thái disabled
+        btnLastWeek.disabled = !btnLastWeek.disabled;
+
+        // Lưu trạng thái vào sessionStorage
+        sessionStorage.setItem("btnLastWeekDisabled", btnLastWeek.disabled);
+
+        if (table) {
+            const inactiveHeaders = table.querySelectorAll("th.inactive");
+            if (inactiveHeaders.length > 0) {
+                inactiveHeaders.forEach((th, index) => {
+                    // Tìm vị trí của cột
+                    const colIndex = Array.from(th.parentNode.children).indexOf(th);
+
+                    // Kiểm tra trạng thái của cột từ sessionStorage
+                    const isHidden = sessionStorage.getItem(`inactiveColumn-${colIndex}`);
+                    if (isHidden) {
+                        // Hiện lại cột
+                        th.style.display = "";
+                        sessionStorage.removeItem(`inactiveColumn-${colIndex}`);
+                        // Hiện tất cả các <td> trong cột
+                        table.querySelectorAll(`tbody tr`).forEach((row) => {
+                            row.children[colIndex].style.display = "";
+                        });
+                    } else {
+                        // Ẩn cột
+                        th.style.display = "none";
+                        sessionStorage.setItem(`inactiveColumn-${colIndex}`, true);
+                        // Ẩn tất cả các <td> trong cột
+                        table.querySelectorAll(`tbody tr`).forEach((row) => {
+                            row.children[colIndex].style.display = "none";
+                        });
+                    }
+                });
+            }
+        }
+    }
+});
+
+function toggleThCell(){
+    const table = document.querySelector(".schedule-table");
+    // Lấy trạng thái từ sessionStorage
+    const isDisabled = sessionStorage.getItem("btnLastWeekDisabled") === "true";
+    const btnLastWeek = document.getElementById("btn-lastWeek");
+    // Áp dụng trạng thái
+    btnLastWeek.disabled = isDisabled;
+    if (table) {
+        const inactiveHeaders = table.querySelectorAll("th.inactive");
+        inactiveHeaders.forEach((th, index) => {
+
+            const colIndex = Array.from(th.parentNode.children).indexOf(th);
+            if (sessionStorage.getItem(`inactiveColumn-${colIndex}`)) {
+                // Ẩn tiêu đề
+                th.style.display = "none";
+                // Ẩn tất cả các <td> trong cột
+                table.querySelectorAll(`tbody tr`).forEach((row) => {
+                    row.children[colIndex].style.display = "none";
+                });
+            }
+        });
+    }
 }
