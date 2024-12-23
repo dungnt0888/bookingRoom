@@ -384,3 +384,22 @@ def update_department(id):
     except Exception as e:
         # Trả về lỗi server 500
         return jsonify({"message": f"Failed to update department: {e}"}), 500
+
+
+@user_bp.route('/delete_department/<int:id>', methods=['POST'])
+def delete_department(id):
+
+    try:
+        department = Department.query.get(id)
+        if not department:
+            return jsonify({'success': False, 'error': 'Department not found'}), 400
+
+        # Thực hiện xóa phòng ban
+        db.session.delete(department)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Department deleted successfully'}), 200
+
+    except Exception as e:
+        # Trả về lỗi server 500
+        return jsonify({"message": f"Failed to update department: {e}"}), 500

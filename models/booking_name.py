@@ -5,7 +5,7 @@ class Booking_name(db.Model):
     __tablename__ = 'booking_name'
 
     name_id = db.Column(db.Integer, primary_key=True)
-    booking_name = db.Column(db.String(50), nullable=False, unique=True)
+    booking_name = db.Column(db.String(100), nullable=False, unique=True)
     description = db.Column(db.String(100), nullable=True)
     isActive = db.Column(db.Boolean, default=True)
 

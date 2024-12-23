@@ -116,9 +116,35 @@ app.register_blueprint(booking_delete_bp)
 
 @app.route('/')
 def index():
-    meetings = Booking_name.query.filter_by(isActive = True).all()
+    meetings = Booking_name.query.filter_by(isActive=True).all()
     departments = Department.query.all()
-    # Dữ liệu giả lập cho các khung giờ
+
+    # Lấy ngày được chọn hoặc tính tuần dựa trên offset
+    selected_date = request.args.get('selected_date')
+    offset = int(request.args.get('offset', 0))
+    tz = ZoneInfo("Asia/Ho_Chi_Minh")
+
+    if selected_date:
+        selected_date = datetime.strptime(selected_date, '%Y-%m-%d').date()
+        start_of_week = selected_date - timedelta(days=selected_date.weekday())
+    else:
+        today = datetime.now(tz).date()
+        start_of_week = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
+
+    end_of_week = start_of_week + timedelta(days=6)
+    current_date = datetime.now(tz).date()
+
+    # Tạo danh sách ngày từ Thứ Hai đến Chủ Nhật
+    week_days = [start_of_week + timedelta(days=i) for i in range(7)]
+    week_range = f"{start_of_week.strftime('%d-%m-%Y')} đến {end_of_week.strftime('%d-%m-%Y')}"
+
+    # Kiểm tra tuần hiện tại
+    new_year = start_of_week.year
+    new_week_num = start_of_week.isocalendar()[1]
+    is_current_week = (offset == 0)
+    week_label = f"Tuần {new_week_num} - Năm {new_year}  --- {'Lịch tuần này' if is_current_week else 'Lịch'}"
+
+    # Dữ liệu giả lập khung giờ
     time_slots = [
         "7:00-07:30", "7:30-8:00", "8:00-8:30", "8:30-9:00", "9:00-9:30", "9:30-10:00",
         "10:00-10:30", "10:30-11:00", "11:00-11:30", "11:30-12:00",
@@ -127,64 +153,33 @@ def index():
         "15:30-16:00", "16:00-16:30", "16:30-17:00", "17:00-17:30",
         "17:30-18:00", "18:00-18:30", "18:30-19:00", "19:00-19:30", "19:30-20:00"
     ]
-    # Lấy tuần hiện tại nếu không có tham số 'offset'
-    offset = int(request.args.get('offset', 0))
-    tz = ZoneInfo("Asia/Ho_Chi_Minh")
-    # Năm và tuần hiện tại
-    current_year = datetime.now(tz).year
-    current_week_num = datetime.now(tz).isocalendar()[1]
-    #current_week_num = int(datetime.now(tz).strftime('%W'))
-    week_num = int(request.args.get('week', current_week_num))
-
-    # Ngày đầu tuần hiện tại
-    today = datetime.now(tz)
-    start_of_week = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
-    end_of_week = start_of_week + timedelta(days=6)
-
-    # Thời gian hiện tại
-    current_time_now = datetime.now(tz).strftime("%H:%M")
-    current_time_obj = datetime.strptime(current_time_now, "%H:%M").time()
-
-    # Ngày hiện tại
-    current_date = datetime.now(tz).date()
-
-    new_date = current_date + timedelta(weeks=offset)
-    new_year = new_date.year
-    new_week_num = new_date.isocalendar()[1]
-
-    # Tạo danh sách ngày từ Thứ Hai đến Chủ Nhật
-    week_days = [(start_of_week + timedelta(days=i)).date() for i in range(7)]
-
-    # Format ngày thành chuỗi
-    week_range = f"{start_of_week.strftime('%d-%m-%Y')} đến {end_of_week.strftime('%d-%m-%Y')}"
-
-    # Kiểm tra xem tuần hiển thị có phải là tuần hiện tại không
-    is_current_week = (offset == 0)
-    week_label = "Tuần " + str(new_week_num) + " - Năm " + str(new_year)
-    if is_current_week:
-        week_label += "  ---  Lịch tuần này"
-    else:
-        week_label += "  ---  Lịch"
 
     # Tính toán các slot không khả dụng
-    inactive_slots = {}
-    for day_index, day in enumerate(week_days):
-        inactive_slots[day_index] = []
-        for time_slot in time_slots:
-            end_time = time_slot.split('-')[1]  # Lấy giờ kết thúc
-            end_time_obj = datetime.strptime(end_time, "%H:%M").time()
-            if day < current_date or (day == current_date and end_time_obj <= current_time_obj):
-                inactive_slots[day_index].append(time_slot)
+    current_time_obj = datetime.now(tz).time()
+    inactive_slots = {
+        day_index: [
+            time_slot for time_slot in time_slots
+            if week_days[day_index] < current_date or
+               (week_days[day_index] == current_date and
+                datetime.strptime(time_slot.split('-')[1], "%H:%M").time() <= current_time_obj)
+        ]
+        for day_index in range(7)
+    }
 
-    #current_date = datetime.now().strftime('%d-%m-%Y')  # Định dạng ngày để so sánh
-    #print(departments)
-    #print(len(departments))
-    #print(type(departments))
-    return render_template('index.html', time_slots=time_slots, week_range=week_range,
-                           week_label=week_label, offset=offset, week_days=week_days, current_date=current_date, inactive_slots=inactive_slots,
-                           current_time_now=current_time_now,
-                           meetings = meetings,
-                           departments = departments)
+    return render_template(
+        'index.html',
+        time_slots=time_slots,
+        week_range=week_range,
+        week_label=week_label,
+        offset=offset,
+        week_days=week_days,
+        current_date=current_date,
+        inactive_slots=inactive_slots,
+        current_time_now=datetime.now(tz).strftime("%H:%M"),
+        meetings=meetings,
+        departments=departments
+    )
+
 
 
 

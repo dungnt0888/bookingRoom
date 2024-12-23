@@ -444,3 +444,28 @@ async function saveDepartment(id) {
         alert('An unexpected error occurred while updating the department.');
     }
 }
+
+function deleteDepartment(departmentId) {
+    if (confirm("Bạn có muốn xóa phòng ban này không?")) {
+        fetch(`/user/delete_department/${departmentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                // Xóa dòng tương ứng hoặc refresh trang
+                location.reload();
+            } else {
+                alert(`Error: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete department.');
+        });
+    }
+}

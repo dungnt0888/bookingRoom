@@ -721,3 +721,25 @@ body {
     z-index: 10;
     transition: all 0.3s ease;
 }
+
+
+.btn-calendar {
+    background-color: #fff; /* Màu nền */
+    border: 1px solid #ccc; /* Viền */
+    border-radius: 5px; /* Bo góc */
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex; /* Căn giữa icon và text */
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-calendar i {
+    font-size: 16px;
+    margin-right: 5px; /* Khoảng cách giữa icon và text */
+}
+
+.btn-calendar:hover {
+    background-color: #f0f0f0; /* Hiệu ứng hover */
+    border-color: #999;
+}

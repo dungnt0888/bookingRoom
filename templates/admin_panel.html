@@ -278,12 +278,11 @@
                 <td>
                     <input type="text" id="department-name-{{ department.id }}" value="{{ department.name }}" style="width: 80%">
                 </td>
-                <td>
+                <td style="display: flex; justify-content: center">
                     <button class="btn edit" onclick="saveDepartment({{ department.id }})">Save</button>
+                    <button class="btn delete" onclick="deleteDepartment({{ department.id }})">Delete</button>
                 </td>
-                <td>
-                    <button class="btn delete" onclick="">Delete</button>
-                </td>
+
             </tr>
             {% endfor %}
         </tbody>
