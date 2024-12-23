@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="edit function">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/admin_panel.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/admin_panel.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/user_management.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/user_management.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin_panel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_management.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/3893b39cb39d_update_models_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/versions/3893b39cb39d_update_models_1.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,7 +154,7 @@
       <workItem from="1734580437938" duration="15109000" />
       <workItem from="1734658137852" duration="18847000" />
       <workItem from="1734744571751" duration="7646000" />
-      <workItem from="1734917037131" duration="6521000" />
+      <workItem from="1734917037131" duration="6938000" />
     </task>
     <task id="LOCAL-00001" summary="edit function">
       <option name="closed" value="true" />
