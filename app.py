@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from flask_migrate import Migrate, upgrade
 import os
 from sqlalchemy.sql.functions import current_time
+
+from calendar_view import calendar_bp
 from log_in import authenticate_user
 from save_booking import save_booking
 from models.booking_room import Booking
@@ -23,7 +25,9 @@ from sqlalchemy import inspect
 from view_logs import admin_bp
 from models.department import Department
 from dashboard import dashboard_bp
-
+from calendar_view import calendar_bp
+from pytz import timezone
+from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
@@ -72,42 +76,28 @@ app.register_blueprint(admin_bp, url_prefix='/admin')
 
 app.register_blueprint(dashboard_bp)
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(delete_expired_bookings, 'interval', days=1)
-scheduler.start()
+app.register_blueprint(calendar_bp)
 
+def job_listener(event):
+    if event.exception:
+        print(f"Job {event.job_id} failed: {event.exception}")
+    else:
+        print(f"Job {event.job_id} executed successfully.")
+
+scheduler = BackgroundScheduler()
+scheduler.configure(timezone=timezone('Asia/Ho_Chi_Minh'))  # Đặt múi giờ Việt Nam
+scheduler.add_job(delete_expired_bookings, 'interval', days=1)
+if not scheduler.running:
+    scheduler.start()
+# Thêm listener để theo dõi trạng thái job
+scheduler.add_listener(job_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 # Đảm bảo scheduler được tắt khi ứng dụng dừng
 atexit.register(lambda: scheduler.shutdown())
 
 
-@app.route('/get_bookings', methods=['GET'])
-def get_bookings():
-    """Lấy tất cả các booking chưa bị xóa từ cơ sở dữ liệu và trả về dưới dạng JSON."""
-    try:
-        # Lọc các booking chưa bị xóa
-        bookings = Booking.query.filter_by(isDeleted=False).join(User, Booking.username == User.username).all()
-        bookings_data = []
 
-        for booking in bookings:
-            bookings_data.append({
-                "booking_id": booking.booking_id,
-                "booking_name": booking.booking_name,
-                "department": booking.department,
-                "meeting_content": booking.meeting_content,
-                "chairman": booking.chairman,
-                "start_time": booking.start_time.strftime('%H:%M') if booking.start_time else None,
-                "end_time": booking.end_time.strftime('%H:%M') if booking.end_time else None,
-                "reservation_date": booking.reservation_date.strftime("%d/%m/%Y") if booking.reservation_date else None,
-                "room_name": booking.room_name,
-                "username": booking.username,
-                "role": booking.user.role
-            })
-        #print("Dữ liệu bookings:", bookings_data)  # Ghi lại dữ liệu booking trước khi trả về
-        return jsonify(bookings_data)
-    except Exception as e:
-        # Trả về chi tiết lỗi nếu có lỗi xảy ra
-        print("Lỗi khi lấy dữ liệu bookings:", e)
-        return jsonify({"message": f"Failed to load bookings: {str(e)}"}), 500
+
+
 
 
 app.register_blueprint(booking_delete_bp)

@@ -4,6 +4,7 @@ from cnnDatabase import db
 from save_booking import save_booking
 from send_email import EmailHandler
 from models.booking_name import Booking_name
+from models.user import User
 from datetime import datetime, timedelta
 import pytz
 from zoneinfo import ZoneInfo
@@ -29,6 +30,10 @@ def submit_booking():
     data = request.json  # Nhận dữ liệu JSON từ yêu cầu
 
     try:
+        if not data.get('booking_name') or not data.get('start_time') or not data.get('end_time') or not data.get(
+                'reservation_date'):
+            return jsonify({'success': False, 'error': 'Required fields are missing'}), 400
+
         # Lưu booking và lấy booking_id
         booking_id = save_booking(
             booking_name=data.get('booking_name'),
@@ -156,17 +161,16 @@ def edit_booking(booking_id):
             return jsonify({"message": "Không thể chỉnh sửa vào khoảng thời gian đã qua."}), 400
 
         # Kiểm tra xung đột phòng
-        existing_booking = Booking.query.filter_by(
-            room_name=data.get('room_name', booking.room_name),
-            reservation_date=reservation_date_obj
+        existing_booking = Booking.query.filter(
+            Booking.room_name == data.get('room_name', booking.room_name),
+            Booking.reservation_date == reservation_date_obj,
+            Booking.isDeleted != True,  # Bỏ qua các bản ghi đã xóa
+            Booking.booking_id != booking_id  # Bỏ qua bản ghi hiện tại (nếu đang cập nhật)
         ).filter(
-            and_(
-                or_(
-                    (Booking.start_time <= start_time_obj) & (Booking.end_time > start_time_obj),
-                    (Booking.start_time < end_time_obj) & (Booking.end_time >= end_time_obj)
-                ),
-                Booking.booking_id != booking_id,
-                Booking.isDeleted != True
+            or_(
+                (Booking.start_time <= start_time_obj) & (Booking.end_time > start_time_obj),
+                # Thời gian bắt đầu chồng lấn
+                (Booking.start_time < end_time_obj) & (Booking.end_time >= end_time_obj)  # Thời gian kết thúc chồng lấn
             )
         ).first()
 
@@ -238,3 +242,34 @@ def edit_booking(booking_id):
             additional_info=f"Booking edit failed: {str(e)}"
         )
         return jsonify({"message": f"Failed to save booking: {e}"}), 500
+
+
+
+@booking_bp.route('/get_bookings', methods=['GET'])
+def get_bookings():
+    """Lấy tất cả các booking chưa bị xóa từ cơ sở dữ liệu và trả về dưới dạng JSON."""
+    try:
+        # Lọc các booking chưa bị xóa
+        bookings = Booking.query.filter_by(isDeleted=False).join(User, Booking.username == User.username).all()
+        bookings_data = []
+
+        for booking in bookings:
+            bookings_data.append({
+                "booking_id": booking.booking_id,
+                "booking_name": booking.booking_name,
+                "department": booking.department,
+                "meeting_content": booking.meeting_content,
+                "chairman": booking.chairman,
+                "start_time": booking.start_time.strftime('%H:%M') if booking.start_time else None,
+                "end_time": booking.end_time.strftime('%H:%M') if booking.end_time else None,
+                "reservation_date": booking.reservation_date.strftime("%d/%m/%Y") if booking.reservation_date else None,
+                "room_name": booking.room_name,
+                "username": booking.username,
+                "role": booking.user.role
+            })
+        #print("Dữ liệu bookings:", bookings_data)  # Ghi lại dữ liệu booking trước khi trả về
+        return jsonify(bookings_data)
+    except Exception as e:
+        # Trả về chi tiết lỗi nếu có lỗi xảy ra
+        print("Lỗi khi lấy dữ liệu bookings:", e)
+        return jsonify({"message": f"Failed to load bookings: {str(e)}"}), 500

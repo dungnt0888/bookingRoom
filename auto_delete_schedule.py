@@ -10,16 +10,20 @@ def delete_expired_bookings():
         # Khoảng thời gian kể từ khi bị xóa mà bản ghi sẽ bị xóa hoàn toàn (ví dụ: 30 ngày)
         expiration_time = datetime.now() - timedelta(days=1)
 
-        # Lấy tất cả các bản ghi bị xóa và quá thời gian lưu trữ
-        expired_bookings = Booking.query.filter(Booking.isDeleted == True,
-                                                Booking.date_deleted <= expiration_time).all()
+        # Lấy các bản ghi cần xóa, xử lý từng phần
+        expired_bookings = Booking.query.filter(
+            Booking.isDeleted == True,
+            Booking.date_deleted <= expiration_time
+        ).yield_per(100)  # Xử lý từng 100 bản ghi một
 
-        # Xóa từng bản ghi
+        count = 0
         for booking in expired_bookings:
             db.session.delete(booking)
+            count += 1
 
         # Lưu thay đổi vào database
         db.session.commit()
+
         print(f"{len(expired_bookings)} expired bookings deleted successfully.")
     except Exception as e:
         db.session.rollback()

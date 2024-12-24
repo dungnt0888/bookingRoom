@@ -6,8 +6,11 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
 </head>
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
@@ -18,7 +21,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="/dashboard" class="nav-link">Home</a>
+                    <a href="{{ url_for('index') }}" class="nav-link">Home</a>
                 </li>
             </ul>
         </nav>
@@ -38,9 +41,9 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/reports" class="nav-link">
+                            <a href="/calendar" class="nav-link">
                                 <i class="nav-icon fas fa-chart-pie"></i>
-                                <p>Reports</p>
+                                <p>Calendar</p>
                             </a>
                         </li>
                     </ul>

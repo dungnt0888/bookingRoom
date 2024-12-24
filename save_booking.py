@@ -14,13 +14,12 @@ def save_booking(booking_name, department, meeting_content, chairman, start_time
 
 
         # Kiểm tra phòng đã được đặt chưa
-        existing_booking = Booking.query.filter_by(
-            room_name=room_name,
-            reservation_date=reservation_date_obj
+        existing_booking = Booking.query.filter(
+            Booking.room_name == room_name,
+            Booking.reservation_date == reservation_date_obj,
+            Booking.isDeleted != True  # Kiểm tra nếu booking chưa bị xóa
         ).filter(
-            ((Booking.start_time <= start_time) & (Booking.end_time > start_time_obj) |
-            (Booking.start_time < end_time_obj) & (Booking.end_time >= end_time_obj)) &
-            (Booking.isDeleted  != True)
+            (Booking.start_time < end_time_obj) & (Booking.end_time > start_time_obj)  # Thời gian bị chồng lấn
         ).first()
         print(existing_booking)
         if existing_booking:

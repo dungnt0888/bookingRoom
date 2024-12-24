@@ -13,6 +13,7 @@ class Booking(db.Model):
     )
     department = db.Column(
         db.String(100),
+        db.ForeignKey('department.name', onupdate='CASCADE'),
         nullable=True
     )
     meeting_content = db.Column(db.Text, nullable=True)

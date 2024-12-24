@@ -226,12 +226,12 @@ function createBookingForm(roomName, timeRange, bookingDate) {
                 // updateBookingUI(result.booking_id, data);
             } else {
                 console.error("Failed to save booking:", result.message);
-                alert("Failed to save booking. Please try again.");
+                alert("Lỗi khi đặt phòng." + result.message + " Hãy thử lại");
             }
         }
     } catch (error) {
         console.error("Error saving booking:", error);
-        alert("Failed to save booking. Please try again.");
+        alert("Lỗi khi đặt phòng." + error + " Hãy thử lại");
     }
     /*const book_id = `<div style="display: none" class="booking-id" data-id="${id}"></div>`;
     // Xử lý các trường hợp theo số lượng ô đã chọn

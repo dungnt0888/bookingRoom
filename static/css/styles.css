@@ -203,6 +203,8 @@ body {
 .schedule-table td {
     z-index: 0;
     position: relative;
+    max-width: 275px !important;
+
 }
 
 
@@ -517,6 +519,7 @@ body {
     padding: 5px;
     background-color: #d5e73d;
     border-radius: 5px;
+
 }
 .booking-content div.department {
     pointer-events: auto; /* Kích hoạt sự kiện chuột */
@@ -672,6 +675,11 @@ body {
     .schedule-table th, .schedule-table td {
         font-size: 12px;
         padding: 8px;
+        max-width: 200px;
+    }
+
+    .booking-content{
+        max-width: 200px
     }
 
     .login {
@@ -699,6 +707,11 @@ body {
     .schedule-table th, .schedule-table td {
         font-size: 10px;
         padding: 5px;
+        max-width: 150px;
+    }
+
+    .booking-content{
+        max-width: 150px;
     }
 }
 

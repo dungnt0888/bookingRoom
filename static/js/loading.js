@@ -1,6 +1,6 @@
 async function loadBookings() {
     try {
-        const response = await fetch('/get_bookings');
+        const response = await fetch('api/booking/get_bookings');
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -23,6 +23,7 @@ async function loadBookings() {
 
                 return; // Bỏ qua booking này nếu phòng không khớp
             }
+            //console.log(booking);
             // Giả định bạn đã có hàm để tìm và chọn đúng các ô dựa trên thời gian
             const selectedCells = getCellsForBooking(booking.start_time, booking.end_time, booking.reservation_date);
             //console.log(selectedCells);
@@ -327,44 +328,47 @@ function syncDivHeightWithTd(selectedCells) {
 document.body.addEventListener("click", function (event) {
     // Kiểm tra xem phần tử được click có phải là cột cần xử lý hay không
     const clickedColumn = event.target.closest(".today-column");
-    //console.log("Bạn đã click vào:", clickedColumn);
+    //console.log("Bạn đã click vào:", clickedColumn.firstChild.nodeValue.trim());
 
     if (clickedColumn) {
-        const table = clickedColumn.closest(".schedule-table");
-        const btnLastWeek = document.getElementById("btn-lastWeek");
-        // Toggle trạng thái disabled
-        btnLastWeek.disabled = !btnLastWeek.disabled;
+        let value = clickedColumn.firstChild.nodeValue.trim();
+        if(value !== "Thứ 2") {
+            const table = clickedColumn.closest(".schedule-table");
+            const btnLastWeek = document.getElementById("btn-lastWeek");
+            // Toggle trạng thái disabled
+            btnLastWeek.disabled = !btnLastWeek.disabled;
 
-        // Lưu trạng thái vào sessionStorage
-        sessionStorage.setItem("btnLastWeekDisabled", btnLastWeek.disabled);
+            // Lưu trạng thái vào sessionStorage
+            sessionStorage.setItem("btnLastWeekDisabled", btnLastWeek.disabled);
 
-        if (table) {
-            const inactiveHeaders = table.querySelectorAll("th.inactive");
-            if (inactiveHeaders.length > 0) {
-                inactiveHeaders.forEach((th, index) => {
-                    // Tìm vị trí của cột
-                    const colIndex = Array.from(th.parentNode.children).indexOf(th);
+            if (table) {
+                const inactiveHeaders = table.querySelectorAll("th.inactive");
+                if (inactiveHeaders.length > 0) {
+                    inactiveHeaders.forEach((th, index) => {
+                        // Tìm vị trí của cột
+                        const colIndex = Array.from(th.parentNode.children).indexOf(th);
 
-                    // Kiểm tra trạng thái của cột từ sessionStorage
-                    const isHidden = sessionStorage.getItem(`inactiveColumn-${colIndex}`);
-                    if (isHidden) {
-                        // Hiện lại cột
-                        th.style.display = "";
-                        sessionStorage.removeItem(`inactiveColumn-${colIndex}`);
-                        // Hiện tất cả các <td> trong cột
-                        table.querySelectorAll(`tbody tr`).forEach((row) => {
-                            row.children[colIndex].style.display = "";
-                        });
-                    } else {
-                        // Ẩn cột
-                        th.style.display = "none";
-                        sessionStorage.setItem(`inactiveColumn-${colIndex}`, true);
-                        // Ẩn tất cả các <td> trong cột
-                        table.querySelectorAll(`tbody tr`).forEach((row) => {
-                            row.children[colIndex].style.display = "none";
-                        });
-                    }
-                });
+                        // Kiểm tra trạng thái của cột từ sessionStorage
+                        const isHidden = sessionStorage.getItem(`inactiveColumn-${colIndex}`);
+                        if (isHidden) {
+                            // Hiện lại cột
+                            th.style.display = "";
+                            sessionStorage.removeItem(`inactiveColumn-${colIndex}`);
+                            // Hiện tất cả các <td> trong cột
+                            table.querySelectorAll(`tbody tr`).forEach((row) => {
+                                row.children[colIndex].style.display = "";
+                            });
+                        } else {
+                            // Ẩn cột
+                            th.style.display = "none";
+                            sessionStorage.setItem(`inactiveColumn-${colIndex}`, true);
+                            // Ẩn tất cả các <td> trong cột
+                            table.querySelectorAll(`tbody tr`).forEach((row) => {
+                                row.children[colIndex].style.display = "none";
+                            });
+                        }
+                    });
+                }
             }
         }
     }

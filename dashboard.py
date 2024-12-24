@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from flask import Blueprint, render_template, jsonify, request
 from models.booking_room import Booking
 from models.department import Department
@@ -5,11 +7,13 @@ from models.booking_name import Booking_name
 from cnnDatabase import db
 from sqlalchemy import func
 from datetime import datetime, timedelta
+from user_management import admin_required
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
 
 @dashboard_bp.route('/dashboard')
+@admin_required
 def dashboard():
     bookings = Booking.query.all()
     total_bookings = len(bookings)
@@ -68,38 +72,57 @@ def filter_by_time(query, time_filter):
 
     if start_date:
         query = query.filter(Booking.reservation_date >= start_date.date())
+    #print(start_date.date())
+
     return query
+
 
 @dashboard_bp.route('/dashboard/filter')
 def dashboard_filter():
     time_filter = request.args.get('time', 'day')
+
+    # Truy vấn cơ sở dữ liệu
     query = db.session.query(
         Booking.room_name,
         Booking.department,
         func.count(Booking.booking_id).label('booking_count')
     ).filter(Booking.isDeleted == False).group_by(Booking.room_name, Booking.department)
 
+    # Áp dụng bộ lọc thời gian
     query = filter_by_time(query, time_filter)
     data = query.all()
 
-    # Chuẩn bị labels và datasets
-    labels_rooms = list(set([entry[0] for entry in data]))
-    labels_departments = list(set([entry[1] or "Unknown" for entry in data]))
+    # Xử lý nếu không có dữ liệu
+    if not data:
+        return jsonify({"labels": [], "datasets": []})
 
-    data_matrix = {room: [0] * len(labels_departments) for room in labels_rooms}
+    # Tạo labels và ma trận dữ liệu
+    labels_rooms = list(set([entry[0] for entry in data]))
+    labels_departments = list(set([entry[1] if entry[1] else "Unknown" for entry in data]))
+
+    data_matrix = defaultdict(lambda: [0] * len(labels_departments))
     for room_name, department, count in data:
         dep_index = labels_departments.index(department or "Unknown")
         data_matrix[room_name][dep_index] = count
 
+    # Danh sách màu sắc
+    COLORS = [
+        "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)",
+        "rgba(255, 206, 86, 0.6)", "rgba(75, 192, 192, 0.6)",
+        "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)"
+    ]
+
+    # Tạo datasets
     datasets = [
         {
             "label": department,
             "data": [data_matrix[room][i] for room in labels_rooms],
-            "backgroundColor": f"rgba({i*50 % 255}, {i*80 % 255}, {i*100 % 255}, 0.6)",
-            "borderColor": f"rgba({i*50 % 255}, {i*80 % 255}, {i*100 % 255}, 1)",
+            "backgroundColor": COLORS[i % len(COLORS)],
+            "borderColor": COLORS[i % len(COLORS)].replace("0.6", "1"),
             "borderWidth": 1
         }
         for i, department in enumerate(labels_departments)
     ]
 
+    # Trả về JSON
     return jsonify({"labels": labels_rooms, "datasets": datasets})
