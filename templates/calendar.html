@@ -5,117 +5,11 @@
 <div id="calendar"></div>
 
 
+<script src="{{ url_for('static', filename='js/fullcalendar/index.global.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/fullcalendar/calendar.js') }}"></script>
 <script type="module">
-const roomColors = {
-  'Phòng họp nhỏ lầu 1': '#FF5733',
-  'Phòng họp dài lầu 1': '#33FF57',
-  'Phòng họp lầu 2': '#e3f858',
-  'Phòng giải trí lầu 9': '#58e2f4',
-};
-document.addEventListener('DOMContentLoaded', function() {
-    const legendContainer = document.getElementById('legend-container');
-    legendContainer.style.display = 'flex';
-    legendContainer.style.flexWrap = 'wrap';
-    legendContainer.style.marginBottom = '10px';
 
-    for (const [room, color] of Object.entries(roomColors)) {
-        const legendItem = document.createElement('div');
-        legendItem.style.display = 'flex';
-        legendItem.style.alignItems = 'center';
-        legendItem.style.marginRight = '20px';
 
-        const colorBox = document.createElement('div');
-        colorBox.style.width = '15px';
-        colorBox.style.height = '15px';
-        colorBox.style.backgroundColor = color;
-        colorBox.style.marginRight = '5px';
-
-        const label = document.createElement('span');
-        label.textContent = room;
-
-        legendItem.appendChild(colorBox);
-        legendItem.appendChild(label);
-        legendContainer.appendChild(legendItem);
-    }
-
-    //==================================================
-    const calendarEl = document.getElementById('calendar')
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'timeGridWeek', // Chế độ xem mặc định
-      slotMinTime: '06:00:00', // Bắt đầu hiển thị từ 7h sáng
-      slotMaxTime: '23:00:00', // Kết thúc hiển thị vào 8h tối
-      resources: [ // Danh sách phòng họp
-          { id: 'Phòng họp nhỏ lầu 1', title: 'Phòng họp nhỏ lầu 1' },
-          { id: 'Phòng họp dài lầu 1', title: 'Phòng họp dài lầu 1' },
-          { id: 'Phòng họp lầu 2', title: 'Phòng họp lầu 2' },
-          { id: 'Phòng giải trí lầu 9', title: 'Phòng giải trí lầu 9' },
-        ],
-      headerToolbar: {
-        left: 'prev,next today', // Các nút điều hướng
-        center: 'title', // Tiêu đề
-        right: 'timeGridDay,timeGridWeek,dayGridMonth',
-      },
-      views: {
-        dayGridMonth: { buttonText: 'Tháng' }, // Nút hiển thị là "Tháng"
-        timeGridWeek: { buttonText: 'Tuần' }, // Nút hiển thị là "Tuần"
-        timeGridDay: { buttonText: 'Ngày' } // Nút hiển thị là "Ngày"
-      },
-      events: 'api/booking/get_bookings', // API endpoint để lấy dữ liệu
-        eventDataTransform: function(eventData) {
-      // Chuyển đổi định dạng dữ liệu
-        const [day, month, year] = eventData.reservation_date.split('/');
-        const color = roomColors[eventData.room_name] || '#3357FF'; // Màu mặc định nếu không khớp phòng
-        let borderColor;
-        if (new Date() < new Date(`${year}-${month}-${day}T${eventData.start_time}`)) {
-        borderColor = '#28a745'; // Sự kiện sắp diễn ra (xanh lá)
-        } else if (new Date() > new Date(`${year}-${month}-${day}T${eventData.end_time}`)) {
-        borderColor = '#dc3545'; // Sự kiện đã kết thúc (đỏ)
-        } else {
-        borderColor = '#ffc107'; // Sự kiện đang diễn ra (vàng)
-        }
-
-  // Đặt màu sắc dựa trên phòng
-
-  return {
-    id: eventData.booking_id,
-    title: eventData.booking_name || "Không có tiêu đề",
-    start: `${year}-${month}-${day}T${eventData.start_time}`,
-    end: `${year}-${month}-${day}T${eventData.end_time}`,
-    allDay: false, // Đánh dấu sự kiện không phải cả ngày
-    backgroundColor: color, // Màu nền
-    borderColor: borderColor,     // Màu viền
-    textColor: '#ffffff',   // Màu chữ
-    resourceId: eventData.room_name.trim(),
-    extendedProps: {
-      chairman: eventData.chairman,
-      department: eventData.department,
-      room_name: eventData.room_name,
-      meeting_content: eventData.meeting_content,
-      username: eventData.username,
-      role: eventData.role,
-      start_time: eventData.start_time, // Thêm start_time vào extendedProps
-      end_time: eventData.end_time      // Thêm end_time vào extendedProps
-    }
-  };
-},
-eventClick: function(info) {
-  const props = info.event.extendedProps;
-  Swal.fire({
-    title: info.event.title,
-    html: `
-      <p><strong>Người chủ trì:</strong> ${props.chairman}</p>
-      <p><strong>Bộ phận:</strong> ${props.department}</p>
-      <p><strong>Phòng:</strong> ${props.room_name}</p>
-      <p><strong>Nội dung:</strong> ${props.meeting_content}</p>
-      <p><strong>Thời gian:</strong> ${props.start_time} - ${props.end_time}</p>
-    `,
-    icon: 'info',
-    confirmButtonText: 'Đóng'
-  });
-}
-});
-calendar.render()
-})
 </script>
 
 {% endblock %}
