@@ -6,17 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="edit function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auto_delete_schedule.py" beforeDir="false" afterPath="$PROJECT_DIR$/auto_delete_schedule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/booking_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/booking_room.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/booking_room.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/save_booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/save_booking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/loading.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/loading.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/saving.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/saving.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/calendar.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -167,7 +157,8 @@
       <workItem from="1734658137852" duration="18847000" />
       <workItem from="1734744571751" duration="7646000" />
       <workItem from="1734917037131" duration="22907000" />
-      <workItem from="1735003686188" duration="6072000" />
+      <workItem from="1735003686188" duration="17082000" />
+      <workItem from="1735090294848" duration="7080000" />
     </task>
     <task id="LOCAL-00001" summary="edit function">
       <option name="closed" value="true" />
