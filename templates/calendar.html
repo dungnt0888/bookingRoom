@@ -1,9 +1,133 @@
+<!-- calendar.html -->
 {% extends "layout.html" %}
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
 
 {% block content %}
 <div id="legend-container"></div>
 <div id="calendar"></div>
 
+<div id="saving-modal" class="modal" style="display: none;">
+    <div class="booking-form-header">Đặt Phòng</div>
+        <div class="booking-form-content">
+            <h4>Ngày: <span id="booking-date"></span></h4>
+            <p><strong id="room-name">Tên phòng:</strong> </p>
+            <p><strong id="time-range">Thời gian:</strong> </p>
+            <form id="booking-form-content">
+                <label for="chairman">Người chủ trì:</label>
+                <input type="text" name="chairman" id="chairman" placeholder="Nhập tên người chủ trì" required><br>
+                <label for="booking_name">Cuộc họp:</label>
+                <select id="booking_name" name="booking_name">
+                    <option value="" selected disabled>-- Chọn một tùy chọn --</option>
+                    {%  if meetings|length == 0 %}
+                        <option value="Họp giao ban">Họp giao ban</option>
+                        <option value="Báo cáo thử việc">Báo cáo thử việc</option>
+                        <option value="Họp đối tác" >Họp đối tác</option>
+                        <option value="Họp nội bộ">Họp nội bộ</option>
+                    {% else %}
+                        {% for meeting in meetings %}
+                        <option value="{{meeting.booking_name}}">{{meeting.booking_name}}</option>
+                        {%  endfor %}
+                    {% endif %}
+                </select>
+                <!--<input type="text" name="booking_name" id="booking_name" placeholder="Nhập tên cuộc họp">--><br>
+                <label for="department">Khối phòng ban:</label>
+                <select name="department" id="department" style="left: 20px">
+                    <option value="" selected disabled>-- Chọn một tùy chọn --</option>
+                         {% if departments|length > 0 %}
+                            {% for department in departments %}
+                                <option value="{{ department.name }}">{{ department.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="HCNS">HCNS</option>
+                            <option value="Thiết kế 1">Thiết kế 1</option>
+                            <option value="Thiết kế 2">Thiết kế 2</option>
+                            <option value="Kiểm soát & Phát Triển">Kiểm soát & Phát Triển</option>
+                            <option value="Kế toán">Kế toán</option>
+                            <option value="Đấu thầu">Đấu thầu</option>
+                        {% endif %}
+                </select>
+                <label for="meetingContent">Nội dung cuộc họp:</label>
+                <textarea name="meetingContent" id="meetingContent" placeholder="Nhập nội dung cuộc họp" rows="4"></textarea><br>
+                <label>Tần suất:</label>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <label>
+                        <input type="radio" id="frequency-once" name="frequency" value="once" checked>
+                        Một lần
+                    </label>
+                    <label>
+                        <input type="radio" id="frequency-weekly" name="frequency" value="weekly">
+                        Hàng tuần
+                    </label>
+                </div>
+                <br>
+                <button type="submit">Xác nhận</button>
+                <button type="button" onclick="hideForm(this.closest('.modal'))">Tắt</button>
+            </form>
+        </div>
+</div>
+
+<div id="edit-modal" class="modal" style="display: none;">
+    <div class="booking-form-header">Chỉnh sừa</div>
+        <div class="booking-form-content" style="left: 30%">
+            <form id="edit-booking-form-content">
+                <div id="edit-booking-id" class="booking-form-id" style="display: none;"></div>
+                <div id="edit-booking-username" class="booking-form-username" style="display: none;"></div>
+                <h4>Ngày: <span id="edit-booking-date"></span></h4>
+                <p><strong id="edit-room-name">Tên phòng:</strong> </p>
+                <p><strong id="edit-time-range">Thời gian:</strong> </p>
+                <!-- Thời gian bắt đầu -->
+                <label for="edit-start-time">Thời gian bắt đầu:</label>
+                <select id="edit-start-time" name="start_time" required></select><br>
+
+                <!-- Thời gian kết thúc -->
+                <label for="edit-end-time">Thời gian kết thúc:</label>
+                <select id="edit-end-time" name="end_time" required></select><br>
+
+
+                <label for="edit-chairman">Người chủ trì:</label>
+                <input type="text" name="chairman" id="edit-chairman" placeholder="Nhập tên người chủ trì" required><br>
+                <label for="edit-booking_name">Cuộc họp:</label>
+                <select id="edit-booking_name" name="booking_name">
+                    <option value="" selected disabled>-- Chọn một tùy chọn --</option>
+                    {%  if meetings|length == 0 %}
+                        <option value="Họp giao ban">Họp giao ban</option>
+                        <option value="Báo cáo thử việc">Báo cáo thử việc</option>
+                        <option value="Họp đối tác" >Họp đối tác</option>
+                        <option value="Họp nội bộ">Họp nội bộ</option>
+                    {% else %}
+                        {% for meeting in meetings %}
+                        <option value="{{meeting.booking_name}}">{{meeting.booking_name}}</option>
+                        {%  endfor %}
+                    {% endif %}
+                </select>
+                <!--<input type="text" name="booking_name" id="booking_name" placeholder="Nhập tên cuộc họp">--><br>
+                <label for="edit-department">Khối phòng ban:</label>
+                <select name="department" id="edit-department" style="left: 20px">
+                    <option value="" selected disabled>-- Chọn một tùy chọn --</option>
+                         {% if departments|length > 0 %}
+                            {% for department in departments %}
+                                <option value="{{ department.name }}">{{ department.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="HCNS">HCNS</option>
+                            <option value="Thiết kế 1">Thiết kế 1</option>
+                            <option value="Thiết kế 2">Thiết kế 2</option>
+                            <option value="Kiểm soát & Phát Triển">Kiểm soát & Phát Triển</option>
+                            <option value="Kế toán">Kế toán</option>
+                            <option value="Đấu thầu">Đấu thầu</option>
+                        {% endif %}
+                </select>
+                <label for="edit-meetingContent">Nội dung cuộc họp:</label>
+                <textarea name="meetingContent" id="edit-meetingContent" placeholder="Nhập nội dung cuộc họp" rows="4"></textarea><br>
+
+                <br>
+                <button type="submit">Xác nhận</button>
+                <button type="button" onclick="hideForm(this.closest('.modal'))">Tắt</button>
+            </form>
+        </div>
+</div>
 
 <script src="{{ url_for('static', filename='js/fullcalendar/index.global.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/fullcalendar/calendar.js') }}"></script>

@@ -35,8 +35,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const calendar = new FullCalendar.Calendar(calendarEl, {
       schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
       initialView: 'timeGridWeek', // Chế độ xem mặc định
-      slotMinTime: '06:00:00', // Bắt đầu hiển thị từ 7h sáng
-      slotMaxTime: '23:00:00', // Kết thúc hiển thị vào 8h tối
+      editable: true, // Cho phép kéo thả
+      selectable: true, // Cho phép chọn vùng
+      eventResizableFromStart: true, // Resize từ đầu
+      allDaySlot: false, // Ẩn dòng All-day
+      contentHeight: 'auto',
+      slotMinTime: '07:00:00', // Bắt đầu hiển thị từ 7h sáng
+      slotMaxTime: '20:00:00', // Kết thúc hiển thị vào 8h tối
       //plugins: [ 'resourceTimeGridPlugin' ], // Sử dụng plugin Premium
       resources: [ // Danh sách phòng họp
           { id: 'Phòng họp nhỏ lầu 1', title: 'Phòng họp nhỏ lầu 1' },
@@ -47,12 +52,34 @@ document.addEventListener('DOMContentLoaded', function() {
       headerToolbar: {
         left: 'prev,next today', // Các nút điều hướng
         center: 'title', // Tiêu đề
-        right: 'resourceTimeGridDay,timeGridWeek,dayGridMonth',
+        right: 'resourceTimeGridDay,timeGridWeek,dayGridMonth,resourceTimelineDay',
       },
       views: {
         dayGridMonth: { buttonText: 'Tháng' }, // Nút hiển thị là "Tháng"
         timeGridWeek: { buttonText: 'Tuần' }, // Nút hiển thị là "Tuần"
-        resourceTimeGridDay: { buttonText: 'Ngày' } // Nút hiển thị là "Ngày"
+        resourceTimeGridDay: { buttonText: 'Ngày' }, // Nút hiển thị là "Ngày"
+        resourceTimelineDay: {buttonText: 'Timeline'}
+      },
+      eventAllow: function (dropInfo, draggedEvent) {
+        // Kiểm tra nếu chế độ xem hiện tại là 'timeGridDay'
+        const currentView = calendar.view.type;
+        if (currentView !== 'resourceTimeGridDay') {
+          return false; // Không cho chỉnh sửa nếu không phải chế độ ngày
+        }
+        // Kiểm tra thời gian mới
+        const start = new Date(dropInfo.start);
+        const end = new Date(dropInfo.end);
+
+        const restrictedStart = new Date(start);
+        restrictedStart.setHours(12, 0, 0, 0); // 12:00:00
+        const restrictedEnd = new Date(start);
+        restrictedEnd.setHours(13, 30, 0, 0); // 13:30:00
+
+        // Kiểm tra nếu sự kiện giao với khoảng bị hạn chế
+        return !(start < restrictedEnd && end > restrictedStart);
+
+         // Cho phép chỉnh sửa
+         // Không cho chỉnh sửa
       },
       dayHeaderFormat: { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' },
       eventTimeFormat: {
@@ -68,7 +95,17 @@ document.addEventListener('DOMContentLoaded', function() {
           return { start, end };
         },
       eventOverlap: false,
-      events: 'api/booking/get_bookings', // API endpoint để lấy dữ liệu
+      events: {
+          url: 'api/booking/get_bookings',
+          failure: function() {
+            Swal.fire({
+              title: 'Lỗi',
+              text: 'Không thể tải dữ liệu sự kiện!',
+              icon: 'error',
+              confirmButtonText: 'Đóng'
+            });
+          }
+        }, // API endpoint để lấy dữ liệu
         eventDataTransform: function(eventData) {
       // Chuyển đổi định dạng dữ liệu
         const [day, month, year] = eventData.reservation_date.split('/');
@@ -133,6 +170,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           });
         });
+        document.querySelectorAll('.fc-timegrid-slot-label').forEach((label) => {
+        const time = label.getAttribute('data-time');
+        if (time >= '12:00:00' && time < '13:30:00') {
+          label.parentElement.style.backgroundColor = '#151515';
+          label.parentElement.style.opacity = '0.5';
+        }
+      });
       }, 0);
     },
 });
