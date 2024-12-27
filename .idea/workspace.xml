@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="edit function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/update.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/update.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,7 +160,7 @@
       <workItem from="1735003686188" duration="17082000" />
       <workItem from="1735090294848" duration="25450000" />
       <workItem from="1735176595963" duration="11750000" />
-      <workItem from="1735263174117" duration="14346000" />
+      <workItem from="1735263174117" duration="15536000" />
     </task>
     <task id="LOCAL-00001" summary="edit function">
       <option name="closed" value="true" />

@@ -135,8 +135,9 @@ document.getElementById("edit-booking-form-content").addEventListener("submit", 
     const currentDateTime = new Date(new Date().toISOString());
     const gmt7DateTime = new Date(currentDateTime.getTime() + (7 * 60 * 60 * 1000));
     if (!formData.start_time || !formData.end_time || startTime >= endTime) {
-        //console.log("start_time ", formData.start_time);
-        //console.log("end_time ", formData.end_time);
+        console.log("start_time ", startTime >= endTime);
+        console.log("start_time ", formData.start_time);
+        console.log("end_time ", formData.end_time);
         //console.log("Vui lòng chọn thời gian hợp lệ. Thời gian kết thúc phải lớn hơn thời gian bắt đầu");
         alert("Vui lòng chọn thời gian hợp lệ. Thời gian kết thúc phải lớn hơn thời gian bắt đầu.");
         return;
