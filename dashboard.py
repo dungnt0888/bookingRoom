@@ -58,24 +58,39 @@ def dashboard():
 
 
 def filter_by_time(query, time_filter):
+    """
+    Lọc dữ liệu theo khoảng thời gian: ngày, tuần, tháng hoặc năm.
+    """
     today = datetime.now()
+    start_date = None
+    end_date = None
+
+    # Xác định start_date và end_date
     if time_filter == "day":
         start_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
     elif time_filter == "week":
-        start_date = today - timedelta(days=today.weekday())  # Đầu tuần
+        start_date = today - timedelta(days=today.weekday())  # Đầu tuần (Thứ Hai)
+        end_date = start_date + timedelta(days=6)  # Cuối tuần (Chủ Nhật)
     elif time_filter == "month":
         start_date = today.replace(day=1)  # Đầu tháng
+        next_month = start_date.replace(day=28) + timedelta(days=4)  # Đầu tháng tiếp theo
+        end_date = next_month.replace(day=1) - timedelta(seconds=1)  # Cuối tháng
     elif time_filter == "year":
         start_date = today.replace(month=1, day=1)  # Đầu năm
+        end_date = start_date.replace(year=start_date.year + 1) - timedelta(seconds=1)  # Cuối năm
     else:
-        start_date = None
+        raise ValueError(f"Invalid time_filter: {time_filter}")
 
-    if start_date:
-        query = query.filter(Booking.reservation_date >= start_date.date())
-    #print(start_date.date())
+    # Áp dụng filter vào query
+    if time_filter == "day":
+        query = query.filter(Booking.reservation_date == start_date.date())
+    elif start_date and end_date:
+        query = query.filter(
+            Booking.reservation_date >= start_date.date(),
+            Booking.reservation_date <= end_date.date()
+        )
 
     return query
-
 
 @dashboard_bp.route('/dashboard/filter')
 def dashboard_filter():
