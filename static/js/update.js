@@ -133,7 +133,7 @@ document.getElementById("edit-booking-form-content").addEventListener("submit", 
     const [day, month, year] = formData.reservation_date.split('/'); // Tách chuỗi ngày
     const combinedDateTime = new Date(`${year}-${month}-${day}T${formData.start_time}`);
     const currentDateTime = new Date(new Date().toISOString());
-    const gmt7DateTime = new Date(currentDateTime.getTime() + (7 * 60 * 60 * 1000));
+    //const gmt7DateTime = new Date(currentDateTime.getTime() + (7 * 60 * 60 * 1000));
     if (!formData.start_time || !formData.end_time || startTime >= endTime) {
         console.log("start_time ", startTime >= endTime);
         console.log("start_time ", formData.start_time);
@@ -143,8 +143,8 @@ document.getElementById("edit-booking-form-content").addEventListener("submit", 
         return;
     }
     console.log("combinedDateTime ", combinedDateTime);
-    console.log("gmt7DateTime ", gmt7DateTime);
-    if (combinedDateTime < gmt7DateTime) {
+    console.log("gmt7DateTime ", currentDateTime);
+    if (combinedDateTime < currentDateTime) {
         alert("Không thể sửa vào khoảng thời gian đã qua.");
         event.preventDefault();
         return;
