@@ -142,6 +142,8 @@ document.getElementById("edit-booking-form-content").addEventListener("submit", 
         alert("Vui lòng chọn thời gian hợp lệ. Thời gian kết thúc phải lớn hơn thời gian bắt đầu.");
         return;
     }
+    console.log("combinedDateTime ", combinedDateTime);
+    console.log("gmt7DateTime ", gmt7DateTime);
     if (combinedDateTime < gmt7DateTime) {
         alert("Không thể sửa vào khoảng thời gian đã qua.");
         event.preventDefault();
