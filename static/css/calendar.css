@@ -1,0 +1,5 @@
+.fc-highlight {
+    background-color: rgb(7, 244, 7) !important; /* Màu nền vùng chọn */
+    border: 1px dashed #e3f858; /* Đường viền vùng chọn */
+    opacity: 0.35;
+}

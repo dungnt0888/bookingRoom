@@ -1,3 +1,4 @@
+#booking api
 from flask import Blueprint, request, jsonify
 from models.booking_room import Booking
 from cnnDatabase import db
@@ -35,7 +36,7 @@ def submit_booking():
             return jsonify({'success': False, 'error': 'Required fields are missing'}), 400
 
         # Lưu booking và lấy booking_id
-        booking_id = save_booking(
+        result  = save_booking(
             booking_name=data.get('booking_name'),
             department=data.get('department'),
             meeting_content=data.get('meeting_content'),
@@ -47,8 +48,11 @@ def submit_booking():
             username = data.get('username')
         )
 
+        # Kiểm tra nếu phòng đã được đặt
+        if not result ["success"]:
+            return jsonify({"success": False, "message": result ["message"]}), 409
         # Trả về booking_id sau khi lưu
-
+        booking_id = result["booking_id"]
         # Lấy thông tin người nhận email
         user_email = 'trungtld@bcons.com.vn'  # Email người đặt phòng
         if not user_email:

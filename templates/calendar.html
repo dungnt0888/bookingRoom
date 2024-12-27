@@ -1,7 +1,8 @@
 <!-- calendar.html -->
 {% extends "layout.html" %}
 {% block custom_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/calendar.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -13,7 +14,7 @@
         <div class="booking-form-content">
             <h4>Ngày: <span id="booking-date"></span></h4>
             <p><strong id="room-name">Tên phòng:</strong> </p>
-            <p><strong id="time-range">Thời gian:</strong> </p>
+            <p><strong>Thời gian: </strong><strong id="time-range"></strong> </p>
             <form id="booking-form-content">
                 <label for="chairman">Người chủ trì:</label>
                 <input type="text" name="chairman" id="chairman" placeholder="Nhập tên người chủ trì" required><br>
@@ -128,7 +129,10 @@
             </form>
         </div>
 </div>
-
+<script>
+    const loggedInUser = "{{ session['username'] }}";
+    const loggedInUserRole = "{{ session['role'] }}";
+</script>
 <script src="{{ url_for('static', filename='js/fullcalendar/index.global.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/fullcalendar/calendar.js') }}"></script>
 <script type="module">
