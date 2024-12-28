@@ -3,3 +3,7 @@
     border: 1px dashed #e3f858; /* Đường viền vùng chọn */
     opacity: 0.35;
 }
+.fc-timegrid-slot-past {
+    background-color: #302d2d; /* Màu xám nhạt */
+    opacity: 0.1;
+}

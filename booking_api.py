@@ -197,10 +197,11 @@ def edit_booking(booking_id):
             "username": booking.username,
             "role": booking.user.role
         }
-
+        #print(old_data)
         # Cập nhật thông tin booking
         booking.chairman = data.get('chairman', booking.chairman)
         booking.booking_name = data.get('booking_name', booking.booking_name)
+        booking.room_name = data.get('room_name') or booking.room_name
         booking.department = data.get('department', booking.department)
         booking.meeting_content = data.get('meeting_content', booking.meeting_content)
         booking.start_time = start_time_obj
@@ -219,9 +220,9 @@ def edit_booking(booking_id):
             "meeting_content": booking.meeting_content,
             "room_name": booking.room_name,
             "username": booking.username,
-            "role": booking.user.role
+            "role": booking.user.role,
         }
-
+        #print(new_data)
         # Ghi log
         log_operation(
             table_name="booking",

@@ -61,64 +61,83 @@ document.addEventListener('DOMContentLoaded', function() {
         resourceTimeGridDay: { buttonText: 'Ngày' }, // Nút hiển thị là "Ngày"
         resourceTimelineDay: {buttonText: 'Timeline'}
       },
+
       eventAllow: function (dropInfo, draggedEvent) {
-        // Kiểm tra nếu chế độ xem hiện tại là 'timeGridDay'
-        const currentView = calendar.view.type;
-        if (currentView !== 'resourceTimeGridDay') {
-          return false; // Không cho chỉnh sửa nếu không phải chế độ ngày
-        }
-        // Kiểm tra thời gian mới
-        const start = new Date(dropInfo.start);
-        const end = new Date(dropInfo.end);
+    // Kiểm tra nếu chế độ xem hiện tại là 'resourceTimeGridDay'
+            const currentView = calendar.view.type;
+            if (currentView !== 'resourceTimeGridDay') {
+                return false; // Không cho chỉnh sửa nếu không phải chế độ ngày
+            }
 
-        const restrictedStart = new Date(start);
-        restrictedStart.setHours(12, 0, 0, 0); // 12:00:00
-        const restrictedEnd = new Date(start);
-        restrictedEnd.setHours(13, 30, 0, 0); // 13:30:00
+            // Kiểm tra thời gian mới
+            const start = new Date(dropInfo.start);
+            const end = new Date(dropInfo.end);
+            const eventStart = new Date(draggedEvent.start); // Thời gian bắt đầu của sự kiện
+            // Lấy thời gian hiện tại
+            const now = new Date();
+            if (eventStart < now) {
+                return false; // Không cho phép chỉnh sửa sự kiện trong quá khứ
+            }
+            // Đặt khoảng thời gian bị hạn chế
+            const restrictedStart = new Date(start);
+            restrictedStart.setHours(12, 0, 0, 0); // 12:00:00
+            const restrictedEnd = new Date(start);
+            restrictedEnd.setHours(13, 30, 0, 0); // 13:30:00
 
-        // Kiểm tra nếu sự kiện giao với khoảng bị hạn chế
-        return !(start < restrictedEnd && end > restrictedStart);
+            // Kiểm tra nếu sự kiện rơi vào khoảng bị hạn chế
+            const isRestricted = start < restrictedEnd && end > restrictedStart;
 
-         // Cho phép chỉnh sửa
-         // Không cho chỉnh sửa
-      },
-        selectAllow: function(selectInfo) {
-              const currentView = calendar.view.type;
-              if (currentView !== 'resourceTimeGridDay' &&  currentView !== 'timeGridDay') {
-                return; // Chỉ cho phép chọn trong chế độ Ngày
-              }
-              const start = new Date(selectInfo.start);
-              const end = new Date(selectInfo.end);
+            // Kiểm tra nếu sự kiện nằm trong quá khứ
+            const isInPast = start < now;
 
-              const restrictedStart = new Date(start);
-              restrictedStart.setHours(12, 0, 0, 0); // 12:00:00
-              const restrictedEnd = new Date(start);
-              restrictedEnd.setHours(13, 30, 0, 0); // 13:30:00
+            // Trả về false nếu rơi vào khoảng bị hạn chế hoặc trong quá khứ
+            if (isRestricted || isInPast) {
+                return false;
+            }
+            // Nếu không có hạn chế, cho phép chỉnh sửa
+            return true;
+        },
+            selectAllow: function(selectInfo) {
+            const currentView = calendar.view.type;
 
-              // 1. Kiểm tra nếu thời gian rơi vào khoảng 12:00 - 13:30
-              const isRestrictedTime = (start < restrictedEnd && end > restrictedStart);
+            // 1. Chỉ áp dụng trong chế độ ngày
+            if (currentView !== 'resourceTimeGridDay' && currentView !== 'timeGridDay') {
+                return false; // Không cho phép chọn
+            }
 
-              // 2. Kiểm tra nếu ngày nhỏ hơn ngày hiện tại
-              const today = new Date();
-              today.setHours(0, 0, 0, 0); // Chỉ so sánh ngày
-              const isPastDate = start < today;
+            const start = new Date(selectInfo.start);
+            const end = new Date(selectInfo.end);
 
-              // 3. Kiểm tra nếu đã có sự kiện trong khoảng thời gian
-              const events = calendar.getEvents(); // Lấy tất cả các sự kiện trong lịch
-              const isOverlappingEvent = events.some(event => {
-                  //console.log(event._def.resourceIds[0]);
-                  //console.log(selectInfo.resource._resource.id);
-                  const rId = event._def.resourceIds[0]? event._def.resourceIds[0] : ''
-                  if (rId === selectInfo.resource._resource.id) {
-                      return (
-                          event.start < end && event.end > start // Chồng lấn thời gian
-                      );
-                    }
-              });
-              // Chặn nếu bất kỳ điều kiện nào đúng
-              return !(isRestrictedTime || isPastDate || isOverlappingEvent);
+            // 2. Kiểm tra nếu thời gian rơi vào khoảng 12:00 - 13:30
+            const restrictedStart = new Date(start);
+            restrictedStart.setHours(12, 0, 0, 0); // 12:00:00
+            const restrictedEnd = new Date(start);
+            restrictedEnd.setHours(13, 30, 0, 0); // 13:30:00
 
-          },
+            const isRestrictedTime = start < restrictedEnd && end > restrictedStart;
+
+            // 3. Kiểm tra nếu ngày nhỏ hơn ngày hiện tại
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00 để so sánh ngày
+            const isPastDate = start < today;
+
+            // 4. Kiểm tra nếu đã có sự kiện chồng lấn trong cùng resource
+            const events = calendar.getEvents(); // Lấy tất cả các sự kiện
+            const isOverlappingEvent = events.some(event => {
+                const resourceId = event._def.resourceIds[0] || '';
+                return (
+                    resourceId === (selectInfo.resource?._resource?.id || '') && // Kiểm tra resource
+                    event.start < end && event.end > start // Kiểm tra chồng lấn thời gian
+                );
+            });
+
+            // 5. Kiểm tra nếu thời gian bắt đầu < hiện tại (không cho phép chọn trong quá khứ)
+            const now = new Date();
+            const isPast = start < now;
+
+            // Chặn nếu bất kỳ điều kiện nào đúng
+            return !(isRestrictedTime || isPastDate || isOverlappingEvent || isPast);
+     },
       select: function(info) {
           // Thời gian bắt đầu và kết thúc
           const currentView = calendar.view.type;
@@ -163,45 +182,84 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         }, // API endpoint để lấy dữ liệu
         eventDataTransform: function(eventData) {
-      // Chuyển đổi định dạng dữ liệu
-        const [day, month, year] = eventData.reservation_date.split('/');
-        const color = roomColors[eventData.room_name] || '#3357FF'; // Màu mặc định nếu không khớp phòng
-        let borderColor;
-        if (new Date() < new Date(`${year}-${month}-${day}T${eventData.start_time}`)) {
-        borderColor = '#c9e318'; // Sự kiện sắp diễn ra (xanh lá)
-        } else if (new Date() > new Date(`${year}-${month}-${day}T${eventData.end_time}`)) {
-        borderColor = '#0ff451'; // Sự kiện đã kết thúc (đỏ)
-        } else {
-        borderColor = '#ffc107'; // Sự kiện đang diễn ra (vàng)
-        }
+        // Chuyển đổi định dạng dữ liệu
+            const [day, month, year] = eventData.reservation_date.split('/');
+            const color = roomColors[eventData.room_name] || '#3357FF'; // Màu mặc định nếu không khớp phòng
+            let borderColor;
+            if (new Date() < new Date(`${year}-${month}-${day}T${eventData.start_time}`)) {
+                borderColor = '#c9e318'; // Sự kiện sắp diễn ra (xanh lá)
+            } else if (new Date() > new Date(`${year}-${month}-${day}T${eventData.end_time}`)) {
+                borderColor = '#0ff451'; // Sự kiện đã kết thúc (đỏ)
+            } else {
+                borderColor = '#ffc107'; // Sự kiện đang diễn ra (vàng)
+            }
 
-  // Đặt màu sắc dựa trên phòng
+            // Đặt màu sắc dựa trên phòng
 
-      return {
-        id: eventData.booking_id,
-        title: eventData.booking_name || "Không có tiêu đề",
-        start: `${year}-${month}-${day}T${eventData.start_time}`,
-        end: `${year}-${month}-${day}T${eventData.end_time}`,
-        allDay: false, // Đánh dấu sự kiện không phải cả ngày
-        backgroundColor: color, // Màu nền
-        borderColor: borderColor,     // Màu viền
-        textColor: '#ffffff',   // Màu chữ
-        resourceId: eventData.room_name.trim(),
-        extendedProps: {
-          chairman: eventData.chairman,
-          department: eventData.department,
-          room_name: eventData.room_name,
-          meeting_content: eventData.meeting_content,
-          username: eventData.username,
-          role: eventData.role,
-          start_time: eventData.start_time, // Thêm start_time vào extendedProps
-          end_time: eventData.end_time      // Thêm end_time vào extendedProps
-        }
-      };
-},
-    eventClick: function(info) {
+            return {
+                id: eventData.booking_id,
+                title: eventData.booking_name || "Không có tiêu đề",
+                start: `${year}-${month}-${day}T${eventData.start_time}`,
+                end: `${year}-${month}-${day}T${eventData.end_time}`,
+                allDay: false, // Đánh dấu sự kiện không phải cả ngày
+                backgroundColor: color, // Màu nền
+                borderColor: borderColor,     // Màu viền
+                textColor: '#ffffff',   // Màu chữ
+                resourceId: eventData.room_name.trim(),
+                extendedProps: {
+                department: eventData.department,
+                chairman: eventData.chairman,
+                room_name: eventData.room_name,
+                meeting_content: eventData.meeting_content,
+                username: eventData.username,
+                role: eventData.role,
+                start_time: eventData.start_time, // Thêm start_time vào extendedProps
+                end_time: eventData.end_time      // Thêm end_time vào extendedProps
+                }
+            };
+        },
+      eventDrop: async function(info) {
+          const currentView = info.view.type;
+          if(currentView === "resourceTimeGridDay"){
+              if(info){
+                  await editCalendar(info);
+              }
+          }
+      },
+      eventResize: async function(info) {
+          const currentView = info.view.type;
+          if(currentView === "resourceTimeGridDay"){
+              if(info){
+                  await editCalendar(info);
+              }
+          }
+      },
+       /*eventContent: function (arg) {
+            const currentView = arg.view.type;
+             if (currentView === 'resourceTimeGridDay' || currentView === 'timeGridDay') {
+                const department = arg.event.extendedProps.department; // Lấy department từ extendedProps
+                const chairman = arg.event.extendedProps.chairman; // Lấy thông tin chairman (nếu cần)
+                const title = arg.event.title;
+
+                // Tạo nội dung tùy chỉnh
+                const customHtml = `
+                    <div>
+                        <div><b>${title}</b></div>
+                        <div>${department ? `<strong>Khối: ${department}</strong>` : ''}</div>
+                        <div>${chairman ? `<i>${chairman}</i>` : ''}</div>
+                    </div>
+                `;
+
+                // Trả về đối tượng với innerHTML
+                return { html: customHtml };
+             }
+              // Hiển thị mặc định cho các chế độ khác
+             return { html: `<div><b>${arg.event.title}</b></div>` };
+
+    },*/
+    eventClick: async function(info) {
       const props = info.event.extendedProps;
-      Swal.fire({
+      const result = await Swal.fire({
         title: info.event.title,
         html: `
           <p><strong>Người chủ trì:</strong> ${props.chairman}</p>
@@ -211,10 +269,16 @@ document.addEventListener('DOMContentLoaded', function() {
           <p><strong>Thời gian:</strong> ${props.start_time} - ${props.end_time}</p>
         `,
         icon: 'info',
-        confirmButtonText: 'Đóng'
+        showCancelButton: true, // Hiển thị nút hủy
+        confirmButtonText: 'Xóa sự kiện',
+        cancelButtonText: 'Đóng'
       });
+      if (result.isConfirmed) {
+        //await deleteEvent(info.event.id, info); // Gọi hàm xóa sự kiện
+          console.log("Deleted");
+    }
     },
-        datesSet: function () {
+        datesSet: function (info) {
       // Lắng nghe sự kiện click trên tiêu đề ngày
       setTimeout(() => {
         document.querySelectorAll('.fc-col-header-cell').forEach((headerCell) => {
@@ -226,13 +290,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           });
         });
+
+
+
         document.querySelectorAll('.fc-timegrid-slot-label').forEach((label) => {
-        const time = label.getAttribute('data-time');
-        if (time >= '12:00:00' && time < '13:30:00') {
-          label.parentElement.style.backgroundColor = '#151515';
-          label.parentElement.style.opacity = '0.5';
+            const time = label.getAttribute('data-time');
+
+            if (time >= '12:00:00' && time < '13:30:00') {
+              label.parentElement.style.backgroundColor = '#151515';
+              label.parentElement.style.opacity = '0.5';
+            }
+         });
+        const currentView = info.view.type;
+        const now = new Date();
+        const currentDate = info.start;
+        if(currentView === 'resourceTimeGridDay' || currentView === 'timeGridDay') {
+            const timeGridEls = document.querySelectorAll('.fc-timegrid-slot');
+            timeGridEls.forEach(slot => {
+                const time = slot.getAttribute('data-time'); // Lấy thời gian từ slot
+                if (time) {
+                    const slotDateTime = new Date(currentDate);
+                    const [hours, minutes] = time.split(':').map(Number);
+                    slotDateTime.setHours(hours, minutes, 0, 0);
+
+                    // Nếu slot nhỏ hơn thời gian hiện tại -> thêm màu xám
+                    if (slotDateTime < now) {
+                        slot.classList.add('fc-timegrid-slot-past');
+                    } else {
+                        slot.classList.remove('fc-timegrid-slot-past');
+                    }
+                }
+            });
         }
-      });
       }, 0);
     },
 });
@@ -470,6 +559,13 @@ document.getElementById("booking-form-content").addEventListener("submit", async
     if(result.success){
          hideForm();
          // Làm mới calendar
+        Swal.fire({
+              title: 'Thành công',
+              text: 'Bạn đã đặt lịch thành công!',
+              icon: 'success',
+              timer: 1500, // Tự động đóng sau 1.5 giây
+              showConfirmButton: false
+            });
         calendar.refetchEvents();
     }else {
         alert(`Failed to save booking: ${result.message}`);
@@ -537,4 +633,97 @@ function getRemainingDaysInMonth(year, month, dayOfWeek, startDate) {
     }
 
     return matchingDays;
+}
+
+function formatTime(date) {
+    if (!date) return null;
+    const hours = date.getHours().toString().padStart(2, '0'); // Đảm bảo luôn có 2 chữ số
+    const minutes = date.getMinutes().toString().padStart(2, '0'); // Đảm bảo luôn có 2 chữ số
+    return `${hours}:${minutes}`;
+}
+function getDataFromEvent(event){
+    let data = {};
+    if (event){
+        data = {
+            booking_id: event.id || null, // Mặc định là null nếu không có id
+            booking_name: event.title || "", // Giá trị mặc định
+            start_time: formatTime(event.start), // Định dạng thành HH:mm
+            end_time: formatTime(event.end),     // Định dạng thành HH:mm
+            chairman: event.extendedProps.chairman || "", // Giá trị mặc định là chuỗi rỗng
+            room_name: event._def.resourceIds && event._def.resourceIds.length > 0 ? event._def.resourceIds[0] : "", // Kiểm tra tài nguyên
+            meeting_content: event.extendedProps.meeting_content || "", // Giá trị mặc định
+            username: event.extendedProps.username || "", // Giá trị mặc định
+            role: event.extendedProps.role || "" // Giá trị mặc định
+        };
+    }
+    //console.log("data check: ",data);
+    return data
+}
+
+
+async function updateBooking(bookingID, data) {
+    try {
+        const response = await fetch(`/api/booking/edit_booking/${bookingID}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            //alert(result.message);
+            //window.loadBookings();
+            //window.hideForm();// Cập nhật thành công
+            return { success: true, message: result.message }; // Thành công
+        } else {
+            alert(`Lỗi: ${result.message}`); // Thời gian trùng lặp hoặc lỗi khác
+            return { success: false, message: result.message }; // Lỗi từ server
+        }
+    } catch (error) {
+        console.error("Lỗi khi cập nhật lịch họp:", error);
+        alert("Có lỗi xảy ra khi gửi yêu cầu.");
+        return { success: false, message: "Có lỗi xảy ra khi gửi yêu cầu." };
+    }
+}
+
+async function editCalendar(info){
+    const event = info.event;
+    if(event) {
+        //console.log(event);
+        const data = getDataFromEvent(event)
+        try {
+            const result = await updateBooking(data.booking_id, data);
+            if (!result.success) {
+                console.warn("Edit failed, reverting changes...");
+                Swal.fire({
+                  title: 'Lỗi',
+                  text: result.message || 'Edit lỗi! Hãy kiểm tra lại dữ liệu.',
+                  icon: 'error',
+                  confirmButtonText: 'Đóng'
+                });
+                info.revert();
+            } else {
+                //console.log("Edit successful:", data);
+                calendar.refetchEvents();
+            }
+
+        } catch (error) {
+            console.error("Error during edit:", error);
+            Swal.fire({
+                title: 'Lỗi mạng',
+                text: 'Không thể kết nối tới server. Hãy thử lại sau.',
+                icon: 'error',
+                confirmButtonText: 'Đóng'
+            });
+            info.revert(); // Hoàn tác nếu xảy ra lỗi
+        }
+    }else{
+         Swal.fire({
+                title: 'Xảy ra sự cố',
+                text: 'Không thể kết nối tới server. Hãy thử lại sau.',
+                icon: 'error',
+                confirmButtonText: 'Đóng'
+            });
+    }
 }
