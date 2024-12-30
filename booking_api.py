@@ -1,6 +1,8 @@
 #booking api
 from flask import Blueprint, request, jsonify
 from models.booking_room import Booking
+from models.booking_name import Booking_name
+from models.department import Department
 from cnnDatabase import db
 from save_booking import save_booking
 from send_email import EmailHandler
@@ -278,3 +280,38 @@ def get_bookings():
         # Trả về chi tiết lỗi nếu có lỗi xảy ra
         print("Lỗi khi lấy dữ liệu bookings:", e)
         return jsonify({"message": f"Failed to load bookings: {str(e)}"}), 500
+
+
+@booking_bp.route('/get_departments', methods=['GET'])
+def get_departments():
+    try:
+        departments = Department.query.all()
+        department_data = []
+        for department in departments:
+            department_data.append({
+                "department_id": department.id,
+                "department_name": department.name
+            })
+        return jsonify({"departments": department_data}), 200
+    except Exception as e:
+        print("Lỗi khi lấy dữ liệu department:", e)
+        return jsonify({"message": f"Failed to load department: {str(e)}"}), 500
+
+
+@booking_bp.route('/get_meetings', methods=['GET'])
+def get_meetings():
+    try:
+        meetings = Booking_name.query.all()
+        meetings_data = []
+        for meeting in meetings:
+            meetings_data.append({
+                "name_id": meeting.name_id,
+                "booking_name": meeting.booking_name,
+                "description": meeting.description
+            })
+        #print(meetings)
+        #print(meetings_data)
+        return jsonify({"meetings": meetings_data}), 200
+    except Exception as e:
+        print("Lỗi khi lấy dữ liệu meetings:", e)
+        return jsonify({"message": f"Failed to load meetings: {str(e)}"}), 500

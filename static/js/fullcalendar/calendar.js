@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
       eventAllow: function (dropInfo, draggedEvent) {
     // Kiểm tra nếu chế độ xem hiện tại là 'resourceTimeGridDay'
             const currentView = calendar.view.type;
-            if (currentView !== 'resourceTimeGridDay') {
+            if (currentView !== 'resourceTimeGridDay' || currentView ===  "resourceTimelineDay") {
                 return false; // Không cho chỉnh sửa nếu không phải chế độ ngày
             }
 
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentView = calendar.view.type;
 
             // 1. Chỉ áp dụng trong chế độ ngày
-            if (currentView !== 'resourceTimeGridDay' && currentView !== 'timeGridDay') {
+            if (currentView !== 'resourceTimeGridDay' || currentView ===  "resourceTimelineDay") {
                 return false; // Không cho phép chọn
             }
 
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
           //console.log("Current view type:", currentView);
           //console.log("Resources:", calendar.getResources());
           //console.log("Select Info:", info);
-          if (currentView !== 'resourceTimeGridDay' &&  currentView !== 'timeGridDay') {
+          if (currentView !== 'resourceTimeGridDay' || currentView ===  "resourceTimelineDay") {
             return; // Chỉ cho phép chọn trong chế độ Ngày
           }
 
@@ -168,6 +168,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const end = start.add(5, 'day'); // Thứ Hai + 5 ngày = Thứ Bảy
         return { start, end };
     },
+      windowResize: function(view) {
+        console.log("Window resized. Adjusting calendar...");
+        calendar.updateSize(); // Tự động điều chỉnh kích thước lịch
+    },
       hiddenDays: [0], // Ẩn Chủ Nhật (0 = Chủ Nhật, 1 = Thứ Hai, ..., 6 = Thứ Bảy)
       eventOverlap: false,
       events: {
@@ -180,7 +184,9 @@ document.addEventListener('DOMContentLoaded', function() {
               confirmButtonText: 'Đóng'
             });
           }
-        }, // API endpoint để lấy dữ liệu
+        },
+      //======================================================
+        // API endpoint để lấy dữ liệu
         eventDataTransform: function(eventData) {
         // Chuyển đổi định dạng dữ liệu
             const [day, month, year] = eventData.reservation_date.split('/');
@@ -218,6 +224,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
         },
+      //=============================================
+      //Event Drop Kéo thả
       eventDrop: async function(info) {
           const currentView = info.view.type;
           if(currentView === "resourceTimeGridDay"){
@@ -226,6 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
               }
           }
       },
+      //=============================================
+      // Resize event
       eventResize: async function(info) {
           const currentView = info.view.type;
           if(currentView === "resourceTimeGridDay"){
@@ -257,26 +267,238 @@ document.addEventListener('DOMContentLoaded', function() {
              return { html: `<div><b>${arg.event.title}</b></div>` };
 
     },*/
+
+  //=================================================
+  // Event Click
+  //=================================================
     eventClick: async function(info) {
       const props = info.event.extendedProps;
-      const result = await Swal.fire({
-        title: info.event.title,
-        html: `
-          <p><strong>Người chủ trì:</strong> ${props.chairman}</p>
-          <p><strong>Bộ phận:</strong> ${props.department}</p>
-          <p><strong>Phòng:</strong> ${props.room_name}</p>
-          <p><strong>Nội dung:</strong> ${props.meeting_content}</p>
-          <p><strong>Thời gian:</strong> ${props.start_time} - ${props.end_time}</p>
-        `,
-        icon: 'info',
-        showCancelButton: true, // Hiển thị nút hủy
-        confirmButtonText: 'Xóa sự kiện',
-        cancelButtonText: 'Đóng'
-      });
-      if (result.isConfirmed) {
-        //await deleteEvent(info.event.id, info); // Gọi hàm xóa sự kiện
-          console.log("Deleted");
-    }
+      const now = new Date();
+      const departments = await getDepartments();
+      const meetings = await getMeetings();
+      console.log(meetings);
+      const eventStart = new Date(info.event.start); // Thời gian bắt đầu của sự kiện
+      await Swal.fire({
+            title: 'Cuộc họp',
+            html: `
+                <p> <h2 style="font-size: 40px; font-weight: bold" id="meetingText">${info.event.title}</h2>
+                <select id="meetingDropdown" class="swal2-select" style="display: none; margin: auto">
+                     <option value="" selected disabled style="color: gray; font-weight: bold;">-- Chọn một tùy chọn --</option>
+                     ${meetings.meetings.map(dep => `
+                        <option value="${dep.booking_name}" 
+                          ${dep.booking_name === info.event.title ? 'selected' : ''}>
+                          ${dep.booking_name}
+                        </option>
+                      `).join('')}
+                </select>
+                </p>
+              <p><strong>Phòng ban:</strong> <h2 style="color: greenyellow" id="departmentText">${props.department}</h2>
+              <select id="departmentDropdown" class="swal2-select" style="display: none; margin: auto">
+                 <option value="" selected disabled style="color: gray; font-weight: bold;">-- Chọn một tùy chọn --</option>
+                 ${departments.departments.map(dep => `
+                    <option value="${dep.department_name}" 
+                      ${dep.department_name === props.department ? 'selected' : ''}>
+                      ${dep.department_name}
+                    </option>
+                  `).join('')}
+              </select>
+              </p>
+              <p>
+                <strong>Người chủ trì:</strong> 
+                <h3 style="color: yellow;" id="chairmanText">${props.chairman}</h3>
+                <input id="chairmanInput" class="swal2-input" style="display: none; margin: auto" value="${props.chairman}">
+              </p>
+              <p>
+                <strong>Nội dung:</strong> 
+                <span id="meetingContentText">${props.meeting_content}</span>
+                <input id="meetingContentInput" class="swal2-input" style="display: none; margin: auto" value="${props.meeting_content}">
+              </p>
+              <p><strong>Phòng:</strong> ${props.room_name}</p>
+              <p><strong>Thời gian:</strong> ${props.start_time} - ${props.end_time}</p>
+            `,
+            icon: 'info',
+            showConfirmButton: eventStart >= now, // Hiển thị nút "Xóa sự kiện" nếu sự kiện chưa bắt đầu
+            confirmButtonText: 'Lưu thay đổi',
+            cancelButtonText: 'Đóng',
+            denyButtonText: 'Xóa sự kiện',
+            cancelButtonText: 'Đóng',
+            showCancelButton: true,
+            showDenyButton: eventStart >= now,
+            didOpen: () => {
+                // Gắn sự kiện click để chuyển sang chế độ chỉnh sửa
+                const chairmanText = document.getElementById('chairmanText');
+                const chairmanInput = document.getElementById('chairmanInput');
+                const toggleEdit = (textEl, inputEl) => {
+                    textEl.style.display = 'none';
+                    inputEl.style.display = 'block';
+                    inputEl.focus();
+                };
+
+                const updateText = (textEl, inputEl) => {
+                    inputEl.style.display = 'none';
+                    textEl.style.display = 'inline';
+                    textEl.textContent = inputEl.value || textEl.textContent; // Giữ nguyên nếu không có giá trị
+                };
+                chairmanText.addEventListener('click', () => {
+                    chairmanText.style.display = 'none';
+                    chairmanInput.style.display = 'block';
+                    chairmanInput.focus();
+                });
+                chairmanInput.addEventListener('blur', () => {
+                chairmanInput.style.display = 'none';
+                chairmanText.style.display = 'inline';
+                chairmanText.textContent = chairmanInput.value; // Cập nhật nội dung mới
+                });
+
+                const meetingContentText = document.getElementById('meetingContentText');
+                const meetingContentInput = document.getElementById('meetingContentInput');
+                meetingContentText.addEventListener('click', () => {
+                    meetingContentText.style.display = 'none';
+                    meetingContentInput.style.display = 'block';
+                    meetingContentInput.focus();
+                });
+                meetingContentInput.addEventListener('blur', () => {
+                    meetingContentInput.style.display = 'none';
+                    meetingContentText.style.display = 'inline';
+                    meetingContentText.textContent = meetingContentInput.value; // Cập nhật nội dung mới
+                });
+
+                const departmentText = document.getElementById('departmentText');
+                const departmentInput = document.getElementById('departmentDropdown');
+                departmentText.addEventListener('click', () => toggleEdit(departmentText, departmentInput));
+
+                // Xử lý khi dropdown thay đổi giá trị (change)
+                departmentInput.addEventListener('change', () => {
+                    updateText(departmentText, departmentInput);
+                });
+
+                // Xử lý khi dropdown mất focus (blur)
+                departmentInput.addEventListener('blur', () => {
+                    updateText(departmentText, departmentInput);
+                });
+
+                const meetingText = document.getElementById('meetingText');
+                const meetingInput = document.getElementById('meetingDropdown');
+                meetingText.addEventListener('click', () => toggleEdit(meetingText, meetingInput));
+
+                // Xử lý khi dropdown thay đổi giá trị (change)
+                meetingInput.addEventListener('change', () => {
+                    updateText(meetingText, meetingInput);
+                });
+
+                // Xử lý khi dropdown mất focus (blur)
+                meetingInput.addEventListener('blur', () => {
+                    updateText(meetingText, meetingInput);
+                });
+
+            },
+            preConfirm: () => {
+                // Lấy giá trị mới từ các ô nhập liệu
+                const newChairman = document.getElementById('chairmanInput').value;
+                const newMeetingContent = document.getElementById('meetingContentInput').value;
+                const newDepartment = document.getElementById('departmentDropdown').value;
+                const newMeeting = document.getElementById('meetingDropdown').value;
+
+                return { newChairman, newMeetingContent, newDepartment, newMeeting };
+            }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const {newChairman, newMeetingContent, newDepartment, newMeeting} = result.value;
+                    const event = info.event;
+                    // Gửi dữ liệu mới đến server
+                    const data = {
+                        booking_id: event.id || null, // Mặc định là null nếu không có id
+                        booking_name: newMeeting || "", // Giá trị mặc định
+                        department: newDepartment,
+                        start_time: formatTime(event.start), // Định dạng thành HH:mm
+                        end_time: formatTime(event.end),     // Định dạng thành HH:mm
+                        chairman: newChairman, // Giá trị mặc định là chuỗi rỗng
+                        room_name: event._def.resourceIds && event._def.resourceIds.length > 0 ? event._def.resourceIds[0] : "", // Kiểm tra tài nguyên
+                        meeting_content: newMeetingContent, // Giá trị mặc định
+                        username: event.extendedProps.username || "", // Giá trị mặc định
+                        role: event.extendedProps.role || "" // Giá trị mặc định
+                    };
+                    try {
+                        const result = await updateBooking(data.booking_id, data)
+                        if (!result.success) {
+                            console.warn("Edit failed, reverting changes...");
+                            Swal.fire({
+                                title: 'Lỗi',
+                                text: result.message || 'Edit lỗi! Hãy kiểm tra lại dữ liệu.',
+                                icon: 'error',
+                                confirmButtonText: 'Đóng'
+                            });
+                            info.revert();
+                        } else {
+                            //console.log("Edit successful:", data);
+                            Swal.fire({
+                              title: 'Thành công',
+                              text: 'Bạn đã đặt lịch thành công!',
+                              icon: 'success',
+                              timer: 1000, // Tự động đóng sau 1.5 giây
+                              showConfirmButton: false
+                            });
+                            calendar.refetchEvents();
+                        }
+
+                    } catch (error) {
+                        console.error("Error during edit:", error);
+                        Swal.fire({
+                            title: 'Lỗi mạng',
+                            text: 'Không thể kết nối tới server. Hãy thử lại sau.',
+                            icon: 'error',
+                            confirmButtonText: 'Đóng'
+                        });
+                        info.revert(); // Hoàn tác nếu xảy ra lỗi
+
+                    }
+                } //======================================
+                  //Delete event
+                else if (result.isDenied) {
+                    // Người dùng nhấn "Xóa sự kiện"
+                    const confirmDelete = await Swal.fire({
+                        title: 'Bạn có chắc chắn?',
+                        text: 'Hành động này không thể hoàn tác!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Xóa',
+                        cancelButtonText: 'Hủy'
+                    });
+                if (confirmDelete.isConfirmed) {
+                    try {
+                        const result = await removeBooking(info.event.id); // Gọi API xóa
+                        if (result.success) {
+                            Swal.fire({
+                                title: 'Xóa thành công',
+                                text: 'Sự kiện đã được xóa.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                            calendar.refetchEvents(); // Làm mới sự kiện trong FullCalendar
+                        } else {
+                            Swal.fire({
+                                title: 'Lỗi',
+                                text: result.message || 'Không thể xóa sự kiện.',
+                                icon: 'error',
+                                confirmButtonText: 'Đóng'
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Lỗi khi xóa sự kiện:', error);
+                        Swal.fire({
+                            title: 'Lỗi',
+                            text: 'Không thể xóa sự kiện. Hãy thử lại.',
+                            icon: 'error',
+                            confirmButtonText: 'Đóng'
+                        });
+                    }
+                }
+            }
+        });
+
+
+
     },
         datesSet: function (info) {
       // Lắng nghe sự kiện click trên tiêu đề ngày
@@ -705,6 +927,13 @@ async function editCalendar(info){
                 info.revert();
             } else {
                 //console.log("Edit successful:", data);
+                Swal.fire({
+                  title: 'Thành công',
+                  text: 'Bạn đã sửa lịch thành công!',
+                  icon: 'success',
+                  timer: 750, // Tự động đóng sau 1.5 giây
+                  showConfirmButton: false
+                });
                 calendar.refetchEvents();
             }
 
@@ -725,5 +954,50 @@ async function editCalendar(info){
                 icon: 'error',
                 confirmButtonText: 'Đóng'
             });
+    }
+}
+
+async function getMeetings(){
+    try {
+        const response = await fetch('/api/booking/get_meetings');
+        if (!response.ok) throw new Error("Có lỗi xảy ra khi gửi yêu cầu");
+        return response.json()
+
+    }catch (error) {
+        console.error("Lỗi khi lấy lịch họp:", error);
+        alert("Có lỗi xảy ra khi gửi yêu cầu.");
+        return { success: false, message: "Có lỗi xảy ra khi gửi yêu cầu." };
+    }
+}
+
+async function getDepartments(){
+    try {
+        const response = await fetch('api/booking/get_departments');
+        if (!response.ok) throw new Error("Có lỗi xảy ra khi gửi yêu cầu");
+        return response.json()
+
+    }catch (error) {
+        console.error("Lỗi khi lấy phòng ban:", error);
+        alert("Có lỗi xảy ra khi gửi yêu cầu.");
+        return { success: false, message: "Có lỗi xảy ra khi gửi yêu cầu." };
+    }
+}
+
+async function removeBooking(bookingId) {
+    try {
+        const response = await fetch('/delete_booking', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ booking_id: bookingId })
+        });
+
+        if (!response.ok) throw new Error('Có lỗi xảy ra khi gửi yêu cầu');
+        return await response.json(); // Trả về JSON từ server
+    } catch (error) {
+        console.error('Lỗi khi xóa event:', error);
+        alert('Có lỗi xảy ra khi gửi yêu cầu.');
+        return { success: false, message: 'Có lỗi xảy ra khi gửi yêu cầu.' };
     }
 }

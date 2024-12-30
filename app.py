@@ -99,7 +99,6 @@ atexit.register(lambda: scheduler.shutdown())
 
 
 
-
 app.register_blueprint(booking_delete_bp)
 
 # Khởi tạo EmailHandler và cấu hình email
