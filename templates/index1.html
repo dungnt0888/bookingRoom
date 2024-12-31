@@ -62,13 +62,13 @@
 
     <!-- Phần điều hướng thời gian -->
     <div class="time-navigation">
-        <a href="{{ url_for('index.index', offset=offset-1) }}">
+        <a href="{{ url_for('index', offset=offset-1) }}">
             <button id="btn-lastWeek">Tuần trước</button>
         </a>
-        <a href="{{ url_for('index.index', offset=0) }}">
+        <a href="{{ url_for('index', offset=0) }}">
             <button class="current-week">Tuần này</button>
         </a>
-        <a href="{{ url_for('index.index', offset=offset + 1) }}">
+        <a href="{{ url_for('index', offset=offset + 1) }}">
             <button id="btn-nextWeek">Tuần sau</button>
         </a>
         <span>{{ week_label }}: {{ week_range }}</span>
@@ -309,7 +309,7 @@
                 onChange: function(selectedDates, dateStr) {
                     if (dateStr) {
                         // Điều hướng đến ngày được chọn
-                        window.location.href = `{{ url_for('index.index') }}?selected_date=${dateStr}`;
+                        window.location.href = `{{ url_for('index') }}?selected_date=${dateStr}`;
                     }
                 },
             }).open(); // Mở Flatpickr ngay khi click

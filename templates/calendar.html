@@ -6,6 +6,22 @@
 {% endblock %}
 
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        {% for category, message in messages %}
+          Swal.fire({
+            icon: '{{ 'success' if category == 'success' else 'error' if category == 'danger' else 'info' }}',
+            title: '{{ message }}',
+            timer: 2000,  // Tự động đóng sau 3 giây
+            showConfirmButton: false
+          });
+        {% endfor %}
+      });
+    </script>
+  {% endif %}
+{% endwith %}
 <div id="legend-container"></div>
 <div id="calendar"></div>
 
@@ -129,10 +145,7 @@
             </form>
         </div>
 </div>
-<script>
-    const loggedInUser = "{{ session['username'] }}";
-    const loggedInUserRole = "{{ session['role'] }}";
-</script>
+
 <script src="{{ url_for('static', filename='js/fullcalendar/index.global.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/fullcalendar/calendar.js') }}"></script>
 <script type="module">

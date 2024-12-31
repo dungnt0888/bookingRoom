@@ -14,3 +14,7 @@ instance/
 *.pyc
 
 styles1.css
+
+chat_api.py
+
+chat.js

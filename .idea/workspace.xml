@@ -5,10 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="edit function">
+      <change afterPath="$PROJECT_DIR$/decorators.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/old_index.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js/chat.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/index1.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/profile.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/booking_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calendar_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/calendar_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/fullcalendar/calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/fullcalendar/calendar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin_panel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/calendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_logon.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_logon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_management.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,10 +34,10 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Flask Main" />
-        <option value="JavaScript File" />
-        <option value="HTML File" />
-        <option value="Python Script" />
         <option value="CSS File" />
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -58,7 +73,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Flask/flaskProject/static/js/fullcalendar&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Flask/flaskProject/templates&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -76,6 +91,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Flask\flaskProject\templates" />
       <recent name="D:\Flask\flaskProject\static\js\fullcalendar" />
       <recent name="D:\Flask\flaskProject\static\img" />
     </key>
@@ -164,7 +180,8 @@
       <workItem from="1735176595963" duration="11750000" />
       <workItem from="1735263174117" duration="23918000" />
       <workItem from="1735349190416" duration="10279000" />
-      <workItem from="1735522086029" duration="11010000" />
+      <workItem from="1735522086029" duration="23853000" />
+      <workItem from="1735608405086" duration="8955000" />
     </task>
     <task id="LOCAL-00001" summary="edit function">
       <option name="closed" value="true" />

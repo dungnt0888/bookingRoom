@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
           //console.log("Current view type:", currentView);
           //console.log("Resources:", calendar.getResources());
           //console.log("Select Info:", info);
-          if (currentView !== 'resourceTimeGridDay' || currentView ===  "resourceTimelineDay") {
+          if (currentView !== 'resourceTimeGridDay' || currentView ===  "resourceTimelineDay" || loggedInUser === '') {
             return; // Chỉ cho phép chọn trong chế độ Ngày
           }
 
@@ -244,6 +244,15 @@ document.addEventListener('DOMContentLoaded', function() {
               }
           }
       },
+          resourceLabelDidMount: function(info) {
+              const color = roomColors[info.resource.title];
+              if (color) {
+                info.el.style.backgroundColor = color; // Set text color
+                info.el.style.opacity = 0.85;
+                info.el.style.fontWeight = 'bold'; // Optional: Make it bold
+              }
+            },
+
        /*eventContent: function (arg) {
             const currentView = arg.view.type;
              if (currentView === 'resourceTimeGridDay' || currentView === 'timeGridDay') {
@@ -276,7 +285,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const now = new Date();
       const departments = await getDepartments();
       const meetings = await getMeetings();
-      console.log(meetings);
+
+      //console.log(meetings);
       const eventStart = new Date(info.event.start); // Thời gian bắt đầu của sự kiện
       await Swal.fire({
             title: 'Cuộc họp',
@@ -317,13 +327,12 @@ document.addEventListener('DOMContentLoaded', function() {
               <p><strong>Thời gian:</strong> ${props.start_time} - ${props.end_time}</p>
             `,
             icon: 'info',
-            showConfirmButton: eventStart >= now, // Hiển thị nút "Xóa sự kiện" nếu sự kiện chưa bắt đầu
+            showConfirmButton: eventStart >= now && (loggedInUserRole === 'Administrator'|| props.username === loggedInUserRole ), // Hiển thị nút "Xóa sự kiện" nếu sự kiện chưa bắt đầu
             confirmButtonText: 'Lưu thay đổi',
             cancelButtonText: 'Đóng',
             denyButtonText: 'Xóa sự kiện',
-            cancelButtonText: 'Đóng',
             showCancelButton: true,
-            showDenyButton: eventStart >= now,
+            showDenyButton: eventStart >= now && (loggedInUserRole === 'Administrator'|| props.username === loggedInUserRole ),
             didOpen: () => {
                 // Gắn sự kiện click để chuyển sang chế độ chỉnh sửa
                 const chairmanText = document.getElementById('chairmanText');
@@ -547,6 +556,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 0);
     },
 });
+
 
 calendar.render()
 })

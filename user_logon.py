@@ -1,7 +1,7 @@
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from models.user import User
 from cnnDatabase import db
-from flask import Blueprint, request, session, flash, redirect, url_for, jsonify
+from flask import Blueprint, request, session, flash, redirect, url_for, jsonify, render_template
 
 # Tạo Blueprint cho chức năng đăng nhập
 login_bp = Blueprint('login', __name__)
@@ -31,37 +31,78 @@ def authenticate_user(username, password):
     return "Sai tên đăng nhập hoặc mật khẩu. Vui lòng thử lại.", None
 
 
-@login_bp.route('/login', methods=['POST'])
+@login_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET':
+        # Render trang login
+        return render_template('login.html')
+
+    # Xử lý logic đăng nhập khi nhận POST request
     username = request.form.get('username', '').strip()
     password = request.form.get('password', '').strip()
 
-    if not username or not password:  # Kiểm tra đầu vào rỗng
+    if not username or not password:
         flash("Tên đăng nhập và mật khẩu không được để trống.", 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('login.login'))
 
+    # Gọi hàm xác thực
     message, user = authenticate_user(username, password)
 
-    if user:  # Nếu xác thực thành công
+    if user:
         session['username'] = user['username'] if isinstance(user, dict) else user.username
         session['role'] = user['role'] if isinstance(user, dict) else user.role
         flash(message, 'success')
-        return redirect(url_for('index'))
-    else:  # Nếu xác thực thất bại
+        return redirect(url_for('calendar.calendar'))
+    else:
         flash(message, 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('login.login'))
+
 
 @login_bp.route('/logout')
 def logout():
     session.pop('username', None)  # Xóa username khỏi session
     session.pop('role', None)  # Xóa role khỏi session
+    session.clear()
     flash("Bạn đã đăng xuất thành công.", 'success')
-    return redirect(url_for('index'))
+    return redirect(url_for('calendar.calendar'))
 
 
-@login_bp.route('/session_info')
+@login_bp.route('/session_info', methods=['GET'])
 def session_info():
+    """
+    Endpoint to return session information.
+    """
     return jsonify({
         'username': session.get('username', 'Guest'),
         'role': session.get('role', 'Guest')
-    })
+    }), 200  # Trả về HTTP status code 200
+
+
+@login_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Kiểm tra user tồn tại
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists!', 'danger')
+            return redirect(url_for('login.register'))
+        if User.query.filter_by(email=email).first():
+            flash('Email already in use!', 'danger')
+            return redirect(url_for('login.register'))
+
+        # Hash mật khẩu và tạo user
+        #hashed_password = generate_password_hash(password, method='sha256')
+        new_user = User(username=username, firstname=firstname, lastname=lastname,
+                        email=email, password=password, role='user')
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash('Registration successful! Please login.', 'success')
+        return redirect(url_for('login.login'))
+    return render_template('register.html')
+

@@ -8,6 +8,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from write_logs import log_operation
 from models.status_booking_log import StatusBooking
+from decorators import login_required
 
 user_bp = Blueprint('user', __name__, template_folder='templates')
 
@@ -19,7 +20,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if 'username' not in session or session.get('role') != 'Administrator':
             flash('Access denied! Admins only.')
-            return redirect(url_for('index'))
+            return redirect(url_for('login.login'))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -403,3 +404,42 @@ def delete_department(id):
     except Exception as e:
         # Trả về lỗi server 500
         return jsonify({"message": f"Failed to update department: {e}"}), 500
+
+
+@user_bp.route('/user/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if 'username' not in session:
+        flash('You need to login first.', 'danger')
+        return redirect(url_for('login.login'))
+
+    user = User.query.filter_by(username=session['username']).first()
+
+    if not user:
+        flash('User not found.', 'danger')
+        return redirect(url_for('login.login'))
+
+    if request.method == 'POST':
+        firstname = request.form.get('firstname', '').strip()
+        lastname = request.form.get('lastname', '').strip()
+        password = request.form.get('password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
+
+        if firstname:
+            user.firstname = firstname
+        if lastname:
+            user.lastname = lastname
+
+        # Xử lý đổi mật khẩu nếu mật khẩu được nhập
+        if password:
+            if password != confirm_password:
+                flash('Passwords do not match.', 'danger')
+                return redirect(url_for('user.profile'))
+            #hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
+            user.password = password
+
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('user.profile'))
+
+    return render_template('profile.html', user=user)

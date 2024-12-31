@@ -8,13 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
     {% block custom_css %}
     {% endblock %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const loggedInUser = "{{ session['username'] }}";
+        const loggedInUserRole = "{{ session['role'] }}";
+    </script>
 </head>
 <body class="hold-transition sidebar-mini sidebar-collapse">
     <div class="wrapper">
@@ -25,10 +30,42 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                    <a href="{{ url_for('calendar.calendar') }}" class="nav-link">Home</a>
                 </li>
             </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if session.get('username') %}
+                <li class="nav-item">
+                    <a href="{{ url_for('user.profile') }}" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        Welcome, {{ session['username'] }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('login.logout') }}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{{ url_for('login.login') }}" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('login.register') }}" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        Register
+                    </a>
+                </li>
+                {% endif %}
+
+
+            </ul>
         </nav>
+
 
         <!-- Sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -45,9 +82,44 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/calendar" class="nav-link">
-                                <i class="nav-icon fas fa-chart-pie"></i>
+                            <a href="/" class="nav-link">
+                                <i class="nav-icon fas fa-calendar"></i>
                                 <p>Calendar</p>
+                            </a>
+                        </li>
+                        {% if session['role'] == 'Administrator' %}
+                        <li class="nav-item">
+                            <a href="/user/admin_panel" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Admin panel</p>
+                            </a>
+                        </li>
+                        {% endif %}
+                       {% if session.get('username') %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('login.logout') }}" class="nav-link">
+                                <i class="nav-icon fas fa-sign-out-alt"></i>
+                                <p>Logout</p>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('login.login') }}" class="nav-link">
+                                <i class="nav-icon fas fa-sign-in-alt"></i>
+                                <p>Login</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('login.register') }}" class="nav-link">
+                                <i class="nav-icon fas fa-user-plus"></i>
+                                <p>Register</p>
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('index.index') }}" class="nav-link">
+                                <i class="fas fa-plus-square"></i>
+                                <p> Extra </p>
                             </a>
                         </li>
                     </ul>
@@ -73,7 +145,48 @@
                 </div>
             </section>
         </div>
+    <!------------------------------------------------------------------------------------->
+    <!--------chat box ---------->
+            <div class="card card-primary card-outline direct-chat direct-chat-primary collapsed-card" style="width: 300px; position: fixed; bottom: -5px; right: 10px; z-index: 1000">
+            <div class="card-header">
+                <h3 class="card-title">Chatbox</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+        <div class="card-body">
+            <div id="chat-messages" class="direct-chat-messages" style="height: 300px; overflow-y: auto;">
+                <!-- Example messages -->
+                <div class="direct-chat-msg">
+                    <div class="direct-chat-infos clearfix">
+                        <span class="direct-chat-name float-left">Admin</span>
+                        <span class="direct-chat-timestamp float-right">10:30 AM</span>
+                    </div>
+                    <img class="direct-chat-img" src="https://via.placeholder.com/40" alt="Admin Image">
+                    <div class="direct-chat-text">
+                        Hello, how can I help you today?
+                    </div>
+                </div>
+                <div class="direct-chat-msg right">
 
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <form id="chat-form">
+                <div class="input-group">
+                    <input type="text" name="message" id="message-input" placeholder="Type Message ..." class="form-control">
+                    <span class="input-group-append">
+                        <button type="button" id="send-btn" class="btn btn-primary">Send</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+        <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+        <!--<script src="{{ url_for('static', filename='js/chat.js') }}"></script>-->
         <footer class="main-footer" style="background-color: #d2f106">
             <div class="float-right d-none d-sm-inline">
                 Version 1.0

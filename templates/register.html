@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="register-box mx-auto mt-5">
+    <div class="register-logo">
+        <b>Register</b>
+    </div>
+    <div class="card">
+        <div class="card-body register-card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <script>
+                  document.addEventListener("DOMContentLoaded", function() {
+                    {% for category, message in messages %}
+                      Swal.fire({
+                        icon: '{{ 'success' if category == 'success' else 'error' if category == 'danger' else 'info' }}',
+                        title: '{{ message }}',
+                        timer: 2000,  // Tự động đóng sau 3 giây
+                        showConfirmButton: false
+                      });
+                    {% endfor %}
+                  });
+                </script>
+              {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('login.register') }}" method="POST">
+                <div class="input-group mb-3">
+                    <input type="text" name="firstname" class="form-control" placeholder="First Name" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text"><i class="fas fa-user"></i></div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" name="lastname" class="form-control" placeholder="Last Name" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text"><i class="fas fa-user"></i></div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" name="username" class="form-control" placeholder="Username" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text"><i class="fas fa-user"></i></div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="email" name="email" class="form-control" placeholder="Email" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text"><i class="fas fa-envelope"></i></div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text"><i class="fas fa-lock"></i></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    </div>
+                </div>
+            </form>
+            <p class="mb-1 mt-3 text-center">
+                <a href="{{ url_for('login.login') }}">I already have an account</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
