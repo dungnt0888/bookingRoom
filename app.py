@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from datetime import datetime, timedelta
 
-from flask_cors import CORS
+#from flask_cors import CORS
 from flask_migrate import Migrate, upgrade
 import os
 from sqlalchemy.sql.functions import current_time
