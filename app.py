@@ -1,17 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from datetime import datetime, timedelta
-
+from cnnDatabase import init_db, db
 from flask_cors import CORS
 from flask_migrate import Migrate, upgrade
 import os
 from sqlalchemy.sql.functions import current_time
-from chat_api import chat_api, socketio
+#from chat_api import chat_api, socketio
 from calendar_view import calendar_bp
 from log_in import authenticate_user
 from save_booking import save_booking
 from models.booking_room import Booking
 from models.user import User
-from cnnDatabase import init_db, db
+
+
 from delete_booking import booking_delete_bp  # Import blueprint từ booking_delete.py
 from user_logon import login_bp
 from booking_api import booking_bp
