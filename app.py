@@ -83,7 +83,7 @@ app.register_blueprint(calendar_bp)
 
 app.register_blueprint(index_bp)
 
-app.register_blueprint(chat_api)
+#app.register_blueprint(chat_api)
 
 def job_listener(event):
     if event.exception:
