@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from flask_migrate import Migrate, upgrade
 import os
 from sqlalchemy.sql.functions import current_time
-from chat_api import chat_api, socketio
+#from chat_api import chat_api, socketio
 from calendar_view import calendar_bp
 from log_in import authenticate_user
 from save_booking import save_booking
