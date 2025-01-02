@@ -30,7 +30,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{{ url_for('calendar.calendar') }}" class="nav-link">Home</a>
+                    <a href="{{ url_for('calendar.calendar') }}" class="nav-link">Trang chủ</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -61,7 +61,6 @@
                     </a>
                 </li>
                 {% endif %}
-
 
             </ul>
         </nav>
@@ -133,7 +132,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>Dashboard</h1>
+                            <h1>Lịch đặt phòng họp</h1>
                         </div>
                     </div>
                 </div>
@@ -148,18 +147,34 @@
     <!------------------------------------------------------------------------------------->
     <!--------chat box ---------->
         <!--Start of Tawk.to Script-->
+        {% if session['role'] != 'Administrator' and session.get('username') %}
         <script type="text/javascript">
         var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
         (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/6775ed8549e2fd8dfe017a85/1igiafkvo';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-        })();
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/6775ed8549e2fd8dfe017a85/1igiafkvo';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+            })();
         </script>
         <!--End of Tawk.to Script-->
+
+        <script type="text/javascript">
+        Tawk_API.onLoad = function() {
+            // Thay thế `userName` và `userEmail` bằng thông tin từ backend
+            Tawk_API.setAttributes({
+                'name': "{% if session.get('username') %}{{ session['username'] }}{% else %}Guest{% endif %}", // Tên user từ backend Flask
+                'email' : "test@gmail.com" // Email user từ backend Flask
+            }, function(error) {
+                if (error) {
+                    console.error("Error setting Tawk.to user attributes:", error);
+                }
+            });
+        };
+        </script>
+        {% endif %}
 
 
         <!--<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>-->
