@@ -147,7 +147,35 @@
         </div>
     <!------------------------------------------------------------------------------------->
     <!--------chat box ---------->
-            <div class="card card-primary card-outline direct-chat direct-chat-primary collapsed-card" style="width: 300px; position: fixed; bottom: -5px; right: 10px; z-index: 1000">
+        <!--Start of Tawk.to Script-->
+        <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/6775ed8549e2fd8dfe017a85/1igiafkvo';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+        </script>
+        <!--End of Tawk.to Script-->
+
+
+        <!--<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>-->
+        <!--<script src="{{ url_for('static', filename='js/chat.js') }}"></script>-->
+        <footer class="main-footer" style="background-color: #d2f106">
+            <div class="float-right d-none d-sm-inline">
+                Version 1.0
+            </div>
+            <strong>Copyright &copy; 2024 <a href="#">YourCompany</a>.</strong> All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>
+
+<!--
+<div class="card card-primary card-outline direct-chat direct-chat-primary collapsed-card" style="width: 300px; position: fixed; bottom: -5px; right: 10px; z-index: 1000">
             <div class="card-header">
                 <h3 class="card-title">Chatbox</h3>
                 <div class="card-tools">
@@ -156,9 +184,9 @@
                     </button>
                 </div>
             </div>
-        <div class="card-body">
-            <div id="chat-messages" class="direct-chat-messages" style="height: 300px; overflow-y: auto;">
-                <!-- Example messages -->
+        <div class="card-body"> -->
+            <!--<div id="chat-messages" class="direct-chat-messages" style="height: 300px; overflow-y: auto;">
+
                 <div class="direct-chat-msg">
                     <div class="direct-chat-infos clearfix">
                         <span class="direct-chat-name float-left">Admin</span>
@@ -184,15 +212,4 @@
                 </div>
             </form>
         </div>
-    </div>
-        <!--<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>-->
-        <!--<script src="{{ url_for('static', filename='js/chat.js') }}"></script>-->
-        <footer class="main-footer" style="background-color: #d2f106">
-            <div class="float-right d-none d-sm-inline">
-                Version 1.0
-            </div>
-            <strong>Copyright &copy; 2024 <a href="#">YourCompany</a>.</strong> All rights reserved.
-        </footer>
-    </div>
-</body>
-</html>
+    </div> -->
