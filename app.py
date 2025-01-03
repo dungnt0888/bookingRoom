@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from datetime import datetime, timedelta
 
@@ -13,6 +14,7 @@ from models.booking_room import Booking
 from models.user import User
 from cnnDatabase import init_db, db
 from delete_booking import booking_delete_bp  # Import blueprint từ booking_delete.py
+from sync_realtime import sync_realtime_bp, socketio
 from user_logon import login_bp
 from booking_api import booking_bp
 from user_management import user_bp
@@ -112,11 +114,17 @@ app.register_blueprint(booking_delete_bp)
 
 
 
-#socketio.init_app(app, cors_allowed_origins="*")
+socketio.init_app(app, cors_allowed_origins="*")
 
+app.register_blueprint(sync_realtime_bp)
 
 if __name__ == '__main__':
-    app.run()
-    #socketio.run(app, debug=True)
+    # Phát hiện môi trường (Render hoặc Localhost)
+    is_render = os.environ.get('RENDER', False)
+    host = '0.0.0.0' if is_render else '127.0.0.1'
+    port = int(os.environ.get('PORT', 5000))  # Render cung cấp PORT qua biến môi trường
+
+    # Chạy server
+    socketio.run(app, host=host, port=port, debug=not is_render)
 
 

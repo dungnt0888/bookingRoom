@@ -19,6 +19,7 @@
     <script>
         const loggedInUser = "{{ session['username'] }}";
         const loggedInUserRole = "{{ session['role'] }}";
+        const loggedInUserEmail = "{{ session['email'] }}";
     </script>
 </head>
 <body class="hold-transition sidebar-mini sidebar-collapse">
@@ -68,7 +69,7 @@
 
         <!-- Sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="/dashboard" class="brand-link">
+            <a href="/dashboard" class="brand-link" style="background-image: url('static/img/logo.png'); background-size: cover; background-position: center">
                 <span class="brand-text font-weight-light">Booking Dashboard</span>
             </a>
             <div class="sidebar">
@@ -166,7 +167,7 @@
             // Thay thế `userName` và `userEmail` bằng thông tin từ backend
             Tawk_API.setAttributes({
                 'name': "{% if session.get('username') %}{{ session['username'] }}{% else %}Guest{% endif %}", // Tên user từ backend Flask
-                'email' : "test@gmail.com" // Email user từ backend Flask
+                'email' : "{% if session.get('email') %}{{ session['email'] }}{% else %}Guest@guest.com{% endif %}" // Email user từ backend Flask
             }, function(error) {
                 if (error) {
                     console.error("Error setting Tawk.to user attributes:", error);

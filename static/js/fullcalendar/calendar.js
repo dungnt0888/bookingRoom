@@ -5,7 +5,9 @@ const roomColors = {
     'Phòng giải trí lầu 9': '#4ce1f3',
 };
 let calendar;
+let socket;
 document.addEventListener('DOMContentLoaded', function () {
+    socket = io();
     const legendContainer = document.getElementById('legend-container');
     legendContainer.style.display = 'flex';
     legendContainer.style.flexWrap = 'wrap';
@@ -448,6 +450,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 timer: 1000, // Tự động đóng sau 1.5 giây
                                 showConfirmButton: false
                             });
+                            socket.emit('update_event', data);
                             calendar.refetchEvents();
                         }
 
@@ -485,6 +488,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
+                                socket.emit('update_event', result);
                                 calendar.refetchEvents(); // Làm mới sự kiện trong FullCalendar
                             } else {
                                 Swal.fire({
@@ -511,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         longPressDelay: 500,
         datesSet: function (info) {
-            // Lắng nghe sự kiện click trên tiêu đề ngày
+            // Lắng nghe sự kiện click trên tiêu đề ngày B9F6C376
             setTimeout(() => {
                 document.querySelectorAll('.fc-col-header-cell').forEach((headerCell) => {
                     headerCell.style.cursor = 'pointer'; // Thay đổi con trỏ chuột để chỉ định có thể click
@@ -559,7 +563,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     calendar.render()
-})
+ // Lắng nghe sự kiện 'refresh_events'
+    socket.on('refresh_events', function(data) {
+        console.log("Refreshing events...");
+        calendar.refetchEvents(); // Làm mới sự kiện
+    });
+});
 
 window.hideForm = function () {
     const save_modal = document.getElementById("saving-modal");
@@ -706,6 +715,14 @@ async function saveBooking(data, frequency) {
                         .map((f, i) => `Booking ${i + 1}: ${f.message}`)
                         .join('\n')}`
                 );
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Lỗi khi đặt phòng: ' + failureResults
+                        .map((f, i) => `Booking ${i + 1}: ${f.message}`)
+                        .join('\n'),
+                    icon: 'error',
+                    confirmButtonText: 'Đóng'
+                });
             }
 
             return {
@@ -721,13 +738,15 @@ async function saveBooking(data, frequency) {
                 // updateBookingUI(result.booking_id, data);
             } else {
                 console.error("Failed to save booking:", result.message);
-                alert(`Failed to save booking: ${result.message}`);
+                //alert(`Failed to save booking: ${result.message}`);
+
             }
             return result;
         }
     } catch (error) {
         console.error("Error saving booking:", error);
-        alert(`Error saving booking: ${error.message}`);
+        //alert(`Error saving booking: ${error.message}`);
+
         return {success: false, message: error.message};
     }
 }
@@ -798,10 +817,16 @@ document.getElementById("booking-form-content").addEventListener("submit", async
             timer: 1500, // Tự động đóng sau 1.5 giây
             showConfirmButton: false
         });
-        calendar.refetchEvents();
+
     } else {
-        alert(`Failed to save booking: ${result.message}`);
+        Swal.fire({
+                    title: 'Error',
+                    text: 'Lỗi khi đặt phòng: ' + result.message,
+                    icon: 'error',
+                    confirmButtonText: 'Đóng'
+                });
     }
+    calendar.refetchEvents();
 
 });
 
@@ -945,6 +970,7 @@ async function editCalendar(info) {
                     timer: 750, // Tự động đóng sau 1.5 giây
                     showConfirmButton: false
                 });
+                socket.emit('update_event', data);
                 calendar.refetchEvents();
             }
 

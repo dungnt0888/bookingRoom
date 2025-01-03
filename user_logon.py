@@ -51,6 +51,7 @@ def login():
     if user:
         session['username'] = user['username'] if isinstance(user, dict) else user.username
         session['role'] = user['role'] if isinstance(user, dict) else user.role
+        session['email'] = user['email'] if isinstance(user, dict) else user.email
         flash(message, 'success')
         return redirect(url_for('calendar.calendar'))
     else:
@@ -62,6 +63,7 @@ def login():
 def logout():
     session.pop('username', None)  # Xóa username khỏi session
     session.pop('role', None)  # Xóa role khỏi session
+    session.pop('email', None)
     session.clear()
     flash("Bạn đã đăng xuất thành công.", 'success')
     return redirect(url_for('calendar.calendar'))
@@ -74,7 +76,8 @@ def session_info():
     """
     return jsonify({
         'username': session.get('username', 'Guest'),
-        'role': session.get('role', 'Guest')
+        'role': session.get('role', 'Guest'),
+        'email': session.get('email', 'Guest')
     }), 200  # Trả về HTTP status code 200
 
 
