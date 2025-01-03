@@ -115,7 +115,7 @@ app.register_blueprint(booking_delete_bp)
 
 
 
-socketio.init_app(app, cors_allowed_origins="*")
+socketio.init_app(app, async_mode='eventlet', cors_allowed_origins="*")
 
 app.register_blueprint(sync_realtime_bp)
 
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     is_render = os.environ.get('RENDER', False)
     host = '0.0.0.0' if is_render else '127.0.0.1'
     port = int(os.environ.get('PORT', 5000))  # Render cung cấp PORT qua biến môi trường
-
+    print(f"Running on host: {host}, port: {port}, is_render: {is_render}")
     # Chạy server
     socketio.run(app, host=host, port=port, debug=not is_render)
 

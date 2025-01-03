@@ -16,6 +16,6 @@ def handle_update_event(data):
     Nhận thông tin sự kiện được chỉnh sửa từ client
     và phát thông báo đến tất cả các client khác.
     """
-    print(f"Received event update: {data}")
+    #print(f"Received event update: {data}")
     emit('refresh_events', data, broadcast=True)  # Phát thông báo tới tất cả client
 
