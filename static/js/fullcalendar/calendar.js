@@ -68,10 +68,14 @@ document.addEventListener('DOMContentLoaded', function () {
         eventAllow: function (dropInfo, draggedEvent) {
             // Kiểm tra nếu chế độ xem hiện tại là 'resourceTimeGridDay'
             const currentView = calendar.view.type;
-            if (currentView !== 'resourceTimeGridDay' || currentView === "resourceTimelineDay") {
+            const username = draggedEvent.extendedProps.username;
+            //console.log("current user ", username)
+            if (currentView !== 'resourceTimeGridDay' && currentView !== "resourceTimelineDay") {
                 return false; // Không cho chỉnh sửa nếu không phải chế độ ngày
             }
-
+            if(username !== loggedInUser && loggedInUserRole !== "Administrator"){
+                return false;
+            }
             // Kiểm tra thời gian mới
             const start = new Date(dropInfo.start);
             const end = new Date(dropInfo.end);
@@ -102,12 +106,15 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         selectAllow: function (selectInfo) {
             const currentView = calendar.view.type;
+            const username = selectInfo.username;
 
             // 1. Chỉ áp dụng trong chế độ ngày
-            if (currentView !== 'resourceTimeGridDay' || currentView === "resourceTimelineDay") {
+            if (currentView !== 'resourceTimeGridDay' && currentView !== "resourceTimelineDay") {
                 return false; // Không cho phép chọn
             }
-
+            /*if(username !== loggedInUser && loggedInUserRole !== "Administrator"){
+                return false;
+            }*/
             const start = new Date(selectInfo.start);
             const end = new Date(selectInfo.end);
 
@@ -231,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
         //Event Drop Kéo thả
         eventDrop: async function (info) {
             const currentView = info.view.type;
-            if (currentView === "resourceTimeGridDay") {
+            if (currentView === "resourceTimeGridDay" || currentView === "resourceTimelineDay") {
                 if (info) {
                     await editCalendar(info);
                 }
@@ -241,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Resize event
         eventResize: async function (info) {
             const currentView = info.view.type;
-            if (currentView === "resourceTimeGridDay") {
+            if (currentView === "resourceTimeGridDay" || currentView === "resourceTimelineDay") {
                 if (info) {
                     await editCalendar(info);
                 }
