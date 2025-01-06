@@ -346,12 +346,12 @@ document.addEventListener('DOMContentLoaded', function () {
               <p><strong>Thời gian:</strong> ${props.start_time} - ${props.end_time}</p>
             `,
                 icon: 'info',
-                showConfirmButton: eventStart >= now && (loggedInUserRole === 'Administrator' || props.username === loggedInUserRole), // Hiển thị nút "Xóa sự kiện" nếu sự kiện chưa bắt đầu
+                showConfirmButton: eventStart >= now && (loggedInUserRole === 'Administrator' || props.username === loggedInUser), // Hiển thị nút "Xóa sự kiện" nếu sự kiện chưa bắt đầu
                 confirmButtonText: 'Lưu thay đổi',
                 cancelButtonText: 'Đóng',
                 denyButtonText: 'Xóa sự kiện',
                 showCancelButton: true,
-                showDenyButton: eventStart >= now && (loggedInUserRole === 'Administrator' || props.username === loggedInUserRole),
+                showDenyButton: eventStart >= now && (loggedInUserRole === 'Administrator' || props.username === loggedInUser),
                 didOpen: () => {
                     // Gắn sự kiện click để chuyển sang chế độ chỉnh sửa
                     const chairmanText = document.getElementById('chairmanText');
@@ -575,6 +575,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             }, 0);
+        },
+        eventMouseEnter: function (info) {
+            const username = info.event.extendedProps.username || 'Không có thông tin';
+            const department = info.event.extendedProps.department || 'Không có thông tin';
+            const chairman = info.event.extendedProps.chairman || 'Không có thông tin';
+
+            tippy(info.el, {
+                content: `
+                    <strong>Người đăng ký:</strong> ${username}<br>
+                    <strong>Phòng ban:</strong> ${department}<br>
+                    <strong>Người chủ trì:</strong> ${chairman}
+                `,
+                allowHTML: true,
+                placement: 'top'
+            });
         },
     });
 
