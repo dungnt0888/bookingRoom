@@ -7,7 +7,7 @@
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="edit function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/fullcalendar/calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/fullcalendar/calendar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin_panel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,7 +168,8 @@
       <workItem from="1735608405086" duration="12831000" />
       <workItem from="1735781318637" duration="19143000" />
       <workItem from="1735867708034" duration="16408000" />
-      <workItem from="1735955448740" duration="1932000" />
+      <workItem from="1735955448740" duration="5684000" />
+      <workItem from="1736127072948" duration="2914000" />
     </task>
     <task id="LOCAL-00001" summary="edit function">
       <option name="closed" value="true" />

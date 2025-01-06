@@ -59,7 +59,10 @@ document.addEventListener('DOMContentLoaded', function () {
             right: 'resourceTimeGridDay,timeGridWeek,dayGridMonth,resourceTimelineDay',
         },
         views: {
-            dayGridMonth: {buttonText: 'Tháng'}, // Nút hiển thị là "Tháng"
+             dayGridMonth: {
+                dayHeaderFormat: { weekday: 'short' }, // Hiển thị CN, T2, ...
+                buttonText: 'Tháng',
+            },
             timeGridWeek: {buttonText: 'Tuần'}, // Nút hiển thị là "Tuần"
             resourceTimeGridDay: {buttonText: 'Ngày'}, // Nút hiển thị là "Ngày"
             resourceTimelineDay: {buttonText: 'Timeline'}
@@ -106,15 +109,15 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         selectAllow: function (selectInfo) {
             const currentView = calendar.view.type;
-            const username = selectInfo.username;
+            const username = loggedInUser;
 
             // 1. Chỉ áp dụng trong chế độ ngày
             if (currentView !== 'resourceTimeGridDay' && currentView !== "resourceTimelineDay") {
                 return false; // Không cho phép chọn
             }
-            /*if(username !== loggedInUser && loggedInUserRole !== "Administrator"){
+            if(username === ''){
                 return false;
-            }*/
+            }
             const start = new Date(selectInfo.start);
             const end = new Date(selectInfo.end);
 
@@ -195,10 +198,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         },
+        timeZone: 'local',
         //======================================================
         // API endpoint để lấy dữ liệu
         eventDataTransform: function (eventData) {
             // Chuyển đổi định dạng dữ liệu
+            //console.log(eventData);
             const [day, month, year] = eventData.reservation_date.split('/');
             const color = roomColors[eventData.room_name] || '#3357FF'; // Màu mặc định nếu không khớp phòng
             let borderColor;
@@ -209,14 +214,18 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 borderColor = '#ffc107'; // Sự kiện đang diễn ra (vàng)
             }
+             // Đặt màu sắc dựa trên phòng
+            const startDateTime = `${year}-${month}-${day}T${eventData.start_time}`;
+            const endDateTime = `${year}-${month}-${day}T${eventData.end_time}`;
 
-            // Đặt màu sắc dựa trên phòng
 
+            //console.log(startDateTime);
+            //console.log(endDateTime);
             return {
                 id: eventData.booking_id,
                 title: eventData.booking_name || "Không có tiêu đề",
-                start: `${year}-${month}-${day}T${eventData.start_time}`,
-                end: `${year}-${month}-${day}T${eventData.end_time}`,
+                start: startDateTime,
+                end: endDateTime,
                 allDay: false, // Đánh dấu sự kiện không phải cả ngày
                 backgroundColor: color, // Màu nền
                 borderColor: borderColor,     // Màu viền
@@ -528,6 +537,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     headerCell.style.cursor = 'pointer'; // Thay đổi con trỏ chuột để chỉ định có thể click
                     headerCell.addEventListener('click', function () {
                         const dateStr = headerCell.getAttribute('data-date'); // Lấy ngày từ thuộc tính data-date
+                        console.log(headerCell);
                         if (dateStr) {
                             calendar.changeView('resourceTimeGridDay', dateStr); // Chuyển sang view ngày
                         }
