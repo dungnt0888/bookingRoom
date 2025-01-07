@@ -537,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     headerCell.style.cursor = 'pointer'; // Thay đổi con trỏ chuột để chỉ định có thể click
                     headerCell.addEventListener('click', function () {
                         const dateStr = headerCell.getAttribute('data-date'); // Lấy ngày từ thuộc tính data-date
-                        console.log(headerCell);
+                        //console.log(headerCell);
                         if (dateStr) {
                             calendar.changeView('resourceTimeGridDay', dateStr); // Chuyển sang view ngày
                         }

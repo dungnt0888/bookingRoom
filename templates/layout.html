@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Đặt phòng họp Bcons</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css" rel="stylesheet">
@@ -136,7 +136,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>Lịch đặt phòng họp</h1>
+                            <h1>Lịch đặt phòng họp tại Bcons Tower I</h1>
                         </div>
                     </div>
                 </div>
@@ -170,7 +170,7 @@
             // Thay thế `userName` và `userEmail` bằng thông tin từ backend
             Tawk_API.setAttributes({
                 'name': "{% if session.get('username') %}{{ session['username'] }}{% else %}Guest{% endif %}", // Tên user từ backend Flask
-                'email' : "{% if session.get('email') %}{{ session['email'] }}{% else %}Guest@guest.com{% endif %}" // Email user từ backend Flask
+                 // Email user từ backend Flask
             }, function(error) {
                 if (error) {
                     console.error("Error setting Tawk.to user attributes:", error);
