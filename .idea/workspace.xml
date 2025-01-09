@@ -7,6 +7,16 @@
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="edit function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/booking_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/booking_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/alembic.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/script.py.mako" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/1055cc89ddb5_change_datatype_to_time.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/15a7478e9c9c_create_department_table.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/3893b39cb39d_update_models_1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/64fe5c068481_update_models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/754beb8336d7_add_foreign_key_for_username_in_booking.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/98eeb68940c0_update_models_2.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/fullcalendar/calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/fullcalendar/calendar.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -172,7 +182,7 @@
       <workItem from="1736127072948" duration="12529000" />
       <workItem from="1736215336600" duration="9361000" />
       <workItem from="1736302300508" duration="11775000" />
-      <workItem from="1736387274261" duration="1974000" />
+      <workItem from="1736387274261" duration="10849000" />
     </task>
     <task id="LOCAL-00001" summary="edit function">
       <option name="closed" value="true" />

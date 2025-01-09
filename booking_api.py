@@ -325,3 +325,17 @@ def get_meetings():
     except Exception as e:
         print("Lỗi khi lấy dữ liệu meetings:", e)
         return jsonify({"message": f"Failed to load meetings: {str(e)}"}), 500
+
+
+@booking_bp.route('/get_holidays', methods=['GET'])
+def get_holidays():
+    """
+    API trả về danh sách các ngày nghỉ lễ.
+    """
+    try:
+        # Gọi hàm tính ngày lễ
+        holidays = calculated_holidays()
+        return jsonify(holidays), 200
+    except Exception as e:
+        print("Lỗi khi tạo danh sách ngày nghỉ lễ:", e)
+        return jsonify({"message": "Không thể tải danh sách ngày lễ."}), 500
