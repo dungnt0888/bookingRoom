@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+
     <list default="true" id="d833ef5d-9198-4992-a2af-c813b57cbe62" name="Changes" comment="edit function" />
+
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -168,7 +170,11 @@
       <workItem from="1736127072948" duration="12529000" />
       <workItem from="1736215336600" duration="9361000" />
       <workItem from="1736302300508" duration="11775000" />
+<<<<<<< HEAD
       <workItem from="1736387274261" duration="11181000" />
+=======
+      <workItem from="1736387274261" duration="1974000" />
+>>>>>>> parent of f0ea570 (09-01-2025 test)
     </task>
     <task id="LOCAL-00001" summary="edit function">
       <option name="closed" value="true" />
