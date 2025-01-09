@@ -13,6 +13,8 @@ import pytz
 from zoneinfo import ZoneInfo
 import logging
 from sqlalchemy import and_, or_
+from calculate_holidays import calculated_holidays
+
 
 from flask import current_app
 
@@ -274,8 +276,16 @@ def get_bookings():
                 "username": booking.username,
                 "role": booking.user.role
             })
-        #print("Dữ liệu bookings:", bookings_data)  # Ghi lại dữ liệu booking trước khi trả về
-        return jsonify(bookings_data)
+
+        # Thêm ngày nghỉ lễ
+        holidays = calculated_holidays()
+
+        all_events = bookings_data + holidays
+
+        # Ghi log số lượng bookings và holidays
+        print(f"Số lượng bookings: {len(bookings_data)}, Số lượng holidays: {len(holidays)}")
+        #print(holidays)
+        return jsonify(all_events)
     except Exception as e:
         # Trả về chi tiết lỗi nếu có lỗi xảy ra
         print("Lỗi khi lấy dữ liệu bookings:", e)

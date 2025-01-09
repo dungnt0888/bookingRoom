@@ -67,6 +67,15 @@ document.addEventListener('DOMContentLoaded', function () {
             resourceTimeGridDay: {buttonText: 'Ngày'}, // Nút hiển thị là "Ngày"
             resourceTimelineDay: {buttonText: 'Timeline'}
         },
+        dateClick: function (info) {
+            // Chuyển sang view ngày khi click vào ngày
+            calendar.changeView('timeGridWeek', info.dateStr);
+             // Highlight ngày được chọn
+            const selectedCell = document.querySelector('.fc-daygrid-day[data-date="' + info.dateStr + '"]');
+            if (selectedCell) {
+                selectedCell.style.backgroundColor = '#b1dde3';
+            }
+        },
 
         eventAllow: function (dropInfo, draggedEvent) {
             // Kiểm tra nếu chế độ xem hiện tại là 'resourceTimeGridDay'
@@ -202,35 +211,49 @@ document.addEventListener('DOMContentLoaded', function () {
         //======================================================
         // API endpoint để lấy dữ liệu
         eventDataTransform: function (eventData) {
-            // Chuyển đổi định dạng dữ liệu
-            //console.log(eventData);
+            // Chuyển đổi định dạng ngày từ DD/MM/YYYY sang YYYY-MM-DD
+
+
+            // Xử lý nếu sự kiện là ngày nghỉ lễ
+            if (eventData.allDay && !eventData.start_time && !eventData.end_time) {
+                return {
+                    id: eventData.id || null,
+                    title: eventData.title || "Holiday",
+                    start: eventData.start,
+                    allDay: true, // Đây là sự kiện cả ngày
+                    backgroundColor: '#ffcccc', // Màu nền cho ngày lễ
+                    borderColor: '#ff0000', // Màu viền cho ngày lễ
+                    textColor: '#000000', // Màu chữ
+                    extendedProps: {
+                        isHoliday: true, // Đánh dấu đây là ngày lễ
+                    }
+                };
+            }
             const [day, month, year] = eventData.reservation_date.split('/');
-            const color = roomColors[eventData.room_name] || '#3357FF'; // Màu mặc định nếu không khớp phòng
+            // Xử lý các sự kiện đặt phòng
+            const color = roomColors[eventData.room_name] || '#3357FF'; // Màu mặc định
             let borderColor;
             if (new Date() < new Date(`${year}-${month}-${day}T${eventData.start_time}`)) {
-                borderColor = '#c9e318'; // Sự kiện sắp diễn ra (xanh lá)
+                borderColor = '#c9e318'; // Sự kiện sắp diễn ra
             } else if (new Date() > new Date(`${year}-${month}-${day}T${eventData.end_time}`)) {
-                borderColor = '#0ff451'; // Sự kiện đã kết thúc (đỏ)
+                borderColor = '#0ff451'; // Sự kiện đã kết thúc
             } else {
-                borderColor = '#ffc107'; // Sự kiện đang diễn ra (vàng)
+                borderColor = '#ffc107'; // Sự kiện đang diễn ra
             }
-             // Đặt màu sắc dựa trên phòng
+
             const startDateTime = `${year}-${month}-${day}T${eventData.start_time}`;
             const endDateTime = `${year}-${month}-${day}T${eventData.end_time}`;
 
-
-            //console.log(startDateTime);
-            //console.log(endDateTime);
             return {
                 id: eventData.booking_id,
                 title: eventData.booking_name || "Không có tiêu đề",
                 start: startDateTime,
                 end: endDateTime,
-                allDay: false, // Đánh dấu sự kiện không phải cả ngày
+                allDay: false, // Sự kiện không phải cả ngày
                 backgroundColor: color, // Màu nền
-                borderColor: borderColor,     // Màu viền
-                textColor: '#ffffff',   // Màu chữ
-                resourceId: eventData.room_name.trim(),
+                borderColor: borderColor, // Màu viền
+                textColor: '#ffffff', // Màu chữ
+                resourceId: eventData.room_name ? eventData.room_name.trim() : null,
                 extendedProps: {
                     department: eventData.department,
                     chairman: eventData.chairman,
@@ -238,8 +261,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     meeting_content: eventData.meeting_content,
                     username: eventData.username,
                     role: eventData.role,
-                    start_time: eventData.start_time, // Thêm start_time vào extendedProps
-                    end_time: eventData.end_time      // Thêm end_time vào extendedProps
+                    start_time: eventData.start_time,
+                    end_time: eventData.end_time
                 }
             };
         },
@@ -300,16 +323,27 @@ document.addEventListener('DOMContentLoaded', function () {
         // Event Click
         //=================================================
         eventClick: async function (info) {
-            const props = info.event.extendedProps;
-            const now = new Date();
-            const departments = await getDepartments();
-            const meetings = await getMeetings();
 
-            //console.log(meetings);
-            const eventStart = new Date(info.event.start); // Thời gian bắt đầu của sự kiện
-            await Swal.fire({
-                title: 'Cuộc họp',
-                html: `
+            const isHoliday = info.event.extendedProps.isHoliday ? info.event.extendedProps.isHoliday : false;
+
+            if (isHoliday){
+                 Swal.fire({
+                    title: "Thông báo ngày lễ",
+                    text: `Ngày lễ: ${info.event.title}`,
+                    icon: "info",
+                    confirmButtonText: "Đóng"
+                });
+            }
+            else {
+                const props = info.event.extendedProps;
+                const now = new Date();
+                const departments = await getDepartments();
+                const meetings = await getMeetings();
+                //console.log(meetings);
+                const eventStart = new Date(info.event.start); // Thời gian bắt đầu của sự kiện
+                await Swal.fire({
+                    title: 'Cuộc họp',
+                    html: `
                 <p> <h2 style="font-size: 40px; font-weight: bold" id="meetingText">${info.event.title}</h2>
                 <select id="meetingDropdown" class="swal2-select" style="display: none; margin: auto">
                      <option value="" selected disabled style="color: gray; font-weight: bold;">-- Chọn một tùy chọn --</option>
@@ -345,189 +379,189 @@ document.addEventListener('DOMContentLoaded', function () {
               <p><strong>Phòng:</strong> ${props.room_name}</p>
               <p><strong>Thời gian:</strong> ${props.start_time} - ${props.end_time}</p>
             `,
-                icon: 'info',
-                showConfirmButton: eventStart >= now && (loggedInUserRole === 'Administrator' || props.username === loggedInUser), // Hiển thị nút "Xóa sự kiện" nếu sự kiện chưa bắt đầu
-                confirmButtonText: 'Lưu thay đổi',
-                cancelButtonText: 'Đóng',
-                denyButtonText: 'Xóa sự kiện',
-                showCancelButton: true,
-                showDenyButton: eventStart >= now && (loggedInUserRole === 'Administrator' || props.username === loggedInUser),
-                didOpen: () => {
-                    // Gắn sự kiện click để chuyển sang chế độ chỉnh sửa
-                    const chairmanText = document.getElementById('chairmanText');
-                    const chairmanInput = document.getElementById('chairmanInput');
-                    const toggleEdit = (textEl, inputEl) => {
-                        textEl.style.display = 'none';
-                        inputEl.style.display = 'block';
-                        inputEl.focus();
-                    };
+                    icon: 'info',
+                    showConfirmButton: eventStart >= now && (loggedInUserRole === 'Administrator' || props.username === loggedInUser), // Hiển thị nút "Xóa sự kiện" nếu sự kiện chưa bắt đầu
+                    confirmButtonText: 'Lưu thay đổi',
+                    cancelButtonText: 'Đóng',
+                    denyButtonText: 'Xóa sự kiện',
+                    showCancelButton: true,
+                    showDenyButton: eventStart >= now && (loggedInUserRole === 'Administrator' || props.username === loggedInUser),
+                    didOpen: () => {
+                        // Gắn sự kiện click để chuyển sang chế độ chỉnh sửa
+                        const chairmanText = document.getElementById('chairmanText');
+                        const chairmanInput = document.getElementById('chairmanInput');
+                        const toggleEdit = (textEl, inputEl) => {
+                            textEl.style.display = 'none';
+                            inputEl.style.display = 'block';
+                            inputEl.focus();
+                        };
 
-                    const updateText = (textEl, inputEl) => {
-                        inputEl.style.display = 'none';
-                        textEl.style.display = 'inline';
-                        textEl.textContent = inputEl.value || textEl.textContent; // Giữ nguyên nếu không có giá trị
-                    };
-                    chairmanText.addEventListener('click', () => {
-                        chairmanText.style.display = 'none';
-                        chairmanInput.style.display = 'block';
-                        chairmanInput.focus();
-                    });
-                    chairmanInput.addEventListener('blur', () => {
-                        chairmanInput.style.display = 'none';
-                        chairmanText.style.display = 'inline';
-                        chairmanText.textContent = chairmanInput.value; // Cập nhật nội dung mới
-                    });
+                        const updateText = (textEl, inputEl) => {
+                            inputEl.style.display = 'none';
+                            textEl.style.display = 'inline';
+                            textEl.textContent = inputEl.value || textEl.textContent; // Giữ nguyên nếu không có giá trị
+                        };
+                        chairmanText.addEventListener('click', () => {
+                            chairmanText.style.display = 'none';
+                            chairmanInput.style.display = 'block';
+                            chairmanInput.focus();
+                        });
+                        chairmanInput.addEventListener('blur', () => {
+                            chairmanInput.style.display = 'none';
+                            chairmanText.style.display = 'inline';
+                            chairmanText.textContent = chairmanInput.value; // Cập nhật nội dung mới
+                        });
 
-                    const meetingContentText = document.getElementById('meetingContentText');
-                    const meetingContentInput = document.getElementById('meetingContentInput');
-                    meetingContentText.addEventListener('click', () => {
-                        meetingContentText.style.display = 'none';
-                        meetingContentInput.style.display = 'block';
-                        meetingContentInput.focus();
-                    });
-                    meetingContentInput.addEventListener('blur', () => {
-                        meetingContentInput.style.display = 'none';
-                        meetingContentText.style.display = 'inline';
-                        meetingContentText.textContent = meetingContentInput.value; // Cập nhật nội dung mới
-                    });
+                        const meetingContentText = document.getElementById('meetingContentText');
+                        const meetingContentInput = document.getElementById('meetingContentInput');
+                        meetingContentText.addEventListener('click', () => {
+                            meetingContentText.style.display = 'none';
+                            meetingContentInput.style.display = 'block';
+                            meetingContentInput.focus();
+                        });
+                        meetingContentInput.addEventListener('blur', () => {
+                            meetingContentInput.style.display = 'none';
+                            meetingContentText.style.display = 'inline';
+                            meetingContentText.textContent = meetingContentInput.value; // Cập nhật nội dung mới
+                        });
 
-                    const departmentText = document.getElementById('departmentText');
-                    const departmentInput = document.getElementById('departmentDropdown');
-                    departmentText.addEventListener('click', () => toggleEdit(departmentText, departmentInput));
+                        const departmentText = document.getElementById('departmentText');
+                        const departmentInput = document.getElementById('departmentDropdown');
+                        departmentText.addEventListener('click', () => toggleEdit(departmentText, departmentInput));
 
-                    // Xử lý khi dropdown thay đổi giá trị (change)
-                    departmentInput.addEventListener('change', () => {
-                        updateText(departmentText, departmentInput);
-                    });
+                        // Xử lý khi dropdown thay đổi giá trị (change)
+                        departmentInput.addEventListener('change', () => {
+                            updateText(departmentText, departmentInput);
+                        });
 
-                    // Xử lý khi dropdown mất focus (blur)
-                    departmentInput.addEventListener('blur', () => {
-                        updateText(departmentText, departmentInput);
-                    });
+                        // Xử lý khi dropdown mất focus (blur)
+                        departmentInput.addEventListener('blur', () => {
+                            updateText(departmentText, departmentInput);
+                        });
 
-                    const meetingText = document.getElementById('meetingText');
-                    const meetingInput = document.getElementById('meetingDropdown');
-                    meetingText.addEventListener('click', () => toggleEdit(meetingText, meetingInput));
+                        const meetingText = document.getElementById('meetingText');
+                        const meetingInput = document.getElementById('meetingDropdown');
+                        meetingText.addEventListener('click', () => toggleEdit(meetingText, meetingInput));
 
-                    // Xử lý khi dropdown thay đổi giá trị (change)
-                    meetingInput.addEventListener('change', () => {
-                        updateText(meetingText, meetingInput);
-                    });
+                        // Xử lý khi dropdown thay đổi giá trị (change)
+                        meetingInput.addEventListener('change', () => {
+                            updateText(meetingText, meetingInput);
+                        });
 
-                    // Xử lý khi dropdown mất focus (blur)
-                    meetingInput.addEventListener('blur', () => {
-                        updateText(meetingText, meetingInput);
-                    });
+                        // Xử lý khi dropdown mất focus (blur)
+                        meetingInput.addEventListener('blur', () => {
+                            updateText(meetingText, meetingInput);
+                        });
 
-                },
-                preConfirm: () => {
-                    // Lấy giá trị mới từ các ô nhập liệu
-                    const newChairman = document.getElementById('chairmanInput').value;
-                    const newMeetingContent = document.getElementById('meetingContentInput').value;
-                    const newDepartment = document.getElementById('departmentDropdown').value;
-                    const newMeeting = document.getElementById('meetingDropdown').value;
+                    },
+                    preConfirm: () => {
+                        // Lấy giá trị mới từ các ô nhập liệu
+                        const newChairman = document.getElementById('chairmanInput').value;
+                        const newMeetingContent = document.getElementById('meetingContentInput').value;
+                        const newDepartment = document.getElementById('departmentDropdown').value;
+                        const newMeeting = document.getElementById('meetingDropdown').value;
 
-                    return {newChairman, newMeetingContent, newDepartment, newMeeting};
-                }
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    const {newChairman, newMeetingContent, newDepartment, newMeeting} = result.value;
-                    const event = info.event;
-                    // Gửi dữ liệu mới đến server
-                    const data = {
-                        booking_id: event.id || null, // Mặc định là null nếu không có id
-                        booking_name: newMeeting || "", // Giá trị mặc định
-                        department: newDepartment,
-                        start_time: formatTime(event.start), // Định dạng thành HH:mm
-                        end_time: formatTime(event.end),     // Định dạng thành HH:mm
-                        chairman: newChairman, // Giá trị mặc định là chuỗi rỗng
-                        room_name: event._def.resourceIds && event._def.resourceIds.length > 0 ? event._def.resourceIds[0] : "", // Kiểm tra tài nguyên
-                        meeting_content: newMeetingContent, // Giá trị mặc định
-                        username: event.extendedProps.username || "", // Giá trị mặc định
-                        role: event.extendedProps.role || "" // Giá trị mặc định
-                    };
-                    try {
-                        const result = await updateBooking(data.booking_id, data)
-                        if (!result.success) {
-                            console.warn("Edit failed, reverting changes...");
+                        return {newChairman, newMeetingContent, newDepartment, newMeeting};
+                    }
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const {newChairman, newMeetingContent, newDepartment, newMeeting} = result.value;
+                        const event = info.event;
+                        // Gửi dữ liệu mới đến server
+                        const data = {
+                            booking_id: event.id || null, // Mặc định là null nếu không có id
+                            booking_name: newMeeting || "", // Giá trị mặc định
+                            department: newDepartment,
+                            start_time: formatTime(event.start), // Định dạng thành HH:mm
+                            end_time: formatTime(event.end),     // Định dạng thành HH:mm
+                            chairman: newChairman, // Giá trị mặc định là chuỗi rỗng
+                            room_name: event._def.resourceIds && event._def.resourceIds.length > 0 ? event._def.resourceIds[0] : "", // Kiểm tra tài nguyên
+                            meeting_content: newMeetingContent, // Giá trị mặc định
+                            username: event.extendedProps.username || "", // Giá trị mặc định
+                            role: event.extendedProps.role || "" // Giá trị mặc định
+                        };
+                        try {
+                            const result = await updateBooking(data.booking_id, data)
+                            if (!result.success) {
+                                console.warn("Edit failed, reverting changes...");
+                                Swal.fire({
+                                    title: 'Lỗi',
+                                    text: result.message || 'Edit lỗi! Hãy kiểm tra lại dữ liệu.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Đóng'
+                                });
+                                info.revert();
+                            } else {
+                                //console.log("Edit successful:", data);
+                                Swal.fire({
+                                    title: 'Thành công',
+                                    text: 'Bạn đã đặt lịch thành công!',
+                                    icon: 'success',
+                                    timer: 1000, // Tự động đóng sau 1.5 giây
+                                    showConfirmButton: false
+                                });
+                                socket.emit('update_event', data);
+                                calendar.refetchEvents();
+                            }
+
+                        } catch (error) {
+                            console.error("Error during edit:", error);
                             Swal.fire({
-                                title: 'Lỗi',
-                                text: result.message || 'Edit lỗi! Hãy kiểm tra lại dữ liệu.',
+                                title: 'Lỗi mạng',
+                                text: 'Không thể kết nối tới server. Hãy thử lại sau.',
                                 icon: 'error',
                                 confirmButtonText: 'Đóng'
                             });
-                            info.revert();
-                        } else {
-                            //console.log("Edit successful:", data);
-                            Swal.fire({
-                                title: 'Thành công',
-                                text: 'Bạn đã đặt lịch thành công!',
-                                icon: 'success',
-                                timer: 1000, // Tự động đóng sau 1.5 giây
-                                showConfirmButton: false
-                            });
-                            socket.emit('update_event', data);
-                            calendar.refetchEvents();
+                            info.revert(); // Hoàn tác nếu xảy ra lỗi
+
                         }
-
-                    } catch (error) {
-                        console.error("Error during edit:", error);
-                        Swal.fire({
-                            title: 'Lỗi mạng',
-                            text: 'Không thể kết nối tới server. Hãy thử lại sau.',
-                            icon: 'error',
-                            confirmButtonText: 'Đóng'
+                    } //======================================
+                      //Delete event
+                    else if (result.isDenied) {
+                        // Người dùng nhấn "Xóa sự kiện"
+                        const confirmDelete = await Swal.fire({
+                            title: 'Bạn có chắc chắn?',
+                            text: 'Hành động này không thể hoàn tác!',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Xóa',
+                            cancelButtonText: 'Hủy'
                         });
-                        info.revert(); // Hoàn tác nếu xảy ra lỗi
-
-                    }
-                } //======================================
-                  //Delete event
-                else if (result.isDenied) {
-                    // Người dùng nhấn "Xóa sự kiện"
-                    const confirmDelete = await Swal.fire({
-                        title: 'Bạn có chắc chắn?',
-                        text: 'Hành động này không thể hoàn tác!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Xóa',
-                        cancelButtonText: 'Hủy'
-                    });
-                    if (confirmDelete.isConfirmed) {
-                        try {
-                            const result = await removeBooking(info.event.id); // Gọi API xóa
-                            if (result.success) {
-                                Swal.fire({
-                                    title: 'Xóa thành công',
-                                    text: 'Sự kiện đã được xóa.',
-                                    icon: 'success',
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                });
-                                socket.emit('update_event', result);
-                                calendar.refetchEvents(); // Làm mới sự kiện trong FullCalendar
-                            } else {
+                        if (confirmDelete.isConfirmed) {
+                            try {
+                                const result = await removeBooking(info.event.id); // Gọi API xóa
+                                if (result.success) {
+                                    Swal.fire({
+                                        title: 'Xóa thành công',
+                                        text: 'Sự kiện đã được xóa.',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                    socket.emit('update_event', result);
+                                    calendar.refetchEvents(); // Làm mới sự kiện trong FullCalendar
+                                } else {
+                                    Swal.fire({
+                                        title: 'Lỗi',
+                                        text: result.message || 'Không thể xóa sự kiện.',
+                                        icon: 'error',
+                                        confirmButtonText: 'Đóng'
+                                    });
+                                }
+                            } catch (error) {
+                                console.error('Lỗi khi xóa sự kiện:', error);
                                 Swal.fire({
                                     title: 'Lỗi',
-                                    text: result.message || 'Không thể xóa sự kiện.',
+                                    text: 'Không thể xóa sự kiện. Hãy thử lại.',
                                     icon: 'error',
                                     confirmButtonText: 'Đóng'
                                 });
                             }
-                        } catch (error) {
-                            console.error('Lỗi khi xóa sự kiện:', error);
-                            Swal.fire({
-                                title: 'Lỗi',
-                                text: 'Không thể xóa sự kiện. Hãy thử lại.',
-                                icon: 'error',
-                                confirmButtonText: 'Đóng'
-                            });
                         }
                     }
-                }
-            });
+                });
 
-
+            }
         },
         longPressDelay: 500,
         datesSet: function (info) {
@@ -577,19 +611,33 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 0);
         },
         eventMouseEnter: function (info) {
-            const username = info.event.extendedProps.username || 'Không có thông tin';
-            const department = info.event.extendedProps.department || 'Không có thông tin';
-            const chairman = info.event.extendedProps.chairman || 'Không có thông tin';
+            const isHolidays = info.event.extendedProps.isHoliday ? info.event.extendedProps.isHoliday : false;
+            if(isHolidays){
+                const holiday =  info.event.title || 'Không có thông tin';
+                tippy(info.el, {
+                    content: `
+                    <h2 style="color: red; text-align: center">Ngày lễ: ${holiday}</h2><br>
+                `,
+                    allowHTML: true,
+                    placement: 'top'
+                });
+            }
+            else {
 
-            tippy(info.el, {
-                content: `
+                const username = info.event.extendedProps.username || 'Không có thông tin';
+                const department = info.event.extendedProps.department || 'Không có thông tin';
+                const chairman = info.event.extendedProps.chairman || 'Không có thông tin';
+
+                tippy(info.el, {
+                    content: `
                     <strong>Người đăng ký:</strong> ${username}<br>
                     <strong>Phòng ban:</strong> ${department}<br>
                     <strong>Người chủ trì:</strong> ${chairman}
                 `,
-                allowHTML: true,
-                placement: 'top'
-            });
+                    allowHTML: true,
+                    placement: 'top'
+                });
+            }
         },
     });
 
