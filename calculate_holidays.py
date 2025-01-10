@@ -13,19 +13,7 @@ def get_tet_nguyen_dan(current_year):
     # Nếu không thể tính toán, báo lỗi
     raise ValueError("Không thể xác định ngày Tết Nguyên Đán.")
 
-def safe_lunar_to_solar(year, month, day):
-    """
-    Chuyển đổi ngày Âm lịch sang Dương lịch một cách an toàn.
-    Kiểm tra ngày Âm lịch có hợp lệ trước khi chuyển đổi.
-    """
-    try:
-        # Tạo đối tượng Lunar và chuyển sang Solar
-        lunar_date = Lunar(year, month, day)
-        solar_date = Converter.Lunar2Solar(lunar_date)
-        return solar_date
-    except ValueError:
-        # Trả về None nếu ngày không hợp lệ
-        return None
+
 
 def convert_to_datetime(solar_date):
     """
@@ -39,23 +27,24 @@ def convert_to_datetime(solar_date):
     # Trả về kiểu datetime
     return datetime(solar_date.year, solar_date.month, solar_date.day)
 
-def calculated_holidays():
+def calculated_holidays(current_year):
     """
-    Tính toán danh sách các ngày nghỉ lễ theo lịch Dương và lịch Âm trong năm hiện tại.
+    Tính toán các ngày lễ Dương lịch và Âm lịch.
+    Trả về danh sách các ngày lễ với định dạng:
+    {"title": ..., "date": datetime.date, "description": ...}
     """
-    current_year = datetime.now().year
     holidays = []
 
-    # Các ngày nghỉ lễ theo lịch Dương
+    # Ngày lễ Dương lịch
     holidays += [
-        {"title": "Tết Dương Lịch", "date": f"{current_year}-01-01"},
-        {"title": "Giải phóng miền Nam", "date": f"{current_year}-04-30"},
-        {"title": "Quốc tế Lao động", "date": f"{current_year}-05-01"},
-        {"title": "Quốc khánh", "date": f"{current_year}-09-02"},
+        {"title": "Tết Dương Lịch", "date": datetime(current_year, 1, 1).date()},
+        {"title": "Giải phóng miền Nam", "date": datetime(current_year, 4, 30).date()},
+        {"title": "Quốc tế Lao động", "date": datetime(current_year, 5, 1).date()},
+        {"title": "Quốc khánh", "date": datetime(current_year, 9, 2).date()},
     ]
 
     try:
-        # Các ngày nghỉ lễ theo lịch Âm
+        # Ngày lễ Âm lịch
         lunar_holidays = [
             {"title": "Tết Nguyên Đán", "lunar_date": [(current_year, 1, 1), (current_year, 1, 2), (current_year, 1, 3)]},
             {"title": "Giỗ Tổ Hùng Vương", "lunar_date": [(current_year, 3, 10)]},
@@ -66,22 +55,36 @@ def calculated_holidays():
         for holiday in lunar_holidays:
             for lunar_date in holiday["lunar_date"]:
                 solar_date = safe_lunar_to_solar(*lunar_date)
-                if solar_date:  # Chỉ thêm nếu ngày hợp lệ
-                    solar_datetime = convert_to_datetime(solar_date)
-                    holidays.append({"title": holiday["title"], "date": solar_datetime.strftime("%Y-%m-%d")})
+                if solar_date:
+                    holidays.append({
+                        "title": holiday["title"],
+                        "date": solar_date.date(),  # Chuyển Solar thành date
+                        "description": "Ngày lễ theo lịch Âm"
+                    })
 
-        # Tính ngày Giao Thừa
+        # Ngày Giao Thừa
         tet_eve = get_tet_nguyen_dan(current_year)
-        tet_eve_datetime = convert_to_datetime(tet_eve)
-        holidays.append({"title": "Giao Thừa", "date": tet_eve_datetime.strftime("%Y-%m-%d")})
+        holidays.append({
+            "title": "Giao Thừa",
+            "date": tet_eve.date(),
+            "description": "Đêm trước Tết Nguyên Đán"
+        })
 
     except Exception as e:
-        print("Lỗi tổng quát khi tính toán ngày nghỉ lễ:", e)
+        print(f"Lỗi khi tính toán ngày lễ Âm lịch: {str(e)}")
 
-    # Chuyển đổi danh sách các ngày nghỉ lễ thành JSON
-    holidays_json = [
-        {"title": holiday["title"], "start": holiday["date"], "allDay": True}
-        for holiday in holidays
-    ]
+    return holidays
 
-    return holidays_json
+
+def safe_lunar_to_solar(year, month, day):
+    """
+    Chuyển ngày Âm lịch sang Dương lịch, trả về datetime nếu hợp lệ, None nếu không hợp lệ.
+    """
+    try:
+        lunar_date = Lunar(year, month, day)
+        solar_date = Converter.Lunar2Solar(lunar_date)
+        return datetime(solar_date.year, solar_date.month, solar_date.day)
+    except ValueError:
+        return None
+
+

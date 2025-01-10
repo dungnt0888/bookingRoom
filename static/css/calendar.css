@@ -7,3 +7,15 @@
     background-color: #302d2d; /* Màu xám nhạt */
     opacity: 0.1;
 }
+
+.tooltip-content h3 {
+    color: red;
+    text-align: center;
+    margin: 0;
+}
+
+.tooltip-content strong {
+    text-align: center;
+    display: block;
+    margin: auto;
+}

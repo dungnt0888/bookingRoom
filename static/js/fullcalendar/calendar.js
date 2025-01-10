@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         headerToolbar: {
             left: 'prev,next today', // Các nút điều hướng
             center: 'title', // Tiêu đề
-            right: 'resourceTimeGridDay,timeGridWeek,dayGridMonth,resourceTimelineDay',
+            right: 'resourceTimeGridDay,timeGridWeek,dayGridMonth,resourceTimelineDay,dayGridYear',
         },
         views: {
              dayGridMonth: {
@@ -65,7 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             timeGridWeek: {buttonText: 'Tuần'}, // Nút hiển thị là "Tuần"
             resourceTimeGridDay: {buttonText: 'Ngày'}, // Nút hiển thị là "Ngày"
-            resourceTimelineDay: {buttonText: 'Timeline'}
+            dayGridYear: {buttonText: 'Năm'},
+            resourceTimelineDay: {buttonText: 'Timeline'},
+
         },
         dateClick: function (info) {
             // Chuyển sang view ngày khi click vào ngày
@@ -230,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     textColor: '#000000', // Màu chữ
                     extendedProps: {
                         isHoliday: true, // Đánh dấu đây là ngày lễ
+                        description: eventData.description,
                     }
                 };
             }
@@ -618,10 +621,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const isHolidays = info.event.extendedProps.isHoliday ? info.event.extendedProps.isHoliday : false;
             if(isHolidays){
                 const holiday =  info.event.title || 'Không có thông tin';
+                const description =  info.event.extendedProps.description || 'Không có thông tin';
                 tippy(info.el, {
                     content: `
-                    <h2 style="color: red; text-align: center">Ngày lễ: ${holiday}</h2><br>
-                `,
+                        <div class="tooltip-content">
+                            <h3>Ngày lễ: ${holiday}</h3>
+                            <strong>${description}</strong>
+                        </div>
+                    `,
                     allowHTML: true,
                     placement: 'top'
                 });

@@ -1,0 +1,12 @@
+.fc-daygrid-event {
+    display: block !important; /* Hiển thị sự kiện như một khối */
+    height: 100% !important; /* Chiều cao lấp đầy ô */
+    margin: 0 !important; /* Loại bỏ khoảng cách */
+    border-radius: 0 !important; /* Loại bỏ bo tròn */
+    background-color: #e43a3a !important; /* Màu nền */
+    border: none !important; /* Loại bỏ viền */
+    color: #e8e4e4 !important; /* Màu chữ */
+    text-align: center !important; /* Canh giữa chữ */
+    line-height: inherit !important; /* Đảm bảo dòng chữ hiển thị đầy đủ */
+}
+

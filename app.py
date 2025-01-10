@@ -1,5 +1,10 @@
 import eventlet
+
+
+
 eventlet.monkey_patch()  # Phải ở dòng đầu tiên
+
+
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from datetime import datetime, timedelta
 
@@ -19,6 +24,7 @@ from sync_realtime import sync_realtime_bp, socketio
 from user_logon import login_bp
 from booking_api import booking_bp
 from user_management import user_bp
+from holiday_manage import holiday_bp
 from zoneinfo import ZoneInfo
 from send_email import EmailHandler
 from flask_mail import Mail
@@ -85,6 +91,8 @@ app.register_blueprint(dashboard_bp)
 app.register_blueprint(calendar_bp)
 
 app.register_blueprint(index_bp)
+
+app.register_blueprint(holiday_bp)
 
 #app.register_blueprint(chat_api)
 

@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 import logging
 from sqlalchemy import and_, or_
 from calculate_holidays import calculated_holidays
+from get_holiday import get_holiday_list
 
 
 from flask import current_app
@@ -278,7 +279,7 @@ def get_bookings():
             })
 
         # Thêm ngày nghỉ lễ
-        holidays = calculated_holidays()
+        holidays = get_holiday_list()
 
         all_events = bookings_data + holidays
 
@@ -333,7 +334,7 @@ def get_holidays():
     API trả về danh sách các ngày nghỉ lễ.
     """
     try:
-        holidays = calculated_holidays()
+        holidays = get_holiday_list()
         return jsonify(holidays), 200
     except Exception as e:
         print("Lỗi khi tạo danh sách ngày nghỉ lễ:", e)
