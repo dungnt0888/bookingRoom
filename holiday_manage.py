@@ -13,7 +13,7 @@ holiday_bp = Blueprint('holiday', __name__)
 @holiday_bp.route('/holiday',  methods=['GET', 'POST'] )
 def holiday_manage():
     insert_holidays_for_current_year()
-    return render_template('holiday.html')
+    return render_template('holiday.html' , title = 'Trang quản lý')
 
 @holiday_bp.route('/holiday/list', methods=['GET'])
 def holiday_list():

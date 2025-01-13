@@ -83,6 +83,7 @@ def session_info():
 
 @login_bp.route('/register', methods=['GET', 'POST'])
 def register():
+
     if request.method == 'POST':
         username = request.form['username']
         firstname = request.form['firstname']
@@ -107,5 +108,5 @@ def register():
 
         flash('Registration successful! Please login.', 'success')
         return redirect(url_for('login.login'))
-    return render_template('register.html')
+    return render_template('register.html', title = 'Register')
 

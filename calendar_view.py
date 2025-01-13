@@ -5,12 +5,14 @@ calendar_bp = Blueprint('calendar', __name__)
 
 @calendar_bp.route('/')
 def calendar():
+    title = 'Lịch đặt phòng tại Bcons Tower I'
     meetings = Booking_name.query.filter_by(isActive=True).all()
     departments = Department.query.all()
     return render_template(
         'calendar.html',
         meetings=meetings,
-        departments=departments
+        departments=departments,
+        title = title
     )
 
 

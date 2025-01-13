@@ -15,6 +15,7 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @dashboard_bp.route('/dashboard')
 @admin_required
 def dashboard():
+    title = 'Dashboard'
     bookings = Booking.query.all()
     total_bookings = len(bookings)
     departments = Department.query.all()
@@ -52,7 +53,8 @@ def dashboard():
         total_b_name=total_b_name,
         labels_rooms=labels_rooms,
         labels_departments=labels_departments,
-        data_matrix=data_matrix
+        data_matrix=data_matrix,
+        title = title
     )
 
 

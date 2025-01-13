@@ -29,7 +29,7 @@ def admin_required(f):
 @admin_required
 def admin_panel():
     """Hiển thị danh sách người dùng và booking với phân trang."""
-
+    title = 'Admin Panel'
     # Lấy số trang hiện tại từ query string
     user_logon = session.get('username')
     user_page = request.args.get('user_page', 1, type=int)  # Phân trang người dùng
@@ -106,7 +106,8 @@ def admin_panel():
         names=names,
         name_pagination = name_pagination,
         search_query=search_query,
-        departments = department
+        departments = department,
+        title = title
     )
 
 

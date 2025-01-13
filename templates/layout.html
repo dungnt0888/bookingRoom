@@ -72,7 +72,7 @@
 
         <!-- Sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="/dashboard" class="brand-link" style="background-image: url('static/img/logo.png'); background-size: contain; background-position: center; background-repeat: no-repeat;">
+            <a href="/dashboard" class="brand-link" style="background-image: url('{{url_for('static', filename='img/logo.png') }}'); background-size: contain; background-position: center; background-repeat: no-repeat;">
                 <span class="brand-text font-weight-light"></span>
             </a>
             <div class="sidebar">
@@ -142,7 +142,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>Lịch đặt phòng họp tại Bcons Tower I</h1>
+                            <h1>{{ title }}</h1>
                         </div>
                     </div>
                 </div>
