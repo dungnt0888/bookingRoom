@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         headerToolbar: {
             left: 'prev,next today', // Các nút điều hướng
             center: 'title', // Tiêu đề
-            right: 'resourceTimeGridDay,timeGridWeek,dayGridMonth,resourceTimelineDay,dayGridYear',
+            right: isMobile ? 'resourceTimeGridDay' : 'resourceTimeGridDay,timeGridWeek,dayGridMonth,resourceTimelineDay,dayGridYear',
         },
         views: {
              dayGridMonth: {
@@ -690,6 +690,13 @@ function savingMeetingModal(info) {
     document.getElementById("booking-date").textContent = formattedDate;
 }
 
+function resetModals(){
+   document.getElementById("chairman").value = '';
+   document.getElementById("department").value = '';
+   document.getElementById("meetingContent").value = '';
+   document.getElementById("booking_name").value = '';
+}
+
 /*async function saveBooking(data, frequency) {
     const [day, month, year] = data.reservation_date.split('/').map(Number);
     //const dbDate = `${year}/${month}/${day}`;
@@ -918,8 +925,8 @@ document.getElementById("booking-form-content").addEventListener("submit", async
                     confirmButtonText: 'Đóng'
                 });
     }
+    resetModals();
     calendar.refetchEvents();
-
 
 });
 
