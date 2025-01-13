@@ -48,10 +48,12 @@ def calculated_holidays(current_year):
         lunar_holidays = [
             {"title": "Tết Nguyên Đán", "lunar_date": [(current_year, 1, 1), (current_year, 1, 2), (current_year, 1, 3)]},
             {"title": "Giỗ Tổ Hùng Vương", "lunar_date": [(current_year, 3, 10)]},
-            {"title": "Tết Đoan Ngọ", "lunar_date": [(current_year, 5, 5)]},
-            {"title": "Tết Trung Thu", "lunar_date": [(current_year, 8, 15)]},
-        ]
 
+        ]
+        #{"title": "Tết Đoan Ngọ", "lunar_date": [(current_year, 5, 5)]},
+        #{"title": "Tết Trung Thu", "lunar_date": [(current_year, 8, 15)]},
+        #Tạm bỏ 2 cái
+        #
         for holiday in lunar_holidays:
             for lunar_date in holiday["lunar_date"]:
                 solar_date = safe_lunar_to_solar(*lunar_date)

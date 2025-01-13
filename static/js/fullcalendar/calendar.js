@@ -65,7 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             timeGridWeek: {buttonText: 'Tuần'}, // Nút hiển thị là "Tuần"
             resourceTimeGridDay: {buttonText: 'Ngày'}, // Nút hiển thị là "Ngày"
-            dayGridYear: {buttonText: 'Năm'},
+            dayGridYear: {buttonText: 'Năm',
+                        dayHeaderFormat: { weekday: 'short' },},
             resourceTimelineDay: {buttonText: 'Timeline'},
 
         },
@@ -918,6 +919,7 @@ document.getElementById("booking-form-content").addEventListener("submit", async
                 });
     }
     calendar.refetchEvents();
+
 
 });
 

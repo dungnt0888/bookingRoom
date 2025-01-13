@@ -158,9 +158,25 @@ def edit_booking(booking_id):
         gmt7 = pytz.timezone('Asia/Bangkok')
 
         # Kiểm tra và chuyển đổi dữ liệu ngày, giờ
-        reservation_date_obj = datetime.strptime(data.get('reservation_date', booking.reservation_date.strftime('%d/%m/%Y')), '%d/%m/%Y').date()
-        start_time_obj = datetime.strptime(data.get('start_time', booking.start_time.strftime('%H:%M')), '%H:%M').time()
-        end_time_obj = datetime.strptime(data.get('end_time', booking.end_time.strftime('%H:%M')), '%H:%M').time()
+        # Kiểm tra và xử lý dữ liệu ngày, giờ
+        reservation_date = data.get('reservation_date')
+        if reservation_date is None and booking.reservation_date:
+            reservation_date = booking.reservation_date.strftime('%d/%m/%Y')
+
+        start_time = data.get('start_time')
+        if start_time is None and booking.start_time:
+            start_time = booking.start_time.strftime('%H:%M')
+
+        end_time = data.get('end_time')
+        if end_time is None and booking.end_time:
+            end_time = booking.end_time.strftime('%H:%M')
+
+        if reservation_date is None or start_time is None or end_time is None:
+            return jsonify({"message": "Dữ liệu không đầy đủ. Vui lòng kiểm tra ngày, giờ."}), 400
+
+        reservation_date_obj = datetime.strptime(reservation_date, '%d/%m/%Y').date()
+        start_time_obj = datetime.strptime(start_time, '%H:%M').time()
+        end_time_obj = datetime.strptime(end_time, '%H:%M').time()
 
         # Kết hợp ngày và giờ để kiểm tra thời gian đã qua
         combined_start_datetime = gmt7.localize(datetime.combine(reservation_date_obj, start_time_obj))
@@ -251,6 +267,7 @@ def edit_booking(booking_id):
             record_id=booking_id,
             additional_info=f"Booking edit failed: {str(e)}"
         )
+        print(e)
         return jsonify({"message": f"Failed to save booking: {e}"}), 500
 
 

@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - User Management</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin_panel.css') }}">
-    <style>
+{% extends "layout.html" %}
+{% block custom_css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin_panel.css') }}">
+{% endblock %}
+{% block content %}
 
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Administrator Panel</h1>
-        <button class="btn back" onclick="window.location.href='{{ url_for('calendar.calendar') }}'">Back</button>
-        <button class="btn logs" onclick="window.location.href='{{ url_for('admin.view_logs') }}'">View Log</button>
-    </header>
      <!-- Tab buttons -->
     <div class="tab">
         <button class="tablinks" onclick="openTab(event, 'UserManagement')">User Management</button>
@@ -23,11 +12,11 @@
         <button class="tablinks" onclick="openTab(event, 'DepartmentManagement')">Department Management</button>
     </div>
     <div class="container">
-    <div id="UserManagement" class="tab-content">
+    <div id="UserManagement" class="tab-content" style="overflow-x: auto; overflow-y: auto;">
         <button id="addUserBtn" class="btn add" >Add User</button>
         <h2 style="margin-top: auto; margin-bottom: auto; text-align: center">Quản lý người dùng</h2>
 
-            <table>
+            <table style="width: 100%; border-collapse: collapse; border: 1px">
                 <thead>
                     <tr>
                         <th>User ID</th>
@@ -365,12 +354,8 @@
     <script>
 
     </script>
-<script>
-    const loggedInUser = "{{ session.get('username', '') }}";
-    const loggedInUserRole = "{{ session.get('role', '') }}";
-</script>
+
 <script src="{{ url_for('static', filename='js/user_management.js') }}"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-</body>
-</html>
+{% endblock %}
