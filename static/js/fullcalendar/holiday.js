@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        initialView: 'dayGridMonth',
+        initialView: 'dayGridYear',
         locale: 'vi', // Ngôn ngữ tiếng Việt
         selectable: true, // Cho phép chọn ngày
         events: function (fetchInfo, successCallback, failureCallback) {

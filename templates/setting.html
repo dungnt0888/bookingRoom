@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+
+    <ul class="nav nav-tabs" id="settingTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="setting1-tab" data-bs-toggle="tab" data-bs-target="#setting1" type="button" role="tab" aria-controls="setting1" aria-selected="true">
+                Ngày lễ
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="setting2-tab" data-bs-toggle="tab" data-bs-target="#setting2" type="button" role="tab" aria-controls="setting2" aria-selected="false">
+                Chỉnh màu phòng
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="setting3-tab" data-bs-toggle="tab" data-bs-target="#setting3" type="button" role="tab" aria-controls="setting3" aria-selected="false">
+                Setting 3
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="settingTabsContent">
+        <div class="tab-pane fade show active" id="setting1" role="tabpanel" aria-labelledby="holiday-tab">
+            {% include "holiday_setting.html" %}
+        </div>
+        <div class="tab-pane fade" id="setting2" role="tabpanel" aria-labelledby="setting2-tab">
+
+        </div>
+        <div class="tab-pane fade" id="setting3" role="tabpanel" aria-labelledby="setting3-tab">
+
+        </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/fullcalendar/index.global.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/fullcalendar/holiday.js') }}"></script>
+
+{% endblock %}

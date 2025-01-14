@@ -1,7 +1,5 @@
 import eventlet
 
-
-
 eventlet.monkey_patch()  # Phải ở dòng đầu tiên
 
 
@@ -40,6 +38,7 @@ from calendar_view import calendar_bp
 from pytz import timezone
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 from old_index import index_bp
+from route_setting import setting_bp
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_asdw_23123'  # Thay 'your_secret_key' bằng một chuỗi ngẫu nhiên và bảo mật
@@ -93,6 +92,8 @@ app.register_blueprint(calendar_bp)
 app.register_blueprint(index_bp)
 
 app.register_blueprint(holiday_bp)
+
+app.register_blueprint(setting_bp, url_prefix='/setting')
 
 #app.register_blueprint(chat_api)
 
