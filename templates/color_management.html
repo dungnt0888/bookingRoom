@@ -1,0 +1,69 @@
+<div class="container mt-4">
+    <h1>Chỉnh sửa màu phòng</h1>
+     <table class="table table-striped table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Tên Phòng</th>
+                <th>Màu Sắc</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for color in colors %}
+            <tr>
+                <td>{{ color.c_room }}</td>
+                <td>
+                    <input type="color" class="form-control form-control-color" value="{{ color.c_color }}" onchange="updateColor(this)">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+<script>
+    async function updateColor(element) {
+        const newColor = element.value;
+        const roomName = element.closest('tr').querySelector('td:first-child').innerText;
+        //console.log(newColor);
+        //console.log(roomName);
+        await updateColorAPI(roomName,newColor);
+    }
+    async function updateColorAPI(room, color) {
+        try {
+            const response = await fetch('/setting/update_color', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ room: room, color: color }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                Swal.fire({
+                    title: 'Thành công',
+                    text: `Màu của phòng ${room} đã được cập nhật thành ${color}`,
+                    icon: 'success',
+                    timer: 750, // Tự động đóng sau 1.5 giây
+                    showConfirmButton: false
+                });
+            } else {
+                //alert(`Không thể cập nhật màu của phòng ${room}: ${data.error}`);
+                Swal.fire({
+                    title: 'Xảy ra sự cố',
+                    text: `Không thể cập nhật màu của phòng ${room}: ${data.error}`,
+                    icon: 'error',
+                    confirmButtonText: 'Đóng'
+                });
+            }
+        } catch (error) {
+            console.error('Lỗi khi gửi dữ liệu:', error);
+             Swal.fire({
+                title: 'Lỗi mạng',
+                text: 'Không thể kết nối tới server. Hãy thử lại sau.',
+                icon: 'error',
+                confirmButtonText: 'Đóng'
+            });
+        }
+    }
+</script>

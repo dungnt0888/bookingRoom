@@ -1,13 +1,45 @@
-const roomColors = {
+let roomColors = {
     'Phòng họp nhỏ lầu 1': '#FF5733',
     'Phòng họp dài lầu 1': '#33FF57',
     'Phòng họp lầu 2': '#e0f44f',
     'Phòng giải trí lầu 9': '#4ce1f3',
 };
+
+async function getRoomColor() {
+    try {
+        const response = await fetch('setting/get_color', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.length > 0) {
+                // Nếu có dữ liệu từ server, cập nhật roomColors
+                roomColors = data.reduce((acc, room) => {
+                    acc[room.c_room] = room.c_color;
+                    return acc;
+                }, {});
+                console.log('Dữ liệu từ server:', roomColors);
+            } else {
+                console.warn('Không có dữ liệu từ server, sử dụng dữ liệu mặc định.');
+            }
+        } else {
+            console.error('Lỗi khi lấy dữ liệu màu phòng:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Lỗi khi kết nối tới server:', error);
+    }
+}
+
 let calendar;
 let socket;
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded',  async function () {
     socket = io();
+    await getRoomColor();
     const legendContainer = document.getElementById('legend-container');
     legendContainer.style.display = 'flex';
     legendContainer.style.flexWrap = 'wrap';
@@ -1197,3 +1229,4 @@ async function compareHolidays(start){
         }
     return false
 }
+
