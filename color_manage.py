@@ -9,7 +9,17 @@ def get_room_colour():
     """Lấy danh sách màu phòng từ database."""
     try:
         colors = RoomColor.query.all()
-        return colors or []  # Trả về danh sách rỗng nếu không có dữ liệu
+        if len(colors) == 0:  # Nếu không có bản ghi nào
+            default_rooms = [
+                RoomColor(c_color="#FF5733", c_room="Phòng họp nhỏ lầu 1"),
+                RoomColor(c_color="#33FF57", c_room="Phòng họp dài lầu 1"),
+                RoomColor(c_color="#e0f44f", c_room="Phòng họp lầu 2"),
+                RoomColor(c_color="#4ce1f3", c_room="Phòng giải trí lầu 9"),
+            ]
+            db.session.add_all(default_rooms)
+            db.session.commit()
+            colors = RoomColor.query.all()  # Lấy lại danh sách sau khi thêm dữ liệu
+        return colors  # Trả về danh sách rỗng nếu không có dữ liệu
     except SQLAlchemyError as e:
         print(f"Database error: {e}")
         return []  # Trả về danh sách rỗng khi có lỗi

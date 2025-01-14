@@ -9,6 +9,7 @@ setting_bp = Blueprint('setting', __name__)
 def setting():
     colors = get_room_colour()
 
+
     return render_template(
         'setting.html',
         title='Trang quản lý',

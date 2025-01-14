@@ -12,3 +12,5 @@ class RoomColor(db.Model):
 
     def __repr__(self):
         return f"<Color_ID(id={self.c_id}, color={self.c_color}, room={self.c_room})>"
+
+
