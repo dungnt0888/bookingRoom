@@ -23,7 +23,7 @@ async function getRoomColor() {
                     acc[room.c_room] = room.c_color;
                     return acc;
                 }, {});
-                console.log('Dữ liệu từ server:', roomColors);
+                //console.log('Dữ liệu từ server:', roomColors);
             } else {
                 console.warn('Không có dữ liệu từ server, sử dụng dữ liệu mặc định.');
             }
@@ -246,6 +246,7 @@ document.addEventListener('DOMContentLoaded',  async function () {
                 });
             }
         },
+        nowIndicator: true,
         timeZone: 'local',
         //======================================================
         // API endpoint để lấy dữ liệu
@@ -260,9 +261,10 @@ document.addEventListener('DOMContentLoaded',  async function () {
                     title: eventData.title || "Holiday",
                     start: eventData.start,
                     allDay: true, // Đây là sự kiện cả ngày
-                    backgroundColor: '#ffcccc', // Màu nền cho ngày lễ
+                    backgroundColor: '#ec2727', // Màu nền cho ngày lễ
                     borderColor: '#ff0000', // Màu viền cho ngày lễ
                     textColor: '#000000', // Màu chữ
+                    display: 'background',
                     extendedProps: {
                         isHoliday: true, // Đánh dấu đây là ngày lễ
                         description: eventData.description,
