@@ -688,12 +688,18 @@ document.addEventListener('DOMContentLoaded',  async function () {
     });
 
 
-    calendar.render()
+    calendar.render();
  // Lắng nghe sự kiện 'refresh_events'
     socket.on('refresh_events', function(data) {
         console.log("Refreshing events...");
         calendar.refetchEvents(); // Làm mới sự kiện
     });
+
+    setInterval(function() {
+        calendar.refetchEvents();
+        //console.log("Auto refresh");
+    }, 5 * 60 * 1000); // 3 phút = 3 * 60 * 1000 ms
+
 });
 
 window.hideForm = function () {
